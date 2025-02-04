@@ -1,7 +1,9 @@
 backend = "full"
-color_space = "lch"
 palette = "dark"
 
 [templates]
 hypr.template = 'colors-hypr.conf'
 hypr.target = '~/dotfiles/hypr/themes/wallust.conf'
+
+kitty.template = 'colors-kitty.conf'
+kitty.target = '~/dotfiles/kitty/wallust.conf'

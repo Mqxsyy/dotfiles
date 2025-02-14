@@ -1,5 +1,5 @@
 backend = "full"
-palette = "dark"
+palette = "dark16"
 
 [templates]
 hypr.template = 'colors-hypr.conf'

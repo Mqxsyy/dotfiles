@@ -1,0 +1,18 @@
+Hyprland
+Kitty
+Nvim
+Wallust
+Waybar
+Zsh
+Starship
+Nvtop
+Btop
+ZenBrowser
+yay
+
+nvidia drivers, ref hyprland docs
+
+extra/npm
+
+*create proper install script*
+*create symlink script*

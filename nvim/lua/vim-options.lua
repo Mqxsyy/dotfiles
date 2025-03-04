@@ -8,16 +8,16 @@ vim.opt.swapfile = false
 
 vim.cmd "set clipboard+=unnamedplus"
 -- vim.g.clipboard = {
--- 	name = "WslClipboard",
--- 	copy = {
--- 		["+"] = "clip.exe",
--- 		["*"] = "clip.exe",
--- 	},
--- 	paste = {
--- 		["+"] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
--- 		["*"] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
--- 	},
--- 	cache_enabled = 0,
+--     name = "WslClipboard",
+--     copy = {
+--         ["+"] = "clip.exe",
+--         ["*"] = "clip.exe",
+--     },
+--     paste = {
+--         ["+"] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+--         ["*"] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+--     },
+--     cache_enabled = 0,
 -- }
 
 vim.g.mapleader = " "
@@ -48,6 +48,9 @@ map("i", "<C-h>", "<Left>", {})
 map("i", "<C-j>", "<Down>", {})
 map("i", "<C-k>", "<Up>", {})
 map("i", "<C-l>", "<Right>", {})
+map("v", ">", ">gv", { noremap = true })
+map("v", "<", "<gv", { noremap = true })
 
-vim.cmd "cnoreabbrev W w"
-vim.cmd "cnoreabbrev Wqa wqa"
+vim.cmd "cnoreabbrev Q q"
+vim.cmd "cnoreabbrev Qa qa"
+vim.cmd "cnoreabbrev QA qa"

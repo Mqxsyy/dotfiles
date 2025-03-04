@@ -24,6 +24,10 @@ return {
             platform = {
                 type = "roblox",
             },
+            fflags = {
+                -- enable_new_solver = true,
+                sync = true,
+            },
             types = {
                 roblox_security_level = "PluginSecurity",
             },
@@ -43,7 +47,6 @@ return {
                         },
                         require = {
                             mode = "relativeToFile",
-                            directoryAliases = require("luau-lsp").aliases(),
                         },
                         inlayHints = {
                             functionReturnTypes = true,

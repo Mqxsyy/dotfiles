@@ -23,22 +23,38 @@ return {
 		config = function()
 			local capabilities = require("lsp").create_capabilities()
 
-			require("lspconfig").lua_ls.setup(capabilities)
+			require("lspconfig").lua_ls.setup {
+				capabilities = capabilities,
+				on_init = function(client)
+					if client.workspace_folders then
+						local path = client.workspace_folders[1].name
+						if
+							path ~= vim.fn.stdpath "config"
+							and (vim.loop.fs_stat(path .. "/.luarc.json") or vim.loop.fs_stat(path .. "/.luarc.jsonc"))
+						then
+							return
+						end
+					end
+
+					client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
+						runtime = {
+							version = "LuaJIT",
+						},
+						workspace = {
+							checkThirdParty = false,
+							library = {
+								vim.env.VIMRUNTIME,
+							},
+						},
+					})
+				end,
+				settings = {
+					Lua = {},
+				},
+			}
 			require("lspconfig").biome.setup(capabilities)
 			require("lspconfig").ts_ls.setup(capabilities)
-
-			local function map(mode, lhs, rhs)
-				vim.keymap.set(mode, lhs, rhs, {})
-			end
-
-			map("n", "gd", vim.lsp.buf.definition)
-			map("n", "gD", vim.lsp.buf.declaration)
-			map("n", "gr", vim.lsp.buf.references)
-			map("n", "K", vim.lsp.buf.hover)
-			map("n", "<leader>r", vim.lsp.buf.rename)
-			map("n", "<leader>ca", vim.lsp.buf.code_action)
-
-			map("n", "<leader>e", vim.diagnostic.open_float)
+			require("lspconfig").bashls.setup(capabilities)
 		end,
 	},
 }

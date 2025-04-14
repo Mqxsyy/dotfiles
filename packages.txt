@@ -12,6 +12,8 @@ yay
 
 nvidia drivers, ref hyprland docs
 
+pipewire-pulse
+
 extra/npm
 
 *create proper install script*

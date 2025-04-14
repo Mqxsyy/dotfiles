@@ -1,31 +1,30 @@
+local keymap = require "keymap"
+
 return {
     "folke/flash.nvim",
     event = "VeryLazy",
     opts = {},
     keys = {
         {
-            "s",
-            mode = { "n", "x", "o" },
+            keymap.flash.jump.key,
+            mode = keymap.flash.jump.mode,
             function()
                 require("flash").jump()
             end,
-            desc = "Flash",
         },
         {
-            "S",
-            mode = { "n", "x", "o" },
+            keymap.flash.treesitter.key,
+            mode = keymap.flash.treesitter.mode,
             function()
                 require("flash").treesitter()
             end,
-            desc = "Flash Treesitter",
         },
         {
-            "r",
-            mode = "o",
+            keymap.flash.remote.key,
+            mode = keymap.flash.remote.mode,
             function()
                 require("flash").remote()
             end,
-            desc = "Remote Flash",
         },
     },
 }

@@ -37,6 +37,9 @@ Roblox:
 - vinegar (flatpak)
 - sober (flatpak)
 
+Sound:
+- wpctl
+
 
 
 nvidia drivers, ref hyprland docs

@@ -1,5 +1,6 @@
 backend = "full"
-palette = "dark16"
+color_space = "lchmixed"
+palette = "softdark16"
 
 [templates]
 hypr.template = 'colors-hypr.conf'
@@ -7,3 +8,6 @@ hypr.target = '~/dotfiles/hypr/themes/wallust.conf'
 
 kitty.template = 'colors-kitty.conf'
 kitty.target = '~/dotfiles/kitty/wallust.conf'
+
+waybar.template = 'colors-waybar.conf'
+waybar.target = '~/dotfiles/waybar/wallust.css'

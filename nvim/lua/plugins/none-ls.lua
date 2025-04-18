@@ -1,4 +1,4 @@
-local findBiomeConfig = require "utils.findBiomeConfig"
+local findPrettierConfig = require "utils.findPrettierConfig"
 
 return {
     "nvimtools/none-ls.nvim",
@@ -9,7 +9,9 @@ return {
             null_ls.builtins.formatting.stylua,
         }
 
-        if findBiomeConfig() then
+        if findPrettierConfig() then
+            table.insert(sources, null_ls.builtins.formatting.prettierd)
+        else
             table.insert(
                 sources,
                 null_ls.builtins.formatting.biome.with {
@@ -21,8 +23,6 @@ return {
                     },
                 }
             )
-        else
-            table.insert(sources, null_ls.builtins.formatting.prettierd)
         end
 
         null_ls.setup { sources = sources }

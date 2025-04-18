@@ -6,8 +6,12 @@ Package manager:
 - npm
 - flatpak
 
-Clipboard
+Clipboard:
 - wlclipboard
+
+Recording:
+- obs
+    - requires: xdg-desktop-portal-hyprland
 
 Color Palette: 
 - wallust
@@ -35,15 +39,17 @@ Monitoring:
 
 Roblox: 
 - vinegar (flatpak)
+    - requires: xdg-desktop-portal-gtk
 - sober (flatpak)
 
-Sound:
-- wpctl
+Audio:
+- pipewire
+- wireplumber
+- pipewire-pulse
 
 
 
 nvidia drivers, ref hyprland docs
-pipewire-pulse
 
 *create proper install script*
 *create symlink script*

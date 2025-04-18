@@ -1,4 +1,4 @@
-@import url('wallust.css');
+@import "colors.css";
 
 window#waybar {
 	background: @color0;

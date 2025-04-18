@@ -1,11 +1,21 @@
 {
-	"height": 32,
-	"spacing": 4,
+	"layer": "top",
+	"position": "top",
+	"mode": "dock",
+	"reload_style_on_change": true,
 
-	// "modules-left": [
-	// workspaces,
-	// ],
-	// "modules-center": [],
+	"modules-left": ["hyprland/workspaces", "custom/right-workspaces"],
+
+	"modules-center": [
+		"custom/left-time",
+		"clock#time",
+		"custom/left-icon",
+		"custom/icon",
+		"custom/right-icon",
+		"clock#date",
+		"custom/right-date"
+	],
+
 	"modules-right": [
 		"pulseaudio",
 		"network",
@@ -13,17 +23,65 @@
 		"backlight",
 		"sway/language",
 		"battery",
-		"clock",
 		// "tray",
 		"custom/power"
 	],
 
-	// Modules configuration
-
-	"clock": {
-		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-		"format-alt": "{:%Y-%m-%d}"
+	// Modules
+	"hyprland/workspaces": {
+		"format": "{icon}",
+		"format-icons": {
+			"active": "",
+			"default": "",
+			"empty": ""
+		},
+		"persistent-workspaces": {
+			"*": [1, 2, 3, 4, 5]
+		}
 	},
+
+	"clock#time": {
+		"format": "{:%H:%M}"
+	},
+
+	"clock#date": {
+		"format": "{:%d %b}"
+	},
+
+	"custom/icon": {
+		"format": "",
+		"tooltip": false
+	},
+
+	// Arrows Left
+	"custom/right-workspaces": {
+		"format": "",
+		"tooltip": false
+	},
+
+	// Arrows Center
+	"custom/left-time": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/left-icon": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/right-icon": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/right-date": {
+		"format": "",
+		"tooltip": false
+	},
+
+	// Arrows Right
+
 	"backlight": {
 		"format": "{percent}% {icon}",
 		"format-icons": ["", "", "", "", "", "", "", "", ""]

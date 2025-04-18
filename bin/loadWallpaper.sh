@@ -17,7 +17,5 @@ cp "$image_path" "$wallpaper_path"
 
 matugen image "$wallpaper_path"
 
-kill -SIGUSR1 $KITTY_PID
-
 clear
 neofetch

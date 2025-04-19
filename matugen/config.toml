@@ -16,4 +16,4 @@ post_hook = "kitty @ set-colors -a -c ~/dotfiles/kitty/colors.conf"
 [templates.waybar]
 input_path = './templates/colors.css'
 output_path = '~/dotfiles/waybar/colors.css'
-post_hook = 'pkill -SIGUSR2 waybar'
+# post_hook = 'pkill -SIGUSR2 waybar'

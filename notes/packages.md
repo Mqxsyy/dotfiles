@@ -1,55 +1,53 @@
-Hyprland
-NetworkManager `$ nmtui`
+yay (manual install)
 
-Package manager:
-- yay (manual install)
-- npm
-- flatpak
+pacman/yay:
+- `hyprland`
+- `networkmanager` (`$ nmtui`)
+- `git`
+- `sddm`
+- `dolphin`
+- `npm`
+- `flatpak`
+- `wlclipboard`
+- `obs` -> requires: `xdg-desktop-portal-hyprland`
+- `matugen-bin`
+- `swww`
+- `waybar`
+- `nvim`
+- `kitty`
+- `zsh`
+- `starship`
+- `zen-browser-bin`
+- `nvtop`
+- `btop`
+- `pipewire`
+- `wireplumber`
+- `pipewire-pulse`
+- `rofi`
+- `grim`
+- `slurp`
+- `keepassxc`
+- `nvidia`
+- `nvidia-utils`
+- `lib32-nvidia-utils`
+- `libva-nvidia-driver`
+- *`vulkan-intel`
+- *`lib32-vulkan-intel`
+- `man-db`
+- `opentabletdriver`
+- `syncthing`
+- `ttf-firacode-nerd`
+- `vesktop`
+- `steam`
+- `neofetch`
+- `fuse2`
+- `openssh`
+- `unzip`
+- `xdg-desktop-portal-gtk` -> required by vinegar
 
-Clipboard:
-- wlclipboard
-
-Recording:
-- obs
-    - requires: xdg-desktop-portal-hyprland
-
-Color Palette: 
-- wallust
-
-Wallpaper: 
-- hyprpaper
-
-Status bar: 
-- waybar
-
-Code Editor:
-- nvim
-
-Cli:
-- kitty
-- zsh
-- starship
-
-Browser:
-- zen-browser-bin
-
-Monitoring:
-- nvtop (gpu)
-- btop (general)
-
-Roblox: 
-- vinegar (flatpak)
-    - requires: xdg-desktop-portal-gtk
-- sober (flatpak)
-
-Audio:
-- pipewire
-- wireplumber
-- pipewire-pulse
-
-
-
-nvidia drivers, ref hyprland docs
+Flatpak:
+- vinegar
+- sober
 
 *create proper install script*
 *create symlink script*

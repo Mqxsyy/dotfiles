@@ -6,7 +6,7 @@ set = true
 [templates.hyprland]
 input_path = './templates/hyprland-colors.conf'
 output_path = '~/dotfiles/hypr/colors.conf'
-# post_hook = 'hyprctl reload'
+post_hook = 'hyprctl reload'
 
 [templates.kitty]
 input_path = './templates/kitty-colors.conf'
@@ -16,4 +16,4 @@ post_hook = "kitty @ set-colors -a -c ~/dotfiles/kitty/colors.conf"
 [templates.waybar]
 input_path = './templates/colors.css'
 output_path = '~/dotfiles/waybar/colors.css'
-# post_hook = 'pkill -SIGUSR2 waybar'
+post_hook = 'pkill -SIGUSR2 waybar'

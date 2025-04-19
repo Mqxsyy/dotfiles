@@ -6,4 +6,4 @@ source "${ZINIT_HOME}/zinit.zsh"
 eval "$(starship init zsh)"
 
 # Aliases
-alias sa="~/dotfiles/tmux/sessions/spirits-awakening.sh"
+alias spirits-awakening="~/dotfiles/tmux/sessions/spirits-awakening.sh"

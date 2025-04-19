@@ -148,13 +148,8 @@
 		"tooltip": false
 	},
 	"battery": {
-		"states": {
-			// "good": 95,
-			"warning": 30,
-			"critical": 15
-		},
 		"format": "{icon} {capacity}%",
-		"format-plugged": " {capacity}%", // nf-fa-plug
+        "format-charging": " {capacity}%", // nf-fa-plug
 		"format-icons": ["", "", "", "", ""] // nf-fa-battery 0-4
 	},
 

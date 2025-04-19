@@ -1,4 +1,6 @@
-yay (manual install)
+manually from gh:
+- yay
+- tmux plugin manager
 
 pacman/yay:
 - `hyprland`
@@ -44,6 +46,7 @@ pacman/yay:
 - `openssh`
 - `unzip`
 - `xdg-desktop-portal-gtk` -> required by vinegar
+- `tmux`
 
 Flatpak:
 - vinegar

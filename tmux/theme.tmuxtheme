@@ -1,0 +1,13 @@
+set -g @theme-status-current-prefix ""
+set -g @theme-status-current-suffix ""
+
+set -g status-style "fg=#{@theme-status-fg},bg=#{@theme-status-bg},bold"
+
+set -g status-left ""
+set -g status-right ""
+
+set -g status-justify centre
+set -g window-status-format "#I #W"
+set -g window-status-current-format "#I #W"
+set -g window-status-current-format "#[bg=#{@theme-status-bg}]#[fg=#{@theme-status-current-bg}]#{@theme-status-current-prefix}#[bg=#{@theme-status-current-bg}]#[fg=#{@theme-status-current-fg}]#I #W#[fg=#{@theme-status-current-bg}]#[bg=#{@theme-status-bg}]#{@theme-status-current-suffix}"
+

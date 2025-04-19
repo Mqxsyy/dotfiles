@@ -17,3 +17,8 @@ post_hook = "kitty @ set-colors -a -c ~/dotfiles/kitty/colors.conf"
 input_path = './templates/colors.css'
 output_path = '~/dotfiles/waybar/colors.css'
 post_hook = 'pkill -SIGUSR2 waybar'
+
+[templates.tmux]
+input_path = './templates/colors.tmuxtheme'
+output_path = '~/dotfiles/tmux/colors.tmuxtheme'
+post_hook = 'tmux source ~/.config/tmux/tmux.conf'

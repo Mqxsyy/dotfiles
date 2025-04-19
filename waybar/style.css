@@ -1,5 +1,7 @@
 @import "colors.css";
 
+/* -------------------- General -------------------- */
+
 * {
     min-height: 0;
     border: none;
@@ -16,13 +18,22 @@ window#waybar {
 }
 
 window#waybar>box {
-	background: @surface_container_lowest;
+	background: @surface_container_low;
     margin: 2px;
 }
 
-/* Modules Left */
+/* -------------------- Left -------------------- */
+
+/* Workspaces */
 #workspaces {
-    background: @surface_container_low;
+    background: @surface_container_high;
+}
+
+#custom-right-workspaces {
+    color: @surface_container_high;
+    padding-right: 8px;
+    text-shadow: 3px 0px 2px rgba(0, 0, 0, 0.35);
+    font-size: 16px;
 }
 
 #workspaces button {
@@ -30,54 +41,146 @@ window#waybar>box {
     padding: 0 2px;
 }
 
-#workspaces button:hover {
+#workspaces button:hover {}
 
+#workspaces button.active {
+    color: @primary;
+}
+
+/* -------------------- Center -------------------- */
+
+/* Volume */
+#custom-left-pulseaudio {
+    color: @surface_container_high;
+    padding-left: 4px;
+    text-shadow: -3px 0px 2px rgba(0, 0, 0, 0.35);
+    font-size: 16px;
+}
+
+#pulseaudio {
+    color: @on_surface;
+    background: @surface_container_high;
+    padding-left: 4px;
 }
 
 /* Time */
-#custom-left-time {
-    color: @surface_container_low;
+#custom-left-time1 {
+    color: @surface_container_highest;
+    background: @surface_container_high;
+    padding-left: 4px;
+    text-shadow: -3px 0px 2px rgba(0, 0, 0, 0.35);
+    font-size: 16px;
 }
 
 #clock.time {
     color: @on_surface;
-    background: @surface_container_low;
-    padding-left: 8px;
+    background: @surface_container_highest;
+    padding-left: 4px;
+}
+
+#custom-left-time2 {
+    color: @surface_container_low;
+    background: @surface_container_highest;
+    padding-left: 4px;
+    font-size: 16px;
 }
 
 /* Icon */
 #custom-left-icon {
-    color: @surface_container;
-    background: @surface_container_low;
-    padding-left: 8px;
-    text-shadow: -3px 0px 2px rgba(0, 0, 0, 0.3);
+    color: @primary;
+    font-size: 16px;
 }
 
 #custom-icon {
-    color: @primary;
-    background: @surface_container;
-    padding: 0 8px 0 4px;
+    color: @on_primary;
+    background: @primary;
+    padding-left: 4px;
 }
 
 #custom-right-icon {
-    color: @surface_container;
-    background: @surface_container_low;
-    padding-right: 8px;
-    text-shadow: 3px 0px 2px rgba(0, 0, 0, 0.3);
+    color: @primary;
+    font-size: 16px;
 }
 
 /* Date */
+#custom-right-date1 {
+    color: @surface_container_low;
+    background: @surface_container_highest;
+    padding-right: 4px;
+    font-size: 16px;
+}
+
 #clock.date {
     color: @on_surface;
-    background: @surface_container_low;
-    padding-right: 8px;
+    background: @surface_container_highest;
+    padding-right: 4px;
 }
 
-#custom-right-date {
-    color: @surface_container_low;
+#custom-right-date2 {
+    color: @surface_container_highest;
+    background: @surface_container_high;
+    padding-right: 4px;
+    text-shadow: 3px 0px 2px rgba(0, 0, 0, 0.35);
+    font-size: 16px;
 }
 
-/* Arrows */
-#custom-right-workspaces {
+/* Network */
+#network {
+    color: @on_surface;
+    background: @surface_container_high;
+    padding-right: 4px;
+}
+
+#custom-right-network {
+    color: @surface_container_high;
+    padding-right: 4px;
+    text-shadow: 3px 0px 2px rgba(0, 0, 0, 0.35);
+    font-size: 16px;
+}
+
+/* -------------------- Right -------------------- */
+
+/* Backlight */
+#custom-left-backlight {
+    color: @surface_container_high;
+    padding-left: 4px;
+    text-shadow: -3px 0px 2px rgba(0, 0, 0, 0.35);
+    font-size: 16px;
+}
+
+#backlight {
+    color: @on_surface;
+    background: @surface_container_high;
+    padding-left: 4px;
+}
+
+/* Battery */
+#custom-left-battery {
+    color: @surface_container_highest;
+    background: @surface_container_high;
+    padding-left: 4px;
+    text-shadow: -3px 0px 2px rgba(0, 0, 0, 0.35);
+    font-size: 16px;
+}
+
+#battery {
+    color: @on_surface;
+    background: @surface_container_highest;
+    padding-left: 4px;
+}
+
+/* Power */
+#custom-left-power {
     color: @surface_container_low;
+    background: @surface_container_highest;
+    padding-left: 4px;
+    font-size: 16px;
+}
+
+#custom-power {
+    margin: 0 4px;
+    padding: 0 12px 0 8px;
+    color: @on_primary;
+    background: @primary;
+    border-radius: 12px;
 }

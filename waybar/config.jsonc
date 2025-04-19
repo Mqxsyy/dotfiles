@@ -1,3 +1,7 @@
+/*
+    Inspired by: https://github.com/sejjy/mechabar
+*/
+
 {
 	"layer": "top",
 	"position": "top",
@@ -7,27 +11,37 @@
 	"modules-left": ["hyprland/workspaces", "custom/right-workspaces"],
 
 	"modules-center": [
-		"custom/left-time",
+		"custom/left-pulseaudio",
+		"pulseaudio",
+
+		"custom/left-time1",
 		"clock#time",
+		"custom/left-time2",
+
 		"custom/left-icon",
 		"custom/icon",
 		"custom/right-icon",
+
+		"custom/right-date1",
 		"clock#date",
-		"custom/right-date"
+		"custom/right-date2",
+
+		"network",
+		"custom/right-network"
 	],
 
 	"modules-right": [
-		"pulseaudio",
-		"network",
-		// "power-profiles-daemon",
+		"custom/left-backlight",
 		"backlight",
-		"sway/language",
+
+		"custom/left-battery",
 		"battery",
-		// "tray",
+
+		"custom/left-power",
 		"custom/power"
 	],
 
-	// Modules
+	// Workspaces
 	"hyprland/workspaces": {
 		"format": "{icon}",
 		"format-icons": {
@@ -40,33 +54,48 @@
 		}
 	},
 
-	"clock#time": {
-		"format": "{:%H:%M}"
-	},
-
-	"clock#date": {
-		"format": "{:%d %b}"
-	},
-
-	"custom/icon": {
-		"format": "",
-		"tooltip": false
-	},
-
-	// Arrows Left
 	"custom/right-workspaces": {
 		"format": "",
 		"tooltip": false
 	},
 
-	// Arrows Center
-	"custom/left-time": {
+	// Pulseaudio
+	"custom/left-pulseaudio": {
 		"format": "",
 		"tooltip": false
 	},
 
+	"pulseaudio": {
+		"format": "{icon} {volume}%",
+		"format-muted": "",
+		"format-icons": {
+			"default": ["", ""]
+		}
+	},
+
+	// Time
+	"custom/left-time1": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"clock#time": {
+		"format": "{:%H:%M}"
+	},
+
+	"custom/left-time2": {
+		"format": "",
+		"tooltip": false
+	},
+
+	// Icon
 	"custom/left-icon": {
 		"format": "",
+		"tooltip": false
+	},
+
+	"custom/icon": {
+		"format": " ",
 		"tooltip": false
 	},
 
@@ -75,16 +104,48 @@
 		"tooltip": false
 	},
 
-	"custom/right-date": {
+	// Date
+	"custom/right-date1": {
 		"format": "",
 		"tooltip": false
 	},
 
-	// Arrows Right
+	"clock#date": {
+		"format": "{:%d %b}"
+	},
 
+	"custom/right-date2": {
+		"format": "",
+		"tooltip": false
+	},
+
+	// Network
+	"network": {
+		"format-wifi": "󰖩",
+		"format-ethernet": "󰌹",
+		"format-disconnected": "󰖪",
+		"on-click": "kitty nmtui"
+	},
+
+	"custom/right-network": {
+		"format": "",
+		"tooltip": false
+	},
+
+	// Backlight
+	"custom/left-backlight": {
+		"format": "",
+		"tooltip": false
+	},
 	"backlight": {
-		"format": "{percent}% {icon}",
-		"format-icons": ["", "", "", "", "", "", "", "", ""]
+		"format": "{icon} {percent}%",
+		"format-icons": ["󰃞", "󰃟", "󰃠"] // nf-md-brightness 5-7
+	},
+
+	// Battery
+	"custom/left-battery": {
+		"format": "",
+		"tooltip": false
 	},
 	"battery": {
 		"states": {
@@ -92,56 +153,19 @@
 			"warning": 30,
 			"critical": 15
 		},
-		"format": "{capacity}% {icon}",
-		"format-full": "{capacity}% {icon}",
-		"format-charging": "{capacity}% ",
-		"format-plugged": "{capacity}% ",
-		"format-alt": "{time} {icon}",
-		// "format-good": "", // An empty format will hide the module
-		// "format-full": "",
-		"format-icons": ["", "", "", "", ""]
+		"format": "{icon} {capacity}%",
+		"format-plugged": " {capacity}%", // nf-fa-plug
+		"format-icons": ["", "", "", "", ""] // nf-fa-battery 0-4
 	},
-	"network": {
-		// "interface": "wlp2*", // (Optional) To force the use of this interface
-		"format-wifi": "{essid} ({signalStrength}%) ",
-		"format-ethernet": "{ipaddr}/{cidr} ",
-		"tooltip-format": "{ifname} via {gwaddr} ",
-		"format-linked": "{ifname} (No IP) ",
-		"format-disconnected": "Disconnected !",
-		"format-alt": "{ifname}: {ipaddr}/{cidr}"
-	},
-	"pulseaudio": {
-		// "scroll-step": 1, // %, can be a float
-		"format": "{volume}% {icon} {format_source}",
-		"format-bluetooth": "{volume}% {icon} {format_source}",
-		"format-bluetooth-muted": " {icon} {format_source}",
-		"format-muted": " {format_source}",
-		"format-source": "{volume}% ",
-		"format-source-muted": "",
-		"format-icons": {
-			"headphone": "",
-			"hands-free": "",
-			"headset": "",
-			"phone": "",
-			"portable": "",
-			"car": "",
-			"default": ["", "", ""]
-		},
-		"on-click": "pavucontrol"
-	}
 
-	// "tray": {
-	//     "spacing": 10
-	// },
-	// "power-profiles-daemon": {
-	//   "format": "{icon}",
-	//   "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
-	//   "tooltip": true,
-	//   "format-icons": {
-	//     "default": "",
-	//     "performance": "",
-	//     "balanced": "",
-	//     "power-saver": ""
-	//   }
-	// }
+	// Power
+	"custom/left-power": {
+		"format": "",
+		"tooltip": false
+	},
+	"custom/power": {
+		"format": "",
+		"tooltip": false,
+		"on-click": "systemctl poweroff"
+	}
 }

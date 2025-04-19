@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-wallpaper_path="$HOME/dotfiles/wallpaper.jpg"
+wallpaper_path="$HOME/dotfiles/wallpaper.gif"
 
 if [ $# -lt 1 ]; then
     echo "Missing file path"

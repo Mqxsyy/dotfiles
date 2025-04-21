@@ -21,14 +21,14 @@ first_frame_path="$HOME/dotfiles/first_frame.jpg"
     ffmpeg -i "$wallpaper_path" -frames:v 1 "$first_frame_path" 
 
     # Generate palette
-    matugen image "$first_frame_path"
+    matugen image "$first_frame_path" --type scheme-content
 
     # Clean first frame
     rm "$first_frame_path"
 
     # Replace wallpaper
     pkill mpvpaper
-    mpvpaper -o "no-audio --loop-file inf" '*' "$wallpaper_path" &
+    mpvpaper -o "--panscan=1 --loop-file=inf --mute=yes --speed=0.4" '*' "$wallpaper_path" &
     disown
 } > /dev/null 2>&1
 

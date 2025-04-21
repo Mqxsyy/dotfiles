@@ -13,7 +13,7 @@ pacman/yay:
 - `wlclipboard`
 - `obs` -> requires: `xdg-desktop-portal-hyprland`
 - `matugen-bin`
-- `swww`
+- `mpvpaper`
 - `waybar`
 - `nvim`
 - `kitty`

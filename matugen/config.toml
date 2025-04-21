@@ -1,7 +1,6 @@
 [config.wallpaper]
-command = "swww"
-arguments = ["img", "--transition-type", "center"]
-set = true
+command = "mpvpaper"
+set = false
 
 [templates.hyprland]
 input_path = './templates/hyprland-colors.conf'
@@ -21,4 +20,4 @@ post_hook = 'pkill -SIGUSR2 waybar'
 [templates.tmux]
 input_path = './templates/colors.tmuxtheme'
 output_path = '~/dotfiles/tmux/colors.tmuxtheme'
-post_hook = 'tmux source ~/.config/tmux/tmux.conf'
+# post_hook = 'tmux source ~/.config/tmux/tmux.conf'

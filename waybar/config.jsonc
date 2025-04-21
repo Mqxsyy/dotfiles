@@ -121,9 +121,9 @@
 
 	// Network
 	"network": {
-		"format-wifi": "󰖩",
-		"format-ethernet": "󰌹",
-		"format-disconnected": "󰖪",
+		"format-wifi": "󰖩 ",
+		"format-ethernet": "󰌹 ",
+		"format-disconnected": "󰖪 ",
 		"on-click": "kitty nmtui"
 	},
 

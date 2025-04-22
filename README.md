@@ -1,3 +1,1 @@
-Installing:
-1. Clone repo
-2. Run `./bin/loadWallpaper.sh path/to/wallaper`
+Loading wallpaper: `scripts/loadWallpaper.sh path/to/wallaper.mp4`

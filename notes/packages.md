@@ -7,7 +7,7 @@ pacman/yay:
 - `networkmanager` (`$ nmtui`)
 - `git`
 - `sddm`
-- `dolphin`
+- `nautilus`
 - `npm`
 - `flatpak`
 - `wlclipboard`
@@ -39,6 +39,9 @@ pacman/yay:
 - `opentabletdriver`
 - `syncthing`
 - `ttf-firacode-nerd`
+- `noto-fonts-cjk`
+    - enable jp locale by uncommenting `ja_JP.UTF-8 UTF-8` in /etc/locale.gen
+    - regenerate locale `locale-gen`
 - `vesktop`
 - `steam`
 - `neofetch`
@@ -47,6 +50,7 @@ pacman/yay:
 - `unzip`
 - `xdg-desktop-portal-gtk` -> required by vinegar
 - `tmux`
+- `l5p-keyboard-rgb`
 
 Flatpak:
 - vinegar

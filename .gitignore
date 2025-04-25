@@ -1,6 +1,7 @@
 wallpaper.mp4
 
 # Colors
+nvim/lua/nvim-lualine-colors.lua
 hypr/colors.conf
 kitty/colors.conf
 waybar/colors.css

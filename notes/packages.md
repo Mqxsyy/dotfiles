@@ -15,13 +15,15 @@ pacman/yay:
 - `matugen-bin`
 - `mpvpaper`
 - `waybar`
-- `nvim`
 - `kitty`
 - `zsh`
 - `starship`
-- `zen-browser-bin`
+- `zoxide`
+- `fzf`
+- `nvim`
 - `nvtop`
 - `btop`
+- `zen-browser-bin`
 - `pipewire`
 - `wireplumber`
 - `pipewire-pulse`

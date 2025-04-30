@@ -2,34 +2,34 @@ local colors = require "nvim-lualine-colors"
 
 local theme = {
     normal = {
-        a = { bg = colors.bg, fg = colors.fg, gui = "bold" },
-        b = { bg = colors.bg, fg = colors.fg },
-        c = { bg = "", fg = "" },
+        a = { bg = colors.bg_normal_a, fg = colors.fg_normal, gui = "bold" },
+        b = { bg = colors.bg_normal_b, fg = colors.fg_normal },
+        c = { bg = "", fg = colors.fg_normal },
     },
     insert = {
-        a = { bg = colors.insert_bg, fg = colors.insert_fg, gui = "bold" },
-        b = { bg = colors.insert_bg, fg = colors.insert_fg },
-        c = { bg = colors.insert_bg, fg = colors.insert_fg },
+        a = { bg = colors.bg_insert_a, fg = colors.fg_insert, gui = "bold" },
+        b = { bg = colors.bg_insert_b, fg = colors.fg_insert },
+        c = { bg = "", fg = colors.fg_insert },
     },
     visual = {
-        a = { bg = colors.viausl_bg, fg = colors.viausl_fg, gui = "bold" },
-        b = { bg = colors.viausl_bg, fg = colors.viausl_fg },
-        c = { bg = colors.viausl_bg, fg = colors.viausl_fg },
-    },
-    replace = {
-        a = { bg = colors.replace_bg, fg = colors.replace_fg, gui = "bold" },
-        b = { bg = colors.replace_bg, fg = colors.replace_fg },
-        c = { bg = colors.replace_bg, fg = colors.replace_fg },
+        a = { bg = colors.bg_visual_a, fg = colors.fg_visual, gui = "bold" },
+        b = { bg = colors.bg_visual_b, fg = colors.fg_visual },
+        c = { bg = "", fg = colors.fg_visual },
     },
     command = {
-        a = { bg = colors.command_bg, fg = colors.command_fg, gui = "bold" },
-        b = { bg = colors.command_bg, fg = colors.command_fg },
-        c = { bg = colors.command_bg, fg = colors.command_fg },
+        a = { bg = colors.bg_command_a, fg = colors.fg_command, gui = "bold" },
+        b = { bg = colors.bg_command_b, fg = colors.fg_command },
+        c = { bg = "", fg = colors.fg_command },
+    },
+    replace = {
+        a = { bg = colors.bg_replace_a, fg = colors.fg_replace, gui = "bold" },
+        b = { bg = colors.bg_replace_b, fg = colors.fg_replace },
+        c = { bg = "", fg = colors.fg_replace },
     },
     inactive = {
-        a = { bg = colors.inactive_bg, fg = colors.inactive_fg, gui = "bold" },
-        b = { bg = colors.inactive_bg, fg = colors.inactive_fg },
-        c = { bg = colors.inactive_bg, fg = colors.inactive_fg },
+        a = { bg = colors.bg_inactive_a, fg = colors.fg_inactive, gui = "bold" },
+        b = { bg = colors.bg_inactive_b, fg = colors.fg_inactive },
+        c = { bg = "", fg = colors.fg_inactive },
     },
 }
 
@@ -43,8 +43,8 @@ return {
         sections = {
             lualine_a = { "mode" },
             lualine_b = { "filename" },
-            lualine_c = { },
-            lualine_x = { "diagnostics" },
+            lualine_c = { "diagnostics" },
+            lualine_x = {},
             lualine_y = { "diff" },
             lualine_z = { "branch" },
         },

@@ -22,6 +22,6 @@ input_path = './templates/colors.tmuxtheme'
 output_path = '~/dotfiles/tmux/colors.tmuxtheme'
 # post_hook = 'tmux source ~/.config/tmux/tmux.conf'
 
-[templates.nvim]
+[templates.lualine]
 input_path = './templates/nvim-lualine-colors.lua'
 output_path = '~/dotfiles/nvim/lua/nvim-lualine-colors.lua'

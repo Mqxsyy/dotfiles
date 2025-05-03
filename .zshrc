@@ -1,4 +1,3 @@
-
 # Set ZInit & plugins directory
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
@@ -51,6 +50,9 @@ zstyle ':fzf-tab:comelete:cd:*' fzf-preview 'ls --color $realpath'
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
 eval "$(zoxide init zsh)"
+
+# Load .bin into path
+export PATH="$HOME/dotfiles/.bin:$PATH"
 
 # Aliases
 alias c="clear"

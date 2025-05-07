@@ -53,6 +53,9 @@ pacman/yay:
 - `xdg-desktop-portal-gtk` -> required by vinegar
 - `tmux`
 - `l5p-keyboard-rgb`
+- `wine`
+- `winetricks`
+- `bottles`
 
 Flatpak:
 - vinegar

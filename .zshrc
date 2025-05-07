@@ -41,7 +41,7 @@ setopt hist_ignore_dups
 setopt hist_find_no_dups
 
 # Completion styling
-zstyle ':completion:*' matche-list 'm:{a-z}={A-Za-z}' # Make autocomplete case insensitive
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' # Make autocomplete case insensitive
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:comelete:cd:*' fzf-preview 'ls --color $realpath'

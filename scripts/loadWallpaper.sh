@@ -27,9 +27,7 @@ first_frame_path="$HOME/dotfiles/first_frame.jpg"
     rm "$first_frame_path"
 
     # Replace wallpaper
-    pkill mpvpaper
-    mpvpaper -p -o "--panscan=1 --loop-file=inf --mute=yes --speed=0.4" '*' "$wallpaper_path" &
-    disown
+    ./applyWallpaper.sh
 } > /dev/null 2>&1
 
 # Terminal Output

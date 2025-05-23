@@ -3,8 +3,8 @@
 echo "Loading wallpaper..."
 
 # Variables
-wallpaper_path="$HOME/dotfiles/wallpaper.mp4"
-first_frame_path="$HOME/dotfiles/first_frame.jpg"
+wallpaper_path="$HOME/.config/wallpaper.mp4"
+first_frame_path="$HOME/.config/first_frame.jpg"
 
 # Check and extract input file path
 [[ -z "$1" ]] && echo "Missing file path" && exit 1

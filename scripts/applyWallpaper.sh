@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # Variables
-wallpaper_path="$HOME/dotfiles/wallpaper.mp4"
+wallpaper_path="$HOME/.config/wallpaper.mp4"
 
 {
     # Apply Wallpaper

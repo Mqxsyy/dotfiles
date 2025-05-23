@@ -4,24 +4,24 @@ set = false
 
 [templates.hyprland]
 input_path = './templates/hyprland-colors.conf'
-output_path = '~/dotfiles/hypr/colors.conf'
+output_path = '~/.config/hypr/colors.conf'
 post_hook = 'hyprctl reload'
 
 [templates.kitty]
 input_path = './templates/kitty-colors.conf'
-output_path = '~/dotfiles/kitty/colors.conf'
-post_hook = "kitty @ set-colors -a -c ~/dotfiles/kitty/colors.conf"
+output_path = '~/.config/kitty/colors.conf'
+post_hook = "kitty @ set-colors -a -c ~/.config/kitty/colors.conf"
 
 [templates.waybar]
 input_path = './templates/colors.css'
-output_path = '~/dotfiles/waybar/colors.css'
+output_path = '~/.config/waybar/colors.css'
 post_hook = 'pkill -SIGUSR2 waybar'
 
 [templates.tmux]
 input_path = './templates/colors.tmuxtheme'
-output_path = '~/dotfiles/tmux/colors.tmuxtheme'
+output_path = '~/.config/tmux/colors.tmuxtheme'
 # post_hook = 'tmux source ~/.config/tmux/tmux.conf'
 
 [templates.lualine]
 input_path = './templates/nvim-lualine-colors.lua'
-output_path = '~/dotfiles/nvim/lua/nvim-lualine-colors.lua'
+output_path = '~/.config/nvim/lua/nvim-lualine-colors.lua'

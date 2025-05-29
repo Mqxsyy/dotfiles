@@ -1,0 +1,93 @@
+* {
+	black: #000000;
+	white: #FFFFFF;
+    primary: #FF0000;
+}
+
+configuration {
+    modi: "drun,calc";
+}
+
+window {
+    anchor: center;
+    location: center;
+	transparency: "real";
+	background-color: #FFFFFF;
+    border-radius: 16px;
+    width: 50%;
+    height: 25%;
+    padding: 8px;
+}
+
+mainbox {
+	children: [inputbar, message, listview];
+	border: 2px;
+    border-radius: 8px;
+	border-color: @primary;
+}
+
+// Input
+inputbar {
+	children: [prompt, textbox-prompt-colon, entry, case-indicator];
+}
+
+entry {
+	text-color: #000000;
+}
+
+case-indicator {
+	text-color: #000000;
+}
+
+// Mode Indicator
+prompt {
+    text-color: #000000;
+}
+
+textbox-prompt-colon {
+    str: ":";
+    text-color: #000000;
+}
+
+// Error
+message {
+	border: 1px 0;
+}
+
+textbox {
+	background-color: @white;
+	text-color: @black;
+}
+
+// Results
+listview {
+    padding: 0 16px;
+    scrollbar: false; 
+    spacing: 0;
+}
+
+element {
+	highlight: bold underline;
+	children: [element-icon, element-text];
+}
+
+element-text, element-icon {
+    size: 50;
+}
+
+element normal { 
+	background-color: #000000;
+}
+
+element selected {
+	background-color: #000000;
+}
+
+element alternate {
+	background-color: #000000;
+}
+
+element normal normal, element selected normal, element alternate normal {
+	text-color: #000000;
+}
+

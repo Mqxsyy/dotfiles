@@ -60,4 +60,5 @@ alias cd='z'
 alias ls="eza $eza_params"
 alias ll="eza --all --header --long $eza_params"
 alias tree="eza --tree -L 1 $eza_params"
+alias gl="git log --decorate --oneline --graph"
 alias spirits-awakening="~/dotfiles/tmux/sessions/spirits-awakening.sh"

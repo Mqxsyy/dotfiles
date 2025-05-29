@@ -11,7 +11,7 @@ pacman/yay:
 - `npm`
 - `flatpak`
 - `wlclipboard`
-- `obs` -> requires: `xdg-desktop-portal-hyprland`
+- `obs-studio-git` -> requires: `xdg-desktop-portal-hyprland`
 - `matugen-bin`
 - `mpvpaper`
 - `waybar`

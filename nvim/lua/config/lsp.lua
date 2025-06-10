@@ -1,6 +1,5 @@
 vim.lsp.enable {
     "lua_ls",
-    "luau_lsp",
 }
 
 vim.diagnostic.config { virtual_text = true }
@@ -33,5 +32,5 @@ vim.lsp.config("luau_lsp", {
 
 --> Command to view Lsp logs
 vim.api.nvim_create_user_command("LspLog", function()
-  vim.cmd("edit " .. vim.lsp.get_log_path())
+    vim.cmd("edit " .. vim.lsp.get_log_path())
 end, {})

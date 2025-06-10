@@ -25,17 +25,17 @@ return {
             platform = {
                 type = "roblox",
             },
-            fflags = {
-                -- enable_new_solver = true,
-                sync = true,
-            },
-            types = {
-                roblox_security_level = "PluginSecurity",
-            },
             sourcemap = {
                 enabled = true,
                 autogenerate = true,
                 rojo_project_file = "default.project.json",
+            },
+            types = {
+                roblox_security_level = "PluginSecurity",
+            },
+            fflags = {
+                enable_new_solver = false,
+                sync = true,
             },
         }
     end,

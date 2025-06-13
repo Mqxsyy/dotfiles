@@ -15,7 +15,7 @@ vim.lsp.config("luau-lsp", {
 			completion = {
 				imports = {
 					enabled = true,
-					ignoreGlobs = { "**/_Index/**", "**/Packages/**", "**/ServerPackages/**" },
+					ignoreGlobs = { "**/_Index/**" },
 				},
 			},
 			require = {

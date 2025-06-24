@@ -37,10 +37,10 @@ map("n", "<leader>ff", vim.lsp.buf.format)
 
 --> Cmp
 exported.cmp = {
-	complete = "<C-Space>",
-	select_next_item = "<C-j>",
-	select_prev_item = "<C-k>",
-	confirm = "<CR>",
+    complete = "<C-Space>",
+    select_next_item = "<C-j>",
+    select_prev_item = "<C-k>",
+    confirm = "<CR>",
 }
 
 --> NeoTree
@@ -48,22 +48,25 @@ map("n", "<C-e>", ":Neotree filesystem toggle left <CR>")
 
 --> Flash
 exported.flash = {
-	jump = {
-		key = "s",
-		mode = { "n", "x", "o" },
-	},
-	treesitter = {
-		key = "S",
-		mode = { "n", "x", "o" },
-	},
-	remote = {
-		key = "r",
-		mode = { "o" },
-	},
+    jump = {
+        key = "s",
+        mode = { "n", "x", "o" },
+    },
+    treesitter = {
+        key = "S",
+        mode = { "n", "x", "o" },
+    },
+    remote = {
+        key = "r",
+        mode = { "o" },
+    },
 }
 
 --> Namu
 map("n", "<leader>s", ":Namu symbols<cr>", { silent = true })
+
+--> Other
+map("x", "p", [["_dP]], { noremap = true, silent = true })
 
 --> Export
 return exported

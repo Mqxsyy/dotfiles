@@ -29,6 +29,7 @@ pacman/yay:
 - `pipewire-pulse`
 - `rofi`
 - `grim`
+- `grimblast`
 - `slurp`
 - `keepassxc`
 - `nvidia`

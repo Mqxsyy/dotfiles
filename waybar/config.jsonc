@@ -111,7 +111,7 @@
 	},
 
 	"clock#date": {
-		"format": "{:%d %b}"
+		"format": "{:%d %a}"
 	},
 
 	"custom/right-date2": {

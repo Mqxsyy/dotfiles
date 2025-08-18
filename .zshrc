@@ -61,7 +61,9 @@ alias ls="eza $eza_params"
 alias ll="eza --all --header --long $eza_params"
 alias tree="eza --tree -L 1 $eza_params"
 alias gl="git log --decorate --oneline --graph"
+
+alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"
+
 alias spirits-awakening="~/dotfiles/tmux/sessions/spirits-awakening.sh"
 alias project-steal="~/dotfiles/tmux/sessions/project-steal.sh"
-alias project-hustle="~/dotfiles/tmux/sessions/project-hustle.sh"
-alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"
+alias project-baggage="~/dotfiles/tmux/sessions/project-baggage.sh"

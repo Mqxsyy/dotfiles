@@ -51,9 +51,6 @@ eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
 eval "$(zoxide init zsh)"
 
-# Load .bin into path
-export PATH="$HOME/dotfiles/.bin:$PATH"
-
 # Aliases
 alias c="clear"
 alias cd='z'
@@ -67,3 +64,4 @@ alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"
 alias spirits-awakening="~/dotfiles/tmux/sessions/spirits-awakening.sh"
 alias project-steal="~/dotfiles/tmux/sessions/project-steal.sh"
 alias project-baggage="~/dotfiles/tmux/sessions/project-baggage.sh"
+alias brace="~/dotfiles/tmux/sessions/brace.sh"

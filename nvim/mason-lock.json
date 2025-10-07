@@ -1,12 +1,13 @@
 {
-  "basedpyright": "1.31.4",
+  "basedpyright": "1.31.6",
   "bash-language-server": "5.6.0",
-  "biome": "2.2.4",
+  "biome": "2.2.5",
   "lua-language-server": "3.15.0",
-  "luau-lsp": "1.53.3",
+  "luau-lsp": "1.54.0",
   "prettierd": "0.26.2",
-  "ruff": "0.13.1",
+  "qmlls": "0.4",
+  "ruff": "0.14.0",
   "selene": "0.29.0",
-  "stylua": "v2.2.0",
-  "typescript-language-server": "5.0.0"
+  "stylua": "v2.3.0",
+  "typescript-language-server": "5.0.1"
 }

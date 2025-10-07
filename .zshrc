@@ -51,6 +51,10 @@ eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
 eval "$(zoxide init zsh)"
 
+# Qml import paths
+export QML_IMPORT_PATH=/usr/lib/qt6/qml
+export QML2_IMPORT_PATH=/usr/lib/qt6/qml
+
 # Aliases
 alias c="clear"
 alias cd='z'

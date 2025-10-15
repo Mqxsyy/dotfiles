@@ -3,7 +3,12 @@ return {
 		"williamboman/mason.nvim",
 		lazy = false,
 		config = function()
-			require("mason").setup()
+			require("mason").setup {
+				registries = {
+					"github:mason-org/mason-registry",
+					"github:Crashdummyy/mason-registry",
+				},
+			}
 		end,
 	},
 	{
@@ -13,11 +18,11 @@ return {
 			require("mason-lspconfig").setup {
 				automatic_installation = true,
 				ensure_installed = {
-                    -- Lua + Luau
+					-- Lua + Luau
 					"lua_ls",
 					"luau_lsp",
 
-                    -- TypeScript
+					-- TypeScript
 					"ts_ls",
 					"biome",
 

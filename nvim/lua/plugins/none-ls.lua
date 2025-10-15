@@ -7,6 +7,7 @@ return {
 
 		local sources = {
 			null_ls.builtins.formatting.stylua,
+			null_ls.builtins.formatting.gdformat,
 		}
 
 		if findPrettierConfig() then

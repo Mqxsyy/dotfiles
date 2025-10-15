@@ -2,6 +2,8 @@ vim.lsp.enable {
 	"lua_ls",
 	"basedpyright",
 	"qmlls",
+	"roslyn",
+	"gdscript",
 }
 
 vim.diagnostic.config { virtual_text = true }

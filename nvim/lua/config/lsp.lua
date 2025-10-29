@@ -4,6 +4,8 @@ vim.lsp.enable {
 	"qmlls",
 	"roslyn",
 	"gdscript",
+	"ts_ls",
+	"biome",
 }
 
 vim.diagnostic.config { virtual_text = true }

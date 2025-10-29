@@ -16,7 +16,6 @@ end
 
 return {
     "lopi-py/luau-lsp.nvim",
-    branch = "nvim-011",
     dependencies = {
         "nvim-lua/plenary.nvim",
     },
@@ -34,7 +33,6 @@ return {
                 roblox_security_level = "PluginSecurity",
             },
             fflags = {
-                enable_new_solver = false,
                 sync = true,
             },
         }

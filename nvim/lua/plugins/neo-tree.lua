@@ -12,6 +12,7 @@ return {
 					hide_by_pattern = {
 						"*.gd.uid",
 						"*.tscn",
+						"*.tres",
 					},
 					show_hidden_count = false,
 				},

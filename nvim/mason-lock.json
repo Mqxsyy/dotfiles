@@ -1,15 +1,15 @@
 {
-  "basedpyright": "1.32.1",
+  "basedpyright": "1.34.0",
   "bash-language-server": "5.6.0",
-  "biome": "2.3.2",
+  "biome": "2.3.8",
   "gdtoolkit": "4.5.0",
-  "lua-language-server": "3.15.0",
-  "luau-lsp": "1.55.0",
+  "lua-language-server": "3.16.0",
+  "luau-lsp": "1.57.1",
   "prettierd": "0.26.2",
-  "qmlls": "0.4",
+  "qmlls": "0.5",
   "roslyn": "5.3.0-1.25524.13",
-  "ruff": "0.14.2",
+  "ruff": "0.14.7",
   "selene": "0.29.0",
-  "stylua": "v2.3.0",
-  "typescript-language-server": "5.0.1"
+  "stylua": "v2.3.1",
+  "typescript-language-server": "5.1.3"
 }

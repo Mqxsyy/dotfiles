@@ -65,9 +65,6 @@ alias gl="git log --decorate --oneline --graph"
 
 alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"
 
-alias spirits-awakening="~/dotfiles/tmux/sessions/spirits-awakening.sh"
-alias project-baggage="~/dotfiles/tmux/sessions/project-baggage.sh"
-alias brace="~/dotfiles/tmux/sessions/brace.sh"
 alias bonk="~/dotfiles/tmux/sessions/bonk.sh"
-alias project-cave="~/dotfiles/tmux/sessions/project-cave.sh"
+alias splice="~/dotfiles/tmux/sessions/project-splice.sh"
 

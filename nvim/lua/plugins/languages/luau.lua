@@ -34,6 +34,7 @@ return {
             },
             fflags = {
                 sync = true,
+				enable_new_solver = true,
             },
         }
     end,

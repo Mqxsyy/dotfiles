@@ -15,8 +15,6 @@ vim.g.mapleader = " "
 vim.opt.number = true
 vim.o.relativenumber = true
 
-vim.diagnostic.config { virtual_text = true }
-
 vim.opt.showmode = false
 
 vim.cmd "set clipboard+=unnamedplus"

@@ -26,13 +26,13 @@ return {
 				require("flash").remote()
 			end,
 		},
-		{
-			keymap.flash.treesitter_search.key,
-			mode = keymap.flash.treesitter_search.mode,
-			function()
-				require("flash").treesitter_search()
-			end,
-		},
+		-- {
+		-- 	keymap.flash.treesitter_search.key,
+		-- 	mode = keymap.flash.treesitter_search.mode,
+		-- 	function()
+		-- 		require("flash").treesitter_search()
+		-- 	end,
+		-- },
 		{
 			keymap.flash.search.key,
 			mode = keymap.flash.search.mode,

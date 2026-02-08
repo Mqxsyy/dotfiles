@@ -1,3 +1,30 @@
+vim.lsp.config("*", {
+	capabilities = {
+		textDocument = {
+			semanticTokens = {
+				multilineTokenSupport = true,
+			},
+		},
+	},
+})
+
+vim.diagnostic.config { virtual_text = true }
+vim.o.completeopt = "fuzzy,menuone,noinsert,popup"
+vim.o.pumheight = 10
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	group = vim.api.nvim_create_augroup("my.lsp", {}),
+	callback = function(args)
+		local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+		if not client:supports_method("textDocument/completion") then
+			return
+		end
+
+		client.server_capabilities.completionProvider.triggerCharacters = vim.split("abcdefghijklmnopqrstuvwxyz.", "")
+		vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
+	end,
+})
+
 vim.lsp.enable {
 	"lua_ls",
 	"basedpyright",
@@ -8,13 +35,6 @@ vim.lsp.enable {
 	"biome",
 }
 
-vim.diagnostic.config { virtual_text = true }
-
--- vim.lsp.config("*", {
--- 	capabilities = require("lsp").create_capabilities(),
--- })
-
---> Luau
 vim.lsp.config("luau-lsp", {
 	settings = {
 		["luau-lsp"] = {
@@ -35,24 +55,3 @@ vim.lsp.config("luau-lsp", {
 		},
 	},
 })
-
---> Completions
-vim.api.nvim_create_autocmd("LspAttach", {
-	group = vim.api.nvim_create_augroup("my.lsp", {}),
-	callback = function(args)
-		local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
-		if client:supports_method "textDocument/completion" then
-			client.server_capabilities.completionProvider.triggerCharacters =
-				vim.split("abcdefghijklmnopqrstuvwxyz.", "")
-
-			vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
-		end
-	end,
-})
-
-vim.o.completeopt = "fuzzy,menuone,noinsert,popup"
-
---> Command to view Lsp logs
-vim.api.nvim_create_user_command("LspLog", function()
-	vim.cmd("edit " .. vim.lsp.get_log_path())
-end, {})

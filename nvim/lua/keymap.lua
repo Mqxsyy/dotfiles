@@ -60,6 +60,14 @@ exported.flash = {
         key = "r",
         mode = { "o" },
     },
+	treesitter_search = {
+		key = "R",
+		mode = { "o", "x" }
+	},
+	search = {
+		key = "<c-s>",
+		mode = { "c" },
+	}
 }
 
 --> Namu

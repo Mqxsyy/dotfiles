@@ -8,6 +8,15 @@ set -g status-right ""
 
 set -g status-justify centre
 set -g window-status-format "#I #W"
-set -g window-status-current-format "#I #W"
-set -g window-status-current-format "#[bg=#{@theme-status-bg}]#[fg=#{@theme-status-current-bg}]#{@theme-status-current-prefix}#[bg=#{@theme-status-current-bg}]#[fg=#{@theme-status-current-fg}]#I #W#[fg=#{@theme-status-current-bg}]#[bg=#{@theme-status-bg}]#{@theme-status-current-suffix}"
+
+set -g window-status-current-format \
+	"#[bg=default]\
+	#[fg=#{@theme-status-current-bg}]\
+	#{@theme-status-current-prefix}\
+	#[bg=#{@theme-status-current-bg}]\
+	#[fg=#{@theme-status-current-fg}]\
+	#I #W\
+	#[bg=default]\
+	#[fg=#{@theme-status-current-bg}]\
+	#{@theme-status-current-suffix}"
 

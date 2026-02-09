@@ -1,7 +1,7 @@
 set -g @theme-status-current-prefix ""
 set -g @theme-status-current-suffix ""
 
-set -g status-style "fg=#{@theme-status-fg},bg=#{@theme-status-bg},bold"
+set -g status-style "fg=#{@theme-status-fg},bg=default,bold"
 
 set -g status-left ""
 set -g status-right ""

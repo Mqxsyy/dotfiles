@@ -67,4 +67,5 @@ alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"
 
 alias bonk="~/dotfiles/tmux/sessions/bonk.sh"
 alias splice="~/dotfiles/tmux/sessions/project-splice.sh"
+alias tedit="~/dotfiles/tmux/sessions/table-editor.sh"
 

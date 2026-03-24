@@ -14,6 +14,17 @@ return {
 		local sources = {
 			null_ls.builtins.formatting.stylua,
 
+			-- rustfmt
+			helpers.make_builtin {
+				factory = helpers.formatter_factory,
+				filetypes = { "rs" },
+				generator_opts = {
+					command = "rustfmt",
+					to_stdin = true,
+				},
+				method = { FORMATTING },
+			},
+
 			-- gdscript format
 			helpers.make_builtin {
 				factory = helpers.formatter_factory,

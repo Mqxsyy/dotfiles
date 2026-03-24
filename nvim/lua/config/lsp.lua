@@ -6,6 +6,7 @@ vim.lsp.enable {
 	"gdscript",
 	"ts_ls",
 	"biome",
+	"rust-analyzer",
 }
 
 vim.diagnostic.config { virtual_text = true }

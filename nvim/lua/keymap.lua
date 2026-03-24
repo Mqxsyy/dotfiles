@@ -8,10 +8,10 @@ map("i", "<C-j>", "<Down>")
 map("i", "<C-k>", "<Up>")
 map("i", "<C-l>", "<Right>")
 
-map("n", "<C-h>", "<cmd> TmuxNagiateLeft<CR>")
-map("n", "<C-j>", "<cmd> TmuxNagiateDown<CR>")
-map("n", "<C-k>", "<cmd> TmuxNagiateUp<CR>")
-map("n", "<C-l>", "<cmd> TmuxNagiateRight<CR>")
+map("n", "<C-h>", "<C-w>h")
+map("n", "<C-j>", "<C-w>j")
+map("n", "<C-k>", "<C-w>k")
+map("n", "<C-l>", "<C-w>l")
 
 map("v", ">", ">gv", { noremap = true })
 map("v", "<", "<gv", { noremap = true })
@@ -21,6 +21,8 @@ map("n", "<C-u>", "<C-u>zz", { noremap = true, silent = true })
 
 map("n", "n", "nzz", { noremap = true, silent = true })
 map("n", "N", "Nzz", { noremap = true, silent = true })
+
+map("n", "<C-e>", ":e .<CR>")
 
 --> LspConfig
 map("n", "gd", vim.lsp.buf.definition)
@@ -40,33 +42,6 @@ exported.cmp = {
 	select_next_item = "<C-j>",
 	select_prev_item = "<C-k>",
 	confirm = "<CR>",
-}
-
---> NeoTree
-map("n", "<C-e>", ":Neotree filesystem toggle left <CR>")
-
---> Flash
-exported.flash = {
-	jump = {
-		key = "s",
-		mode = { "n", "x", "o" },
-	},
-	treesitter = {
-		key = "S",
-		mode = { "n", "x", "o" },
-	},
-	remote = {
-		key = "r",
-		mode = { "o" },
-	},
-	treesitter_search = {
-		key = "R",
-		mode = { "o", "x" },
-	},
-	search = {
-		key = "<c-s>",
-		mode = { "c" },
-	},
 }
 
 --> Other

@@ -20,7 +20,6 @@ vim.g.maplocalleader = "\\"
 require("lazy").setup {
     spec = {
         { import = "plugins" },
-        { import = "plugins.themes" },
         { import = "plugins.languages" },
     },
     checker = { enabled = false },

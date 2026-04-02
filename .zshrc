@@ -66,6 +66,6 @@ alias gl="git log --decorate --oneline --graph"
 alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"
 
 alias bonk="~/dotfiles/tmux/sessions/bonk.sh"
-alias splice="~/dotfiles/tmux/sessions/project-splice.sh"
-alias tedit="~/dotfiles/tmux/sessions/table-editor.sh"
+alias seed="~/dotfiles/tmux/sessions/seed-game.sh"
+alias inc="~/dotfiles/tmux/sessions/incremental-game.sh"
 

@@ -1,0 +1,38 @@
+vim.pack.add {
+	"https://github.com/lopi-py/luau-lsp.nvim",
+}
+
+local function rojo_project()
+	return vim.fs.root(0, function(name)
+		return name:match "%.project.json$"
+	end)
+end
+
+if rojo_project() then
+	vim.filetype.add {
+		extension = {
+			lua = function(path)
+				return path:match ".nvim.lua$" and "lua" or "luau"
+			end,
+		},
+	}
+end
+
+require("luau-lsp").setup {
+	platform = {
+		type = "roblox",
+	},
+	sourcemap = {
+		enabled = true,
+		autogenerate = true,
+		rojo_project_file = "default.project.json",
+	},
+	types = {
+		roblox_security_level = "PluginSecurity",
+	},
+	fflags = {
+		sync = true,
+		enable_new_solver = true,
+		enableByDefault = true,
+	},
+}

@@ -1,9 +1,7 @@
-local map = require "utils.map"
+local map = vim.keymap.set
 
-local exported = {}
-
---> Nvim
 map("i", "<C-h>", "<Left>")
+
 map("i", "<C-j>", "<Down>")
 map("i", "<C-k>", "<Up>")
 map("i", "<C-l>", "<Right>")
@@ -24,7 +22,7 @@ map("n", "N", "Nzz", { noremap = true, silent = true })
 
 map("n", "<C-e>", ":e .<CR>")
 
---> LspConfig
+--> Lsp
 map("n", "gd", vim.lsp.buf.definition)
 map("n", "gr", vim.lsp.buf.references)
 map("n", "K", vim.lsp.buf.hover)
@@ -33,19 +31,4 @@ map("n", "<leader>ca", vim.lsp.buf.code_action)
 
 map("n", "<leader>e", vim.diagnostic.open_float)
 
---> Nonels
 map("n", "<leader>ff", vim.lsp.buf.format)
-
---> Cmp
-exported.cmp = {
-	complete = "<C-Space>",
-	select_next_item = "<C-j>",
-	select_prev_item = "<C-k>",
-	confirm = "<CR>",
-}
-
---> Other
-map("x", "p", [["_dP]], { noremap = true, silent = true })
-
---> Export
-return exported

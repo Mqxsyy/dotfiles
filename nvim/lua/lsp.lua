@@ -31,28 +31,6 @@ vim.lsp.config("*", {
 	capabilities = create_capabilities(),
 })
 
---> Luau
-vim.lsp.config("luau-lsp", {
-	settings = {
-		["luau-lsp"] = {
-			completion = {
-				imports = {
-					enabled = true,
-					ignoreGlobs = { "**/_Index/**" },
-				},
-			},
-			require = {
-				mode = "relativeToFile",
-			},
-			inlayHints = {
-				functionReturnTypes = true,
-				parameterTypes = true,
-			},
-			ignoreGlobs = { "**/_Index/**", "**/Packages/**", "**/ServerPackages/**" },
-		},
-	},
-})
-
 --> Command to view Lsp logs
 vim.api.nvim_create_user_command("LspLog", function()
 	vim.cmd("edit " .. vim.lsp.get_log_path())

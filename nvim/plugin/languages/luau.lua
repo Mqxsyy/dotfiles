@@ -19,20 +19,7 @@ if rojo_project() then
 end
 
 require("luau-lsp").setup {
-	platform = {
-		type = "roblox",
-	},
-	sourcemap = {
-		enabled = true,
-		autogenerate = true,
-		rojo_project_file = "default.project.json",
-	},
-	types = {
-		roblox_security_level = "PluginSecurity",
-	},
 	fflags = {
-		sync = true,
 		enable_new_solver = true,
-		enableByDefault = true,
 	},
 }

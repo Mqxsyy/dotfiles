@@ -68,4 +68,5 @@ alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"
 alias bonk="~/dotfiles/tmux/sessions/bonk.sh"
 alias seed="~/dotfiles/tmux/sessions/seed-game.sh"
 alias inc="~/dotfiles/tmux/sessions/incremental-game.sh"
+alias race="~/dotfiles/tmux/sessions/racing-game.sh"
 

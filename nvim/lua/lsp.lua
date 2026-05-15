@@ -16,6 +16,7 @@ end
 
 vim.lsp.enable {
 	"lua_ls",
+	"luau_lsp",
 	"basedpyright",
 	"qmlls",
 	"roslyn",

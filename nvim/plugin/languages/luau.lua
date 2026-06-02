@@ -18,14 +18,14 @@ if rojo_project() then
 	}
 
 	require("luau-lsp").setup {
-		platform = {
-			type = "standard",
+		fflags = {
+			enable_new_solver = true,
 		},
 	}
 else
 	require("luau-lsp").setup {
-		fflags = {
-			enable_new_solver = true,
+		platform = {
+			type = "standard",
 		},
 	}
 end

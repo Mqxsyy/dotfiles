@@ -16,10 +16,16 @@ if rojo_project() then
 			end,
 		},
 	}
-end
 
-require("luau-lsp").setup {
-	fflags = {
-		enable_new_solver = true,
-	},
-}
+	require("luau-lsp").setup {
+		platform = {
+			type = "standard",
+		},
+	}
+else
+	require("luau-lsp").setup {
+		fflags = {
+			enable_new_solver = true,
+		},
+	}
+end

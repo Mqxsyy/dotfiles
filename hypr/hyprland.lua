@@ -46,7 +46,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 
 	hl.exec_cmd("awww-daemon")
-	hl.exec_cmd("$HOME/dotfiles/scripts/loadRandomWallpaper.sh")
+	hl.exec_cmd("$HOME/dotfiles/scripts/randomizeWallpaper.sh")
 
 	hl.exec_cmd("vesktop")
 	hl.exec_cmd("zen-browser")
@@ -277,7 +277,7 @@ hl.window_rule({
 hl.window_rule({
 	name = "obsidian-default-workspace",
 	match = {
-		class = "vesktop",
+		class = "obsidian",
 	},
 	workspace = "special:magic",
 })

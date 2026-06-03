@@ -183,6 +183,7 @@ local mainMod = "SUPER"
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd("kitty"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("nautilus"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("hyprlauncher"))
+hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("wayscriber --active"))
 
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
 

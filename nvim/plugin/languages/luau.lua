@@ -16,16 +16,29 @@ if rojo_project() then
 			end,
 		},
 	}
-
-	require("luau-lsp").setup {
-		fflags = {
-			enable_new_solver = true,
-		},
-	}
-else
-	require("luau-lsp").setup {
-		platform = {
-			type = "standard",
-		},
-	}
 end
+
+require("luau-lsp").setup {
+	platform = {
+		type = "roblox", -- "standard"
+	},
+	fflags = {
+		enable_new_solver = true,
+	},
+}
+
+vim.lsp.config("luau-lsp", {
+	settings = {
+		["luau-lsp"] = {
+			completion = {
+				anonymousAutofilledFunction = {
+					enabled = false,
+				},
+				showDeprecatedItems = false,
+			},
+			diagnostics = {
+				includeDependents = false,
+			},
+		},
+	},
+})

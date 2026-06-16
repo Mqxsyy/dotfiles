@@ -200,6 +200,9 @@ hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.move({ direction = "right" }))
 hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.move({ direction = "up" }))
 hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.move({ direction = "down" }))
 
+hl.bind(mainMod .. " + bracketleft", hl.dsp.exec_cmd("~/dotfiles/scripts/gif-recorder/start.sh"))
+hl.bind(mainMod .. " + bracketright", hl.dsp.exec_cmd("~/dotfiles/scripts/gif-recorder/stop.sh"))
+
 for i = 1, 10 do
 	local key = i % 10
 	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))

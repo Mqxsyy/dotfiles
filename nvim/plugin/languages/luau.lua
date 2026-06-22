@@ -35,6 +35,11 @@ vim.lsp.config("luau-lsp", {
 					enabled = false,
 				},
 				showDeprecatedItems = false,
+				imports = {
+					stringRequires = {
+						enabled = false
+					}
+				}
 			},
 			diagnostics = {
 				includeDependents = false,

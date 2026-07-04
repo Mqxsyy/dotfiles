@@ -5,7 +5,10 @@ vim.pack.add {
 	"https://github.com/nvim-mini/mini.pairs",
 }
 
-require("mini.icons").setup()
+local miniIcons = require("mini.icons")
+miniIcons.setup()
+miniIcons.mock_nvim_web_devicons()
+
 require("mini.files").setup()
 
 local mini_pick = require "mini.pick"

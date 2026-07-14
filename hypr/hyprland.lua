@@ -118,11 +118,11 @@ hl.config({
 })
 
 hl.curve("Linear", { type = "bezier", points = { { 0, 0 }, { 1, 1 } } })
-hl.curve("Spring", { type = "spring", mass = 1, stiffness = 500, dampening = 100 })
+hl.curve("Spring", { type = "spring", mass = 1, stiffness = 1000, dampening = 100 })
 
-hl.animation({ leaf = "global", enabled = true, speed = 1, spring = "Spring" })
-hl.animation({ leaf = "windows", enabled = true, speed = 1, spring = "Spring", style = "popin" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 1, spring = "Spring", style = "fade" })
+hl.animation({ leaf = "global", enabled = true, speed = 0.5, spring = "Spring" })
+hl.animation({ leaf = "windows", enabled = true, speed = 0.5, spring = "Spring", style = "popin" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 0.5, spring = "Spring", style = "fade" })
 
 hl.config({
 	dwindle = {

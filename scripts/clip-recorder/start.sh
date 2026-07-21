@@ -11,7 +11,7 @@ OUTPUT="$DIR/rec.avif"
 
 rm -f "$INPUT"
 
-wf-recorder -r 30 -g "$(slurp)" -f "$INPUT" -c libx264 -p crf=18
+wf-recorder -r 30 -g "$(slurp)" -f "$INPUT" -c libx264 -p crf=22
 
 [ ! -f "$INPUT" ] && exit 1
 

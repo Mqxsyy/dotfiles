@@ -19,6 +19,9 @@ tmux send-keys -t "$SESSION_NAME:2" "cd ~/Projects/seed-game && clear && rojo se
 tmux new-window -t "$SESSION_NAME:3" -n "commands" 
 tmux send-keys -t "$SESSION_NAME:3" "cd ~/Projects/seed-game && clear" C-m
 
+tmux new-window -t "$SESSION_NAME:4" -n "claude" 
+tmux send-keys -t "$SESSION_NAME:4" "cd ~/Projects/seed-game && clear && claude" C-m
+
 tmux select-window -t "$SESSION_NAME:1"
 tmux attach-session -t "$SESSION_NAME"
 

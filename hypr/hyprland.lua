@@ -18,6 +18,13 @@ hl.monitor({
 	scale = 1.6,
 })
 
+-- hl.monitor({
+-- 	output = "HDMI-A-1",
+-- 	mode = "1920x1080@60",
+-- 	position = "-1920x0",
+-- 	scale = 1,
+-- })
+
 for i = 1, 10 do
 	hl.workspace_rule({
 		workspace = i,
@@ -32,7 +39,9 @@ hl.workspace_rule({ workspace = 3, monitor = "DP-1" })
 hl.workspace_rule({ workspace = 4, monitor = "DP-1" })
 hl.workspace_rule({ workspace = 5, monitor = "DP-1" })
 hl.workspace_rule({ workspace = 6, monitor = "DP-1" })
+
 hl.workspace_rule({ workspace = 7, monitor = "DP-1" })
+-- hl.workspace_rule({ workspace = 7, monitor = "HDMI-A-1" })
 
 hl.workspace_rule({ workspace = 8, monitor = "eDP-1" })
 hl.workspace_rule({ workspace = 9, monitor = "eDP-1" })
@@ -281,7 +290,7 @@ hl.window_rule({
 hl.window_rule({
 	name = "obsidian-default-workspace",
 	match = {
-		class = "obsidian",
+		class = "md.Obsidian",
 	},
 	workspace = "special:magic",
 })

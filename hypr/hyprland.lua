@@ -244,7 +244,7 @@ end
 
 -- Extra
 hl.bind("CTRL + SHIFT + S", hl.dsp.exec_cmd("grimblast --freeze copy area"))
-hl.bind(mainMod .. " + KP_End", hl.dsp.exec_cmd("python $HOME/dotfiles/scripts/obs/obs-control.py")) -- request StartRecord
+hl.bind(mainMod .. " + KP_End", hl.dsp.exec_cmd("python $HOME/dotfiles/scripts/obs/obs-control.py"))       -- request StartRecord
 hl.bind(mainMod .. " + KP_Page_Down", hl.dsp.exec_cmd("python $HOME/dotfiles/scripts/obs/obs-control.py")) -- request StopRecord
 
 -------------------

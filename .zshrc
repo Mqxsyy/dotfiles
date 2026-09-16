@@ -61,6 +61,8 @@ alias cd='z'
 alias ls="eza $eza_params"
 alias ll="eza --all --header --long $eza_params"
 alias tree="eza --tree -L 1 $eza_params"
+
+alias gs="git status"
 alias gl="git log --decorate --oneline --graph"
 
 alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"
@@ -69,6 +71,11 @@ alias bonk="~/dotfiles/tmux/sessions/bonk.sh"
 alias seed="~/dotfiles/tmux/sessions/seed-game.sh"
 alias inc="~/dotfiles/tmux/sessions/incremental-game.sh"
 alias rpg="~/dotfiles/tmux/sessions/rpg-game.sh"
+alias void="~/dotfiles/tmux/sessions/void-scape.sh"
 
 alias randomWallpaper="~/dotfiles/scripts/randomizeWallpaper.sh"
 alias goodWallpaper="~/dotfiles/scripts/randomizeGoodWallpaper.sh"
+
+gc() {
+  git add . && git commit -m "$1"
+}

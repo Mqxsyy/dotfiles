@@ -5,10 +5,10 @@ vim.pack.add {
 }
 
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "luau" },
+	pattern = { "luau", "gdscript", "gdshader" },
 	callback = function()
 		vim.treesitter.start()
 	end,
 })
 
-require("nvim-treesitter").install { "luau" }
+require("nvim-treesitter").install { "luau", "gdscript", "gdshader" }

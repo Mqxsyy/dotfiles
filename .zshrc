@@ -77,6 +77,7 @@ alias seed="~/dotfiles/tmux/sessions/seed-game.sh"
 alias inc="~/dotfiles/tmux/sessions/incremental-game.sh"
 alias rpg="~/dotfiles/tmux/sessions/rpg-game.sh"
 alias void="~/dotfiles/tmux/sessions/void-scape.sh"
+alias potato="~/dotfiles/tmux/sessions/potato.sh"
 
 ## Other
 alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"

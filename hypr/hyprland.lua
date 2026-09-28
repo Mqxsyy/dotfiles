@@ -55,7 +55,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 
 	hl.exec_cmd("awww-daemon")
-	hl.exec_cmd("$HOME/dotfiles/scripts/randomizeWallpaper.sh")
+	hl.exec_cmd("$HOME/dotfiles/scripts/randomize-wallpaper.sh")
 
 	hl.exec_cmd("vesktop")
 	hl.exec_cmd("zen-browser")

@@ -24,6 +24,9 @@ require("luau-lsp").setup {
 	},
 	fflags = {
 		enable_new_solver = true,
+		override = {
+			LuauTypeFunctionSerdeIterationLimit = "1000000",
+		},
 	},
 }
 

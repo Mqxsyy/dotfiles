@@ -85,8 +85,9 @@ ShellWindow {
     // The last status panel shown; stays while the card shrinks back.
     property string statusShown: "wifi"
 
-    // Holding a button or typing keeps everything as it is.
-    readonly property bool busy: press.active || wifiView.typing
+    // Holding a button, typing or picking a screenshot region keeps
+    // everything as it is.
+    readonly property bool busy: press.active || wifiView.typing || Recorder.shooting
     readonly property bool revealed: hover.hovered || hideTimer.running || (expanded !== "" && !openedAlone) || busy
 
     // The hovered status item, if it has a hint to show.

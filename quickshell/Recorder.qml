@@ -9,7 +9,10 @@ import "icons.js" as Icons
 // /tmp (gone after a reboot) and the clipboard; paste one somewhere to keep it.
 //   screenshot("region" | "screen"): saved to `screenshots`, copied to the clipboard;
 //                                    a region freezes the screen while picking
-//                                    when Settings.screenshotFreeze is on
+//                                    when Settings.screenshotFreeze is on.
+//                                    From a panel: once it has closed. From the
+//                                    hotkey (ipc): the screen as it is, shell
+//                                    included; the bar stays while picking.
 //   record("region" | "screen"):     saved to `recordings`; stop() ends it and
 //                                    copies the file to the clipboard (paste it
 //                                    into a chat or file manager)
@@ -36,6 +39,8 @@ Singleton {
     property string audio: "none"
 
     readonly property bool busy: recorder.running
+    // Picking a region or taking a screenshot (the bar holds still meanwhile).
+    readonly property bool shooting: shooter.running
     property bool recording: false
     property real startedAt: 0
     property int elapsed: 0 // seconds
@@ -54,12 +59,18 @@ Singleton {
         return Qt.formatDateTime(new Date(), "yyyy-MM-dd_HH-mm-ss");
     }
 
+    // From a panel, which shouldn't be in the shot.
     function screenshot(mode) {
-        later(() => {
-            const file = `${screenshots}/${stamp()}.png`;
-            shooter.file = file;
-            shooter.exec([scripts + "screenshot.sh", mode, file, Settings.screenshotFreeze ? "freeze" : ""]);
-        });
+        later(() => shoot(mode));
+    }
+
+    // The screen as it is now.
+    function shoot(mode) {
+        if (shooter.running)
+            return;
+        const file = `${screenshots}/${stamp()}.png`;
+        shooter.file = file;
+        shooter.exec([scripts + "screenshot.sh", mode, file, Settings.screenshotFreeze ? "freeze" : ""]);
     }
 
     function record(mode) {
@@ -161,8 +172,9 @@ Singleton {
     IpcHandler {
         target: "recorder"
 
+        // The hotkey: open panels and the bar stay in the shot.
         function screenshot(mode: string): void {
-            root.screenshot(mode);
+            root.shoot(mode);
         }
 
         function record(mode: string): void {

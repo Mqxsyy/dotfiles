@@ -34,7 +34,6 @@ const speaker = "󰓃";
 const app = "󰀻";
 
 const lock = "󰌾";
-const openLink = "󰏌";
 const close = "󰅖";
 const shuffle = "󰒝";
 const repeat = "󰑖";

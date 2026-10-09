@@ -13,23 +13,14 @@ Column {
 
     // Measure only while this is on screen.
     property bool active: true
-    property int confirmFor: 3000
-
-    // pid of the process waiting for its confirming click, or -1.
-    property int armed: -1
 
     function percent(fraction) {
         return fraction < 0 ? "–" : Math.round(fraction * 100) + "%";
     }
 
     function pick(pid) {
-        if (armed !== pid) {
-            armed = pid;
-            disarm.restart();
-            return;
-        }
-        armed = -1;
-        System.kill(pid);
+        if (confirm.check(pid))
+            System.kill(pid);
     }
 
     spacing: 12
@@ -45,16 +36,14 @@ Column {
     }
 
     onActiveChanged: {
-        armed = -1;
+        confirm.reset();
         count();
     }
     Component.onCompleted: count()
     Component.onDestruction: if (counted) System.viewers--
 
-    Timer {
-        id: disarm
-        interval: root.confirmFor
-        onTriggered: root.armed = -1
+    Confirm {
+        id: confirm
     }
 
     Grid {
@@ -153,7 +142,7 @@ Column {
                 id: process
 
                 required property var modelData
-                readonly property bool armed: root.armed === modelData.pid
+                readonly property bool armed: confirm.armed === modelData.pid
 
                 width: parent.width
                 height: 32

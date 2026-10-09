@@ -23,18 +23,10 @@ Popup {
 
     property int cardWidth: 172
     property int rowHeight: 40
-    property int confirmFor: 3000
-
-    // Index of the action waiting for its confirming click, or -1.
-    property int armed: -1
 
     function pick(index) {
-        if (armed !== index) {
-            armed = index;
-            disarm.restart();
+        if (!confirm.check(index))
             return;
-        }
-        armed = -1;
         Popups.close();
         actions[index].run();
     }
@@ -42,12 +34,10 @@ Popup {
     name: "power"
     surface: card
 
-    onOpenChanged: armed = -1
+    onOpenChanged: confirm.reset()
 
-    Timer {
-        id: disarm
-        interval: root.confirmFor
-        onTriggered: root.armed = -1
+    Confirm {
+        id: confirm
     }
 
     Card {
@@ -73,7 +63,7 @@ Popup {
 
                     required property var modelData
                     required property int index
-                    readonly property bool armed: root.armed === index
+                    readonly property bool armed: confirm.armed === index
 
                     width: column.width
                     height: root.rowHeight

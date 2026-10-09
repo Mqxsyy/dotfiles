@@ -13,35 +13,24 @@ Column {
 
     // Measures when it comes on screen.
     property bool active: true
-    property int confirmFor: 3000
     property int listHeight: 470 // about as tall as the System tab
 
-    // Name of the entry waiting for its confirming click, or "".
-    property string armed: ""
-
     function pick(entry) {
-        if (armed !== entry.name) {
-            armed = entry.name;
-            disarm.restart();
-            return;
-        }
-        armed = "";
-        Cleanup.clean(entry);
+        if (confirm.check(entry.name))
+            Cleanup.clean(entry);
     }
 
     spacing: 12
 
     onActiveChanged: {
-        armed = "";
+        confirm.reset();
         if (active)
             Cleanup.refresh();
     }
     Component.onCompleted: if (active) Cleanup.refresh()
 
-    Timer {
-        id: disarm
-        interval: root.confirmFor
-        onTriggered: root.armed = ""
+    Confirm {
+        id: confirm
     }
 
     // Total, and measuring again.
@@ -136,7 +125,7 @@ Column {
         id: row
 
         required property var modelData
-        readonly property bool armed: root.armed === modelData.name
+        readonly property bool armed: confirm.armed === modelData.name
         readonly property bool cleaning: Cleanup.cleaning === modelData.name
         readonly property var size: Cleanup.sizes[modelData.name] // undefined = unknown
         readonly property bool empty: size === 0

@@ -44,7 +44,6 @@ Singleton {
     readonly property color highlight: Qt.alpha(colors.textPrimary, 0.08)
     readonly property color tile: Qt.alpha(colors.accent, 0.08)             // buttons, tiles and groups in panels
     readonly property color tileHover: Qt.alpha(colors.accent, 0.16)
-    readonly property color accentSoft: Qt.alpha(colors.accent, 0.18)       // selected, but quieter than accent
 
     readonly property int radius: Settings.radius                  // cards
     readonly property int innerRadius: Math.round(radius * 0.55)   // rows and buttons inside cards

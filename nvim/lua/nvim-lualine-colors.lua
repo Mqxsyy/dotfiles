@@ -1,27 +1,27 @@
 return {
     -- Normal
-    bg_normal_a = "#29373d",
-    bg_normal_b = "#151c1e",
+    bg_normal_a = "#463420",
+    bg_normal_b = "#231a10",
 
-    fg_normal = "#dee3e6",
+    fg_normal = "#ede0d4",
 
     -- Insert
     bg_insert_a = "#000000",
-    bg_insert_b = "#87d1ea",
+    bg_insert_b = "#f6bc6f",
 
-    fg_insert = "#003542",
+    fg_insert = "#462b00",
 
     -- Visual
     bg_visual_a = "#000000",
-    bg_visual_b = "#b3cad4",
+    bg_visual_b = "#dec2a2",
 
-    fg_visual = "#1d333b",
+    fg_visual = "#3e2d16",
 
     -- Command
     bg_command_a = "#000000",
-    bg_command_b = "#c2c4eb",
+    bg_command_b = "#b9cda0",
 
-    fg_command = "#2b2e4d",
+    fg_command = "#253514",
 
     -- Replace
     bg_replace_a = "#000000",
@@ -30,8 +30,8 @@ return {
     fg_replace = "#690005",
 
     -- Inactive
-    bg_inactive_a = "#0a0e0f",
-    bg_inactive_b = "#0a0e0f",
+    bg_inactive_a = "#110d08",
+    bg_inactive_b = "#110d08",
 
     fg_inactive = "#000000",
 }

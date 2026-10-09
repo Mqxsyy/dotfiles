@@ -17,8 +17,9 @@ Item {
 
     property real reveal: 1 // 0 = not there, 1 = fully shown
     required property var auth
-    // The wallpaper has loaded (LockSurface.qml waits for it at boot).
-    readonly property bool ready: small.status === Image.Ready
+    // The current wallpaper is loaded and shown (LockSurface.qml waits for
+    // it at boot).
+    readonly property bool ready: small.status === Image.Ready && small.source.toString() === next.source.toString()
 
     Keys.onPressed: event => type(event)
 

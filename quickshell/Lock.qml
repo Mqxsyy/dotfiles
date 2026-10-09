@@ -37,6 +37,10 @@ Singleton {
     // Locked from the start (boot): nothing has faded the lock screen in
     // over the desktop, so it fades in from black (LockSurface.qml).
     property bool fromBlack: false
+    // At boot a new wallpaper is picked; the lock screen waits for it and
+    // its colors (or `prepareLimit` at most), so it doesn't change once shown.
+    property bool preparing: false
+    property int prepareLimit: 3000 // ms
 
     readonly property string startLockedFlag: Quickshell.env("XDG_RUNTIME_DIR") + "/quickshell-start-locked"
 
@@ -53,13 +57,16 @@ Singleton {
     }
 
     // Lock at once, without the fade over the desktop: Hyprland has kept
-    // the session locked since it started.
+    // the session locked since it started. Then a new wallpaper for the day.
     function startLocked() {
         password = "";
         error = "";
         fromBlack = true;
         kept.shown = true;
         kept.locked = true;
+        preparing = true;
+        prepareLimitTimer.start();
+        Wallpaper.randomize();
     }
 
     function submit() {
@@ -86,6 +93,29 @@ Singleton {
             if (shown)
                 locked = true;
         }
+    }
+
+    // The new wallpaper and its colors are written; give the files a moment
+    // to be read back (Theme.qml, Wallpaper.qml) before showing them.
+    Connections {
+        target: Wallpaper
+
+        function onRunningChanged() {
+            if (root.preparing && !Wallpaper.running)
+                prepared.start();
+        }
+    }
+
+    Timer {
+        id: prepared
+        interval: 150
+        onTriggered: root.preparing = false
+    }
+
+    Timer {
+        id: prepareLimitTimer
+        interval: root.prepareLimit
+        onTriggered: root.preparing = false
     }
 
     // Taken (removed) on the shell's first start after boot; a reload or a

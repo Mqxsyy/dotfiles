@@ -26,15 +26,62 @@ hl.workspace_rule({ workspace = 10, monitor = "eDP-1", default = true })
 --- Autostart ---
 -----------------
 
+-- Apps started at login, and the workspace each one opens on.
+local startupApps = {
+	{ command = "vesktop", class = "vesktop", workspace = "2" },
+	{ command = "zen-browser", class = "zen", workspace = "1" },
+	{ command = "obsidian", class = "md.obsidian.Obsidian", workspace = "special:magic" },
+}
+
+-- The workspace shown after logging in: just the wallpaper.
+local startupWorkspace = 3
+
+-- How long after login the apps open without being switched to.
+local quietStartup = 60000 -- ms
+
+-- Opening one of the apps switches to its workspace.
+local appRules = {}
+for _, app in ipairs(startupApps) do
+	table.insert(appRules, hl.window_rule({
+		name = app.class .. "-workspace",
+		match = { class = app.class },
+		workspace = app.workspace,
+	}))
+end
+
 hl.on("hyprland.start", function()
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 
-	hl.exec_cmd("qs -n -d")
-	hl.exec_cmd("$HOME/dotfiles/quickshell/scripts/randomize-wallpaper.sh")
+	hl.exec_cmd("qs -n -d") -- at boot it also picks a new wallpaper (Lock.qml)
 
-	hl.exec_cmd("vesktop")
-	hl.exec_cmd("zen-browser")
-	hl.exec_cmd("obsidian")
+	-- At login the apps open on their workspaces in the background
+	-- ("silent"), so none of them is what greets you; after `quietStartup`
+	-- the usual rules are back.
+	local quietRules = {}
+	for _, rule in ipairs(appRules) do
+		rule:set_enabled(false)
+	end
+	for _, app in ipairs(startupApps) do
+		table.insert(quietRules, hl.window_rule({
+			name = app.class .. "-workspace-quiet",
+			match = { class = app.class },
+			workspace = app.workspace .. " silent",
+		}))
+	end
+	hl.timer(function()
+		for _, rule in ipairs(quietRules) do
+			rule:set_enabled(false)
+		end
+		for _, rule in ipairs(appRules) do
+			rule:set_enabled(true)
+		end
+	end, { timeout = quietStartup, type = "oneshot" })
+
+	hl.dispatch(hl.dsp.focus({ workspace = startupWorkspace }))
+
+	for _, app in ipairs(startupApps) do
+		hl.exec_cmd(app.command)
+	end
 end)
 
 
@@ -212,30 +259,6 @@ hl.window_rule({
 	},
 
 	no_focus = true,
-})
-
-hl.window_rule({
-	name = "zen-default-workspace",
-	match = {
-		class = "zen",
-	},
-	workspace = "1",
-})
-
-hl.window_rule({
-	name = "vesktop-default-workspace",
-	match = {
-		class = "vesktop",
-	},
-	workspace = "2",
-})
-
-hl.window_rule({
-	name = "obsidian-default-workspace",
-	match = {
-		class = "md.obsidian.Obsidian",
-	},
-	workspace = "special:magic",
 })
 
 ------------------

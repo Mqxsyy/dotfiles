@@ -4,8 +4,8 @@ import QtQuick
 // The locked session on one screen (LockScreen.qml): LockView, checking
 // the password with Lock.qml. Usually LockCover.qml has already faded the
 // same picture in over the desktop, so it's fully shown at once. Locked
-// from the start (boot), it fades in from black once the wallpaper has
-// loaded.
+// from the start (boot), it fades in from black once the new wallpaper and
+// its colors are ready.
 WlSessionLockSurface {
     id: root
 
@@ -17,7 +17,7 @@ WlSessionLockSurface {
         anchors.fill: parent
         auth: Lock
         focus: true
-        reveal: Lock.fromBlack && !ready ? 0 : 1
+        reveal: Lock.fromBlack && (Lock.preparing || !ready) ? 0 : 1
 
         Behavior on reveal {
             NumberAnimation {

@@ -3,7 +3,9 @@
 At boot, the lock screen is the login screen. greetd logs in and starts
 Hyprland with the session already locked (`--locked-cmd`, before anything is
 drawn); `quickshell/scripts/start-locked.sh` tells the shell to put its lock
-screen up as soon as it starts (`Lock.qml`), and it fades in from black. The
+screen up as soon as it starts (`Lock.qml`). The shell then picks the day's
+wallpaper, and the lock screen fades in from black once the wallpaper and its
+colors are ready (3 seconds at most). The
 password is checked like logging in (PAM `login`, including the lockout after
 wrong tries). Unlocking fades straight onto the desktop: one Hyprland from boot
 to desktop, nothing in between. If the shell never starts, Hyprland stays

@@ -138,6 +138,16 @@ ShellWindow {
             list.currentIndex = Math.max(0, Math.min(list.count - 1, list.currentIndex + step));
     }
 
+    // Scroll the list by whole rows, so rows always line up with its edges;
+    // the selection stays among the rows on screen.
+    function scroll(rows) {
+        const bottom = Math.max(0, list.contentHeight - list.height);
+        list.contentY = Math.max(0, Math.min(bottom, list.contentY + rows * rowHeight));
+
+        const first = Math.round(list.contentY / rowHeight);
+        list.currentIndex = Math.max(first, Math.min(first + maxRows - 1, list.currentIndex));
+    }
+
     name: "launcher"
     shown: false
 
@@ -238,7 +248,7 @@ ShellWindow {
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: input.text.length === 0
-                        text: "Search apps, calculate, or > command"
+                        text: "Search"
                         color: Theme.textSecondary
                         font: input.font
                     }
@@ -252,93 +262,114 @@ ShellWindow {
                 visible: list.count > 0
             }
 
-            ListView {
-                id: list
-
+            // The list, with padding around it. The padding sits outside the
+            // ListView: list margins let rows stop half under them.
+            Item {
                 width: parent.width
-                height: Math.min(count, root.maxRows) * root.rowHeight + (count > 0 ? root.listPadding * 2 : 0)
-                topMargin: root.listPadding
-                bottomMargin: root.listPadding
-                clip: true
-                model: root.results
-                boundsBehavior: Flickable.StopAtBounds
-                highlightMoveDuration: 0
+                height: list.count > 0 ? list.height + root.listPadding * 2 : 0
 
-                delegate: Item {
-                    id: row
+                // A mouse wheel notch (120) scrolls one row; touchpads add up to it.
+                WheelHandler {
+                    property real pending: 0
 
-                    required property var modelData
-                    required property int index
-
-                    readonly property bool selected: ListView.isCurrentItem
-
-                    width: list.width
-                    height: root.rowHeight
-
-                    Rectangle {
-                        anchors.fill: parent
-                        anchors.leftMargin: 8
-                        anchors.rightMargin: 8
-                        radius: Theme.innerRadius
-                        color: row.selected ? Theme.highlight : "transparent"
+                    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                    onWheel: event => {
+                        pending += event.angleDelta.y;
+                        const rows = Math.trunc(pending / 120);
+                        if (rows !== 0) {
+                            pending -= rows * 120;
+                            root.scroll(-rows);
+                        }
                     }
+                }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered: list.currentIndex = row.index
-                        onClicked: root.activate(row.modelData)
-                    }
+                ListView {
+                    id: list
 
-                    Row {
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: Theme.padding + 4
-                        width: parent.width - x * 2
-                        spacing: 14
+                    y: root.listPadding
+                    width: parent.width
+                    height: Math.min(count, root.maxRows) * root.rowHeight
+                    clip: true
+                    interactive: false // scrolled by whole rows, see scroll()
+                    model: root.results
+                    highlightMoveDuration: 0
 
-                        Item {
-                            id: iconBox
-                            width: Theme.iconSize
-                            height: Theme.iconSize
+                    delegate: Item {
+                        id: row
 
-                            IconImage {
-                                anchors.fill: parent
-                                visible: source != ""
-                                source: row.modelData.icon ?? ""
-                                asynchronous: true
+                        required property var modelData
+                        required property int index
+
+                        readonly property bool selected: ListView.isCurrentItem
+
+                        width: list.width
+                        height: root.rowHeight
+
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 8
+                            radius: Theme.innerRadius
+                            color: row.selected ? Theme.highlight : "transparent"
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: list.currentIndex = row.index
+                            onClicked: root.activate(row.modelData)
+                        }
+
+                        Row {
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: Theme.padding + 4
+                            width: parent.width - x * 2
+                            spacing: 14
+
+                            Item {
+                                id: iconBox
+                                width: Theme.iconSize
+                                height: Theme.iconSize
+
+                                IconImage {
+                                    anchors.fill: parent
+                                    visible: source != ""
+                                    source: row.modelData.icon ?? ""
+                                    asynchronous: true
+                                }
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    visible: !row.modelData.icon
+                                    text: row.modelData.glyph
+                                    color: row.modelData.kind === "app" ? Theme.textSecondary : Theme.accent
+                                    font.pixelSize: Theme.fontLarge + 3
+                                    font.weight: Font.DemiBold
+                                }
                             }
 
                             Text {
-                                anchors.centerIn: parent
-                                visible: !row.modelData.icon
-                                text: row.modelData.glyph
-                                color: row.modelData.kind === "app" ? Theme.textSecondary : Theme.accent
-                                font.pixelSize: Theme.fontLarge + 3
-                                font.weight: Font.DemiBold
+                                id: title
+
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: Math.min(implicitWidth, parent.width - iconBox.width - parent.spacing)
+                                text: row.modelData.title
+                                color: row.modelData.invalid ? Theme.textSecondary : Theme.textPrimary
+                                font.pixelSize: Theme.fontNormal
+                                font.weight: row.modelData.kind === "calc" ? Font.DemiBold : Font.Normal
+                                elide: Text.ElideRight
                             }
-                        }
 
-                        Text {
-                            id: title
-
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: Math.min(implicitWidth, parent.width - iconBox.width - parent.spacing)
-                            text: row.modelData.title
-                            color: row.modelData.invalid ? Theme.textSecondary : Theme.textPrimary
-                            font.pixelSize: Theme.fontNormal
-                            font.weight: row.modelData.kind === "calc" ? Font.DemiBold : Font.Normal
-                            elide: Text.ElideRight
-                        }
-
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: parent.width - iconBox.width - parent.spacing - title.width - parent.spacing
-                            text: row.modelData.subtitle ?? ""
-                            color: Theme.textSecondary
-                            font.pixelSize: Theme.fontSmall
-                            elide: Text.ElideRight
-                            opacity: row.selected ? 1 : 0.7
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: parent.width - iconBox.width - parent.spacing - title.width - parent.spacing
+                                text: row.modelData.subtitle ?? ""
+                                color: Theme.textSecondary
+                                font.pixelSize: Theme.fontSmall
+                                elide: Text.ElideRight
+                                opacity: row.selected ? 1 : 0.7
+                            }
                         }
                     }
                 }

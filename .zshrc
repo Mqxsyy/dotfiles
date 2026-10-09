@@ -82,6 +82,3 @@ alias potato="~/dotfiles/tmux/sessions/potato.sh"
 ## Other
 alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"
 
-alias randomWallpaper="~/dotfiles/scripts/randomize-wallpaper.sh"
-alias goodWallpaper="~/dotfiles/scripts/randomize-good-wallpaper.sh"
-

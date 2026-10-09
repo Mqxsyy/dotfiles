@@ -1,6 +1,5 @@
 #!/bin/zsh
-# Pick a random wallpaper, show it, and recolor everything from it
-# (generate-colors.sh; quickshell, kitty, tmux, ...: see matugen/config.toml).
+# Pick a random wallpaper and set it (set-wallpaper.sh: shows it and recolors).
 # Usage: randomize-wallpaper.sh [folder]   (default: all wallpapers)
 
 folder="${1:-$HOME/dotfiles/wallpapers}"
@@ -11,5 +10,4 @@ if [[ -z "$wallpaper" ]]; then
     exit 1
 fi
 
-awww img "$wallpaper" -t wipe
-"$HOME/dotfiles/scripts/generate-colors.sh" "$wallpaper"
+exec "${0:A:h}/set-wallpaper.sh" "$wallpaper"

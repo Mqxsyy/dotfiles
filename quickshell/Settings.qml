@@ -15,8 +15,6 @@ Singleton {
     // Changing one of these regenerates the colors from the current wallpaper.
     readonly property var colorKeys: ["scheme", "mode", "contrast", "prefer"]
 
-    property bool pageOpen: false
-
     readonly property int radius: values.radius
     readonly property real surfaceOpacity: values.surfaceOpacity
     readonly property bool glass: values.glass
@@ -68,7 +66,7 @@ Singleton {
         target: "settings"
 
         function toggle(): void {
-            root.pageOpen = !root.pageOpen;
+            Popups.toggle("settings");
         }
     }
 }

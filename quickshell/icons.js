@@ -28,7 +28,47 @@ const batteryCharging = "󰂄";
 const battery = ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]; // 10% .. 100%
 const batteryAlert = "󰂃";
 
+const mic = "󰍬";
+const micOff = "󰍭";
+const speaker = "󰓃";
+const app = "󰀻";
+
+const lock = "󰌾";
+const openLink = "󰏌";
+const close = "󰅖";
+const shuffle = "󰒝";
+const repeat = "󰑖";
+const repeatOne = "󰑘";
+const search = "󰍉";
+const image = "󰋩";
+
+const power = "󰐥";
+const restart = "󰜉";
+const suspend = "󰒲";
+const logout = "󰍃";
+
+const cpu = "󰻠";
+const memory = "󰍛";
+const gpu = "󰢮";
+const disk = "󰋊";
+const download = "󰇚";
+const upload = "󰕒";
+
+const screenshot = "󰹑";
+const record = "󰻃";        // dot in a ring
+const stop = "󰓛";
+const monitor = "󰍹";
+const region = "󰩬";
+const colorPicker = "󰈊";
+const folder = "󰉋";
+const clipboard = "󰅌";
+const trash = "󰆴";
+
+const bell = "󰂚";
 const bellOff = "󰂛";
+const moon = "󰖔";
+const sun = "󰖨";
+const settings = "󰒓";
 const refresh = "󰑐";
 const chevronLeft = "󰅁";
 const chevronRight = "󰅂";

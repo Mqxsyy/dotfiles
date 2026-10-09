@@ -3,20 +3,23 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 import QtQuick
 
-// Stack of toasts in the top-right corner. What's shown lives in
-// Notifications.qml; this only draws it. Click a toast to open/dismiss it.
+// Stack of toasts in the top-right corner, Theme.gap from the edges like the
+// bar's cards; while the bar shows, they sit under its status card
+// (BarLayout.qml). What's shown lives in Notifications.qml; this only draws
+// it. Click a toast to open/dismiss it.
 ShellWindow {
     id: root
 
     property int cardWidth: 380
+    // Where the stack starts: under the bar when it shows.
+    readonly property real top: BarLayout.of(screen?.name).rightBottom + Theme.gap
 
+    // Full height, so following the bar never resizes the window; the mask
+    // keeps the rest from taking input.
     anchors {
         top: true
+        bottom: true
         right: true
-    }
-    margins {
-        top: 8
-        right: 8
     }
 
     WlrLayershell.layer: WlrLayer.Overlay
@@ -24,8 +27,7 @@ ShellWindow {
     // Linger briefly after the last toast closes so its exit animation can finish.
     name: "toasts"
     shown: Notifications.toasts.count > 0 || linger.running
-    implicitWidth: cardWidth + Theme.shadowPad * 2
-    implicitHeight: Notifications.maxToasts * 110 + Theme.shadowPad * 2
+    implicitWidth: Theme.shadowPad + cardWidth + Theme.gap
     mask: Region { item: list }
 
     Timer {
@@ -45,7 +47,7 @@ ShellWindow {
         id: list
 
         x: Theme.shadowPad
-        y: Theme.shadowPad
+        y: root.top
         width: root.cardWidth
         height: contentHeight
         spacing: 10
@@ -74,6 +76,7 @@ ShellWindow {
             required property string body
             required property string glyph
             required property string icon
+            required property string image
             required property bool critical
             required property int timeout
             required property string time
@@ -189,6 +192,30 @@ ShellWindow {
                         maximumLineCount: 4
                         elide: Text.ElideRight
                         lineHeight: 1.15
+                    }
+
+                    Item {
+                        width: 1
+                        height: 6
+                        visible: card.image !== ""
+                    }
+
+                    // A picture that came with it (screenshot preview).
+                    ClippingRectangle {
+                        visible: card.image !== ""
+                        width: parent.width
+                        height: preview.status === Image.Ready ? Math.min(200, width * preview.implicitHeight / preview.implicitWidth) : 0
+                        radius: Theme.innerRadius
+                        color: Theme.tile
+
+                        Image {
+                            id: preview
+                            anchors.fill: parent
+                            source: card.image ? "file://" + card.image : ""
+                            sourceSize.width: 720
+                            fillMode: Image.PreserveAspectCrop
+                            asynchronous: true
+                        }
                     }
                 }
             }

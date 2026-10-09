@@ -56,7 +56,7 @@ hl.on("hyprland.start", function()
 
 	hl.exec_cmd("awww-daemon")
 	hl.exec_cmd("qs -n -d")
-	hl.exec_cmd("$HOME/dotfiles/scripts/randomize-wallpaper.sh")
+	hl.exec_cmd("$HOME/dotfiles/quickshell/scripts/randomize-wallpaper.sh")
 
 	hl.exec_cmd("vesktop")
 	hl.exec_cmd("zen-browser")
@@ -199,6 +199,7 @@ hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("wayscriber --active"))
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
 
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("qs ipc call popup toggle clipboard"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 
 hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "left" }))
@@ -211,8 +212,11 @@ hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.move({ direction = "right" }))
 hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.move({ direction = "up" }))
 hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.move({ direction = "down" }))
 
-hl.bind(mainMod .. " + bracketleft", hl.dsp.exec_cmd("~/dotfiles/scripts/clip-recorder/start.sh"))
-hl.bind(mainMod .. " + bracketright", hl.dsp.exec_cmd("~/dotfiles/scripts/clip-recorder/stop.sh"))
+-- Screen recording and screenshots through quickshell (Recorder.qml); the
+-- record and screenshot panels show these keys as hints.
+hl.bind(mainMod .. " + bracketleft", hl.dsp.exec_cmd("qs ipc call popup toggle record"))
+hl.bind(mainMod .. " + bracketright", hl.dsp.exec_cmd("qs ipc call recorder stop"))
+hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("qs ipc call recorder screenshot region"))
 
 for i = 1, 10 do
 	local key = i % 10
@@ -243,11 +247,6 @@ do
 	hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), opts)
 	hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), opts)
 end
-
--- Extra
-hl.bind("CTRL + SHIFT + S", hl.dsp.exec_cmd("grimblast --freeze copy area"))
-hl.bind(mainMod .. " + KP_End", hl.dsp.exec_cmd("python $HOME/dotfiles/scripts/obs/obs-control.py")) -- request StartRecord
-hl.bind(mainMod .. " + KP_Page_Down", hl.dsp.exec_cmd("python $HOME/dotfiles/scripts/obs/obs-control.py")) -- request StopRecord
 
 -------------------
 --- Windowrules ---

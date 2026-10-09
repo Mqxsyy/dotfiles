@@ -13,11 +13,12 @@ Rectangle {
     property int maxLabelWidth: 0 // 0 = no limit; longer labels are elided
     property string hint: ""      // shown under the bar while hovered
     readonly property bool hovered: hover.hovered
+    readonly property real contentWidth: row.implicitWidth
 
     signal clicked()
     signal scrolled(real steps)   // +1 per wheel notch up, fractions on touchpads
 
-    implicitWidth: row.implicitWidth + 12
+    implicitWidth: contentWidth + 12
     implicitHeight: Theme.controlSize
     radius: Theme.innerRadius
     color: interactive && hover.hovered ? Theme.highlight : "transparent"

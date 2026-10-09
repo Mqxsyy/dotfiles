@@ -4,7 +4,10 @@ import Quickshell
 import Quickshell.Networking
 import QtQuick
 
-// Current network connection (NetworkManager).
+// Network connections (NetworkManager).
+//   wifi:     the connected wifi network, if any
+//   networks: wifi networks in range, connected first, then saved ones,
+//             then by signal
 Singleton {
     readonly property var devices: Networking.devices.values
     readonly property var wifiDevice: devices.find(d => d.type === DeviceType.Wifi) ?? null
@@ -16,7 +19,24 @@ Singleton {
     readonly property string name: wifi?.name ?? (wired ? "Ethernet" : "")
     readonly property real signal: wifi?.signalStrength ?? 0 // 0..1
 
+    // Signal is compared in whole bars so the list doesn't reshuffle on every
+    // small change.
+    readonly property var networks: (wifiDevice?.networks.values ?? [])
+        .filter(n => n.name !== "")
+        .sort((a, b) => (b.connected - a.connected)
+            || (b.known - a.known)
+            || (bars(b.signalStrength) - bars(a.signalStrength))
+            || a.name.localeCompare(b.name))
+
+    function bars(strength) {
+        return Math.floor(strength * 4);
+    }
+
+    function setWifi(enabled) {
+        Networking.wifiEnabled = enabled;
+    }
+
     function toggleWifi() {
-        Networking.wifiEnabled = !Networking.wifiEnabled;
+        setWifi(!Networking.wifiEnabled);
     }
 }

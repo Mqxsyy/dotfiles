@@ -21,9 +21,13 @@ Singleton {
 
     // Toast key -> the app's Notification, so closing a toast closes it for the app too.
     property var sources: ({})
+    // Toast key -> function to run when clicked.
+    property var actions: ({})
     property int nextKey: 1
 
-    // Show a toast. entry: { title, body, glyph, icon, critical, timeout, notification }.
+    // Show a toast. entry: { title, body, glyph, icon, image, critical, timeout, notification, action }.
+    // image: path of a picture shown large under the text (screenshot previews).
+    // action: function run when the toast is clicked (the shell's own toasts).
     // A toast with the same title and body as a visible one refreshes it instead.
     // Returns the new toast's key, or 0 when it was hidden by dnd or merged.
     function notify(entry) {
@@ -45,6 +49,8 @@ Singleton {
         const key = nextKey++;
         if (entry.notification)
             sources[key] = entry.notification;
+        if (entry.action)
+            actions[key] = entry.action;
 
         model.insert(0, {
             key: key,
@@ -52,6 +58,7 @@ Singleton {
             body: body,
             glyph: entry.glyph ?? "",
             icon: entry.icon ?? "",
+            image: entry.image ?? "",
             critical: !!entry.critical,
             timeout: entry.critical ? 0 : (entry.timeout ?? timeout), // 0 = stays until clicked
             time: time,
@@ -71,15 +78,20 @@ Singleton {
 
         const notification = sources[key];
         delete sources[key];
+        delete actions[key];
         if (notification)
             byUser ? notification.dismiss() : notification.expire();
     }
 
-    // Clicking a toast runs the app's default action, if it has one.
+    // Clicking a toast runs its action: the app's default action, or the
+    // shell's own, if it has one.
     function activate(key) {
-        const action = sources[key]?.actions.find(a => a.identifier === "default");
-        if (action)
-            action.invoke();
+        const appAction = sources[key]?.actions.find(a => a.identifier === "default");
+        if (appAction)
+            appAction.invoke();
+        const shellAction = actions[key];
+        if (shellAction)
+            shellAction();
         close(key, true);
     }
 

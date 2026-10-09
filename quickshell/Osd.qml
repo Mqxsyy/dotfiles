@@ -3,14 +3,14 @@ import Quickshell.Wayland
 import QtQuick
 import "icons.js" as Icons
 
-// Volume / brightness indicator: a tab sliding out of the right edge of the
-// focused screen, styled like the top bar. Shows whenever either changes,
+// Volume / brightness indicator: a floating card sliding in at the right of
+// the focused screen. Shows whenever either changes,
 // then slides back. Takes no input.
 ShellWindow {
     id: root
 
-    property int tabLength: 180   // along the edge
-    property int tabDepth: 44     // out from the edge
+    property int cardLength: 180
+    property int cardWidth: 48
     property int showFor: 1500
 
     // Which one changed last: "volume" or "brightness".
@@ -37,9 +37,9 @@ ShellWindow {
 
     name: "osd"
     // Stay mapped until the slide-out finishes.
-    shown: active || tab.x < width
-    implicitWidth: tabDepth + Theme.shadowPad
-    implicitHeight: tab.height + Theme.shadowPad * 2
+    shown: active || card.x < width
+    implicitWidth: cardWidth + Theme.gap + Theme.shadowPad
+    implicitHeight: cardLength + Theme.shadowPad * 2
     mask: Region {}
 
     anchors.right: true
@@ -79,13 +79,13 @@ ShellWindow {
         }
     }
 
-    EdgeShape {
-        id: tab
+    Card {
+        id: card
 
-        edge: "right"
-        length: root.tabLength
-        depth: root.tabDepth
-        x: root.active ? parent.width - width : parent.width
+        width: root.cardWidth
+        height: root.cardLength
+        radius: Math.min(Theme.radius, width / 2)
+        x: root.active ? parent.width - width - Theme.gap : parent.width + Theme.shadowPad
         y: Theme.shadowPad
 
         Behavior on x {
@@ -108,7 +108,7 @@ ShellWindow {
             Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 6
-                height: root.tabLength - 80
+                height: root.cardLength - 80
                 radius: 3
                 color: Theme.highlight
 

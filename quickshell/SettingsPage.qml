@@ -1,12 +1,10 @@
-import Quickshell
-import Quickshell.Wayland
 import QtQuick
 import "icons.js" as Icons
 
 // Settings page, opened with "> settings" in the launcher or
 //   qs ipc call settings toggle
-// Changes apply live and are saved by Settings.qml. Esc or clicking outside closes it.
-ShellWindow {
+// Changes apply live and are saved by Settings.qml.
+Popup {
     id: root
 
     property int cardWidth: 460
@@ -40,51 +38,16 @@ ShellWindow {
     ]
 
     name: "settings"
-    shown: Settings.pageOpen
-
-    anchors {
-        top: true
-        bottom: true
-        left: true
-        right: true
-    }
-
-    WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-
-    onVisibleChanged: if (visible) keys.forceActiveFocus()
-
-    Connections {
-        target: Settings
-
-        // Open on the focused screen.
-        function onPageOpenChanged() {
-            if (Settings.pageOpen && FocusedScreen.screen)
-                root.screen = FocusedScreen.screen;
-        }
-    }
-
-    Item {
-        id: keys
-        Keys.onEscapePressed: Settings.pageOpen = false
-    }
-
-    // Clicking anywhere outside the card closes the page.
-    MouseArea {
-        anchors.fill: parent
-        onClicked: Settings.pageOpen = false
-    }
+    surface: card
 
     Card {
+        id: card
+
         x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
+        y: (parent.height - height) / 2 + (1 - root.reveal) * 12
         width: root.cardWidth
         height: content.implicitHeight + Theme.padding * 2 + 8
-
-        // Swallow clicks on the card itself so they don't reach the close area behind it.
-        MouseArea {
-            anchors.fill: parent
-        }
+        opacity: root.reveal
 
         Column {
             id: content
@@ -174,20 +137,21 @@ ShellWindow {
                 onPicked: value => Settings.set("prefer", value)
             }
 
-            BarButton {
-                icon: Icons.refresh
-                iconColor: Theme.accent
-                label: "New wallpaper"
-                onClicked: Wallpaper.randomize()
+            Row {
+                spacing: 6
+
+                PanelButton {
+                    icon: Icons.image
+                    label: "Choose wallpaper"
+                    onClicked: Popups.open("wallpapers")
+                }
+
+                PanelButton {
+                    icon: Icons.shuffle
+                    label: "Random"
+                    onClicked: Wallpaper.randomize()
+                }
             }
         }
-    }
-
-    component SectionTitle: Text {
-        color: Theme.textSecondary
-        font.pixelSize: Theme.fontSmall - 1
-        font.weight: Font.DemiBold
-        font.capitalization: Font.AllUppercase
-        font.letterSpacing: 1
     }
 }

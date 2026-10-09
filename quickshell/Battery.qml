@@ -19,6 +19,7 @@ Singleton {
     readonly property bool available: device.ready && device.isLaptopBattery
     readonly property real percentage: device.percentage // 0..1
     readonly property bool pluggedIn: !UPower.onBattery
+    readonly property real rate: device.changeRate // W, charging or draining
     readonly property string timeLeft: formatDuration(pluggedIn ? device.timeToFull : device.timeToEmpty)
 
     property int lastWarning: 101

@@ -2,12 +2,17 @@ import Quickshell
 import QtQuick
 import "icons.js" as Icons
 
-// Month calendar card. Arrows or scrolling change the month; clicking the
-// month name jumps back to today.
-Card {
+// Month calendar (in the dashboard). Arrows or scrolling change the month;
+// clicking the month name jumps back to today. Resets to this month when
+// it's shown again.
+Item {
     id: root
 
     property int cellSize: 32
+    // Height to fill, stretching the rows; 0 = rows as tall as cellSize.
+    property real fillHeight: 0
+    readonly property int headerHeight: 28
+    readonly property real rowHeight: fillHeight > 0 ? (fillHeight - headerHeight - content.spacing) / 6.8 : cellSize
 
     readonly property date today: clock.date
     property int year: today.getFullYear()
@@ -29,8 +34,10 @@ Card {
         month = today.getMonth();
     }
 
-    width: grid.width + Theme.padding * 2
-    height: content.implicitHeight + Theme.padding * 2
+    implicitWidth: grid.width
+    implicitHeight: content.implicitHeight
+
+    onVisibleChanged: if (visible) showToday()
 
     SystemClock {
         id: clock
@@ -43,13 +50,11 @@ Card {
 
     Column {
         id: content
-        x: Theme.padding
-        y: Theme.padding
         spacing: 8
 
         Item {
             width: grid.width
-            height: 28
+            height: root.headerHeight
 
             BarButton {
                 anchors.left: parent.left
@@ -83,7 +88,7 @@ Card {
                 Text {
                     required property int index
                     width: root.cellSize
-                    height: root.cellSize * 0.8
+                    height: root.rowHeight * 0.8
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     text: Qt.locale().dayName((root.firstDay + index) % 7, Locale.ShortFormat).slice(0, 2)
@@ -96,7 +101,7 @@ Card {
             Repeater {
                 model: 42
 
-                Rectangle {
+                Item {
                     id: day
 
                     required property int index
@@ -105,9 +110,19 @@ Card {
                     readonly property bool isToday: date.toDateString() === root.today.toDateString()
 
                     width: root.cellSize
-                    height: root.cellSize
-                    radius: Theme.innerRadius
-                    color: isToday ? Theme.accent : "transparent"
+                    height: root.rowHeight
+
+                    // Today: a lit circle.
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: Math.min(root.cellSize, root.rowHeight)
+                        height: width
+                        radius: width / 2
+                        visible: day.isToday
+                        gradient: Theme.accentGradient
+
+                        Glow {}
+                    }
 
                     Text {
                         anchors.centerIn: parent

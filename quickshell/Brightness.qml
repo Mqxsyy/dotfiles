@@ -8,6 +8,7 @@ import QtQuick
 // brightness changes, so the brightness keys go through here (hyprland.lua):
 //   qs ipc call brightness up
 //   qs ipc call brightness down
+// set() is for the dashboard slider.
 Singleton {
     id: root
 
@@ -23,6 +24,12 @@ Singleton {
 
     function down() {
         adjust.exec(["brightnessctl", "-m", "set", step + "-"]);
+    }
+
+    function set(fraction) {
+        const percent = Math.round(Math.max(0.01, Math.min(1, fraction)) * 100);
+        root.value = percent / 100;
+        setter.exec(["brightnessctl", "set", percent + "%"]);
     }
 
     // brightnessctl -m prints "device,class,current,percent,max".
@@ -48,6 +55,11 @@ Singleton {
                 root.adjusted();
             }
         }
+    }
+
+    // Slider changes: no OSD, the slider already shows it.
+    Process {
+        id: setter
     }
 
     IpcHandler {

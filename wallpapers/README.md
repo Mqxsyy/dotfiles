@@ -5,6 +5,10 @@ https://drive.google.com/drive/folders/1GwBykGeMJ3pF_mcbdA9TX9RgzC_3dyzQ
 https://endfield.gryphline.com/special/over-the-frontier
 https://arknights.global/fankit
 
+https://x.com/KiriyumeBun?lang=en
+https://x.com/AKEndfield
+https://x.com/ArknightsEN
+
 Get all ULRs from network
 ```js
 copy(performance.getEntriesByType("resource")

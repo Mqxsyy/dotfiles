@@ -5,7 +5,6 @@ manually from gh:
 pacman/yay:
 - `hyprland`
 - `quickshell` (bar, launcher, notifications, panels)
-- `awww-git` (wallpaper)
 - `matugen-bin` (colors from the wallpaper)
 - `networkmanager` (wifi panel)
 - `pipewire`
@@ -13,7 +12,6 @@ pacman/yay:
 - `pipewire-pulse`
 - `upower` (battery)
 - `brightnessctl`
-- `playerctl` (media keys)
 - `wl-clipboard` (clipboard history)
 - `grim` (screenshots)
 - `slurp` (region picking)

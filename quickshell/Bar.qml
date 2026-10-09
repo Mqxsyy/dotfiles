@@ -21,6 +21,8 @@ import "icons.js" as Icons
 // The bar stays while the pointer is on it, a part is expanded, a button is
 // held (dragging a slider) or a password is being typed. Panels it opens
 // (power menu, settings, ...) don't keep it out.
+// A media key opens the now playing card alone, on the focused screen, for
+// `peekDuration`.
 ShellWindow {
     id: root
 
@@ -44,6 +46,7 @@ ShellWindow {
     property int panelRoom: 620     // tallest a part grows; the window is this tall
 
     property int hideDelay: 400
+    property int peekDuration: 1500
     property int openDelay: 80      // hover this long before a part expands
     property int closeDelay: 250
 
@@ -65,7 +68,9 @@ ShellWindow {
     property string statusPick: ""
     // A dashboard shortcut ran: stay closed until the pointer moves to another part.
     property bool suppressed: false
-    readonly property string wanted: suppressed ? "" : hoverTarget
+    // A media key was pressed: the now playing card opens by itself.
+    readonly property bool peeking: peekTimer.running && hoverTarget === ""
+    readonly property string wanted: peeking ? "media" : suppressed ? "" : hoverTarget
 
     // The expanded part, following `wanted` after a short delay.
     property string expanded: ""
@@ -74,7 +79,9 @@ ShellWindow {
 
     // Holding a button or typing keeps everything as it is.
     readonly property bool busy: press.active || wifiView.typing
-    readonly property bool revealed: hover.hovered || hideTimer.running || expanded !== "" || busy
+    // The now playing card shows by itself while open, so a peek doesn't
+    // bring the rest of the bar.
+    readonly property bool revealed: hover.hovered || hideTimer.running || (expanded !== "" && expanded !== "media") || busy
 
     // The hovered status item, if it has a hint to show.
     readonly property BarButton hinted: [dnd, battery, power].find(item => item.visible && item.hovered && item.hint) ?? null
@@ -166,6 +173,20 @@ ShellWindow {
     }
 
     Timer {
+        id: peekTimer
+        interval: root.peekDuration
+    }
+
+    Connections {
+        target: Media
+
+        function onKeyPressed() {
+            if (FocusedScreen.screen === root.modelData)
+                peekTimer.restart();
+        }
+    }
+
+    Timer {
         id: openTimer
         interval: root.openDelay
         onTriggered: root.expanded = root.wanted
@@ -211,7 +232,7 @@ ShellWindow {
             readonly property bool open: root.expanded === "media"
 
             x: root.cardGap
-            y: root.revealed && root.player ? root.cardGap : -height - Theme.shadowPad
+            y: (root.revealed || open) && root.player ? root.cardGap : -height - Theme.shadowPad
             width: open ? root.mediaWidth : mediaHeader.implicitWidth + root.padding * 2
             height: open ? mediaView.implicitHeight + Theme.padding * 2 : root.cardHeight
             radius: open ? Theme.radius : Math.min(Theme.radius, root.cardHeight / 2)

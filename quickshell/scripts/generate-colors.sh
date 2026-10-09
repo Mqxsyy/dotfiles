@@ -4,7 +4,7 @@
 # Usage: generate-colors.sh [image]   (default: the current wallpaper)
 
 settings="$HOME/.local/state/quickshell/settings.json"
-image="${1:-$(awww query | head -n 1 | sed 's/.*image: //')}"
+image="${1:-$(<"$HOME/.local/state/quickshell/wallpaper")}"
 
 # A value from the settings file, or nothing when it (or the file) is missing.
 setting() {

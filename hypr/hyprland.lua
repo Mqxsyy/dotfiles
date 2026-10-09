@@ -54,7 +54,6 @@ hl.workspace_rule({ workspace = 10, monitor = "eDP-1", default = true })
 hl.on("hyprland.start", function()
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 
-	hl.exec_cmd("awww-daemon")
 	hl.exec_cmd("qs -n -d")
 	hl.exec_cmd("$HOME/dotfiles/quickshell/scripts/randomize-wallpaper.sh")
 
@@ -242,10 +241,10 @@ end
 
 do
 	local opts = { locked = true }
-	hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), opts)
-	hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), opts)
-	hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), opts)
-	hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), opts)
+	hl.bind("XF86AudioNext", hl.dsp.exec_cmd("qs ipc call media next"), opts)
+	hl.bind("XF86AudioPause", hl.dsp.exec_cmd("qs ipc call media playPause"), opts)
+	hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("qs ipc call media playPause"), opts)
+	hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("qs ipc call media previous"), opts)
 end
 
 -------------------

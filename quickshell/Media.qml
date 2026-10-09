@@ -1,6 +1,7 @@
 pragma Singleton
 
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Mpris
 import QtQuick
 
@@ -9,11 +10,16 @@ import QtQuick
 // first one with a track loaded. null when there is none.
 //   artSources: album art to try, best first (see ArtImage.qml)
 //   artColor:   the most colorful color in the art, to tint the media card
+// Media keys (hypr/hyprland.lua):  qs ipc call media playPause | next | previous
+// They also make the bar show the player for a moment (keyPressed).
 Singleton {
     id: root
 
     readonly property var players: Mpris.players.values
     property MprisPlayer chosen: null
+
+    // A media key was used on the player.
+    signal keyPressed()
 
     readonly property MprisPlayer player: {
         if (chosen && players.includes(chosen))
@@ -70,5 +76,30 @@ Singleton {
         source: root.player?.trackArtUrl ?? ""
         depth: 3
         rescaleSize: 64
+    }
+
+    IpcHandler {
+        target: "media"
+
+        function playPause(): void {
+            if (root.player?.canTogglePlaying) {
+                root.player.togglePlaying();
+                root.keyPressed();
+            }
+        }
+
+        function next(): void {
+            if (root.player?.canGoNext) {
+                root.player.next();
+                root.keyPressed();
+            }
+        }
+
+        function previous(): void {
+            if (root.player?.canGoPrevious) {
+                root.player.previous();
+                root.keyPressed();
+            }
+        }
     }
 }

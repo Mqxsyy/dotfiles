@@ -2,6 +2,7 @@ import Quickshell
 import QtQuick
 
 ShellRoot {
+    Variants { model: Quickshell.screens; Background {} }
     Variants {
         model: Quickshell.screens
 

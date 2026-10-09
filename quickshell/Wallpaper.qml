@@ -4,7 +4,9 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
-// Wallpaper and the colors generated from it.
+// Wallpaper and the colors generated from it. The wallpaper on screen is
+// the path in `stateFile`, written by scripts/set-wallpaper.sh and shown by
+// Background.qml.
 //   set(path):   show that wallpaper, then new colors (wallpaper picker)
 //   randomize(): random wallpaper from `folder`, then new colors
 //   recolor():   new colors from the current wallpaper (after color settings change)
@@ -14,6 +16,7 @@ Singleton {
 
     readonly property string scripts: Quickshell.shellDir + "/scripts/"
     readonly property string directory: Quickshell.env("HOME") + "/dotfiles/wallpapers/"
+    readonly property string stateFile: Quickshell.env("HOME") + "/.local/state/quickshell/wallpaper"
 
     // Folders the picker can show, relative to `directory`.
     readonly property var folders: [
@@ -61,7 +64,7 @@ Singleton {
 
     Process {
         id: randomizer
-        onExited: query.running = true
+        onExited: wallpaperFile.reload()
     }
 
     Process {
@@ -82,17 +85,22 @@ Singleton {
         }
     }
 
-    // "...: eDP-1: 1600x1000, scale: 1.6, currently displaying: image: /path/to/image.jpg"
-    Process {
-        id: query
-        running: true
-        command: ["awww", "query"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const match = text.match(/image: (.*)$/m);
-                if (match)
-                    root.current = match[1];
-            }
+    // The wallpaper on screen, from the state file.
+    FileView {
+        id: wallpaperFile
+        path: root.stateFile
+        watchChanges: true
+        onFileChanged: reload()
+        // First run: no wallpaper picked yet.
+        onLoadFailed: error => {
+            if (error === FileViewError.FileNotFound)
+                root.randomize();
+        }
+        // Empty while the script is writing it; the next change has the path.
+        onLoaded: {
+            const path = text().trim();
+            if (path)
+                root.current = path;
         }
     }
 }

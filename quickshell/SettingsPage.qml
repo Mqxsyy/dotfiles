@@ -9,6 +9,12 @@ Popup {
 
     property int cardWidth: 460
 
+    // How a new wallpaper comes in (WallpaperView.qml).
+    readonly property var wallpaperTransitions: [
+        { value: "grow", text: "Grow from center" },
+        { value: "swipe", text: "Swipe from corner" },
+    ]
+
     // matugen --type values.
     readonly property var schemes: [
         { value: "scheme-tonal-spot", text: "Tonal spot" },
@@ -96,6 +102,14 @@ Popup {
                 description: "Blur what's behind see-through surfaces"
                 checked: Settings.glass
                 onToggled: checked => Settings.set("glass", checked)
+            }
+
+            SettingChoice {
+                width: parent.width
+                label: "Wallpaper"
+                options: root.wallpaperTransitions
+                value: Settings.wallpaperTransition
+                onPicked: value => Settings.set("wallpaperTransition", value)
             }
 
             SectionTitle {

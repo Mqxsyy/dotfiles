@@ -6,15 +6,24 @@ import "../../utils/icons.js" as Icons
 
 // Settings page, opened with "> settings" in the launcher or
 //   qs ipc call settings toggle
-// One category at a time, picked with the tabs at the top. Changes apply
-// live and are saved by Settings.qml.
+// Categories on the left (Up/Down switch them), the picked one on the right.
+// Changes apply live and are saved by Settings.qml.
 Popup {
     id: root
 
-    property int cardWidth: 460
+    property int sidebarWidth: 180
+    property int pageWidth: 420
+    property int itemHeight: 38
 
-    readonly property var categories: ["Appearance", "Wallpaper", "Night light", "Lock"]
-    property string category: categories[0]
+    readonly property var categories: [
+        { name: "Appearance", glyph: Icons.palette },
+        { name: "Wallpaper", glyph: Icons.image },
+        { name: "Night light", glyph: Icons.nightLight },
+        { name: "Screenshots", glyph: Icons.screenshot },
+        { name: "Lock", glyph: Icons.lock },
+    ]
+    property int selected: 0
+    readonly property string category: categories[selected].name
 
     // How a new wallpaper comes in (WallpaperView.qml).
     readonly property var wallpaperTransitions: [
@@ -61,46 +70,161 @@ Popup {
     Card {
         id: card
 
+        readonly property real pageHeight: Math.max(...pages.children.map(page => page.implicitHeight))
+
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2 + (1 - root.reveal) * 12
-        width: root.cardWidth
-        height: content.implicitHeight + Theme.padding * 2 + 8
+        width: root.sidebarWidth + root.pageWidth + Theme.padding * 3
+        height: Math.max(sidebar.implicitHeight, heading.height + 18 + pageHeight) + Theme.padding * 2
         opacity: root.reveal
+        focus: true
+
+        Keys.onPressed: event => {
+            if (event.key === Qt.Key_Down || event.key === Qt.Key_Up) {
+                const step = event.key === Qt.Key_Down ? 1 : -1;
+                root.selected = (root.selected + step + root.categories.length) % root.categories.length;
+                event.accepted = true;
+            }
+        }
 
         Column {
-            id: content
+            id: sidebar
 
-            x: Theme.padding + 4
-            y: Theme.padding + 4
-            width: parent.width - x * 2
-            spacing: 18
+            x: Theme.padding
+            y: Theme.padding
+            width: root.sidebarWidth
+            spacing: 4
 
-            // Title, categories on the right.
-            Item {
-                width: parent.width
-                height: tabs.implicitHeight
-
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "Settings"
-                    color: Theme.textPrimary
-                    font.pixelSize: Theme.fontLarge
-                    font.weight: Font.DemiBold
-                }
-
-                Tabs {
-                    id: tabs
-                    anchors.right: parent.right
-                    tabs: root.categories
-                    current: root.category
-                    onPicked: tab => root.category = tab
-                }
+            Text {
+                height: 40
+                leftPadding: 12
+                verticalAlignment: Text.AlignVCenter
+                text: "Settings"
+                color: Theme.textPrimary
+                font.pixelSize: Theme.fontLarge
+                font.weight: Font.DemiBold
             }
 
-            Column {
+            Item {
                 width: parent.width
-                visible: root.category === "Appearance"
-                spacing: 16
+                height: list.height
+
+                // Slides to the picked category.
+                Rectangle {
+                    y: root.selected * (root.itemHeight + list.spacing)
+                    width: parent.width
+                    height: root.itemHeight
+                    radius: Theme.innerRadius + 2
+                    gradient: Theme.accentGradient
+
+                    Behavior on y {
+                        NumberAnimation { duration: Theme.animationDuration; easing.type: Easing.OutCubic }
+                    }
+
+                    Glow {}
+                }
+
+                Column {
+                    id: list
+
+                    width: parent.width
+                    spacing: 2
+
+                    Repeater {
+                        model: root.categories
+
+                        Rectangle {
+                            id: item
+
+                            required property var modelData
+                            required property int index
+                            readonly property bool current: root.selected === index
+
+                            width: parent.width
+                            height: root.itemHeight
+                            radius: Theme.innerRadius + 2
+                            color: hover.hovered && !current ? Theme.tile : "transparent"
+
+                            HoverHandler {
+                                id: hover
+                                cursorShape: Qt.PointingHandCursor
+                            }
+
+                            TapHandler {
+                                onTapped: root.selected = item.index
+                            }
+
+                            Row {
+                                x: 12
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 10
+
+                                Text {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 18
+                                    text: item.modelData.glyph
+                                    color: item.current ? Theme.accentText : Theme.textSecondary
+                                    font.family: Theme.iconFont
+                                    font.pixelSize: 16
+
+                                    Behavior on color {
+                                        ColorAnimation { duration: Theme.animationDuration }
+                                    }
+                                }
+
+                                Text {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: item.modelData.name
+                                    color: item.current ? Theme.accentText : Theme.textPrimary
+                                    font.pixelSize: Theme.fontSmall
+                                    font.weight: item.current ? Font.DemiBold : Font.Normal
+
+                                    Behavior on color {
+                                        ColorAnimation { duration: Theme.animationDuration }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Divider between the categories and the page.
+        Rectangle {
+            x: sidebar.x + sidebar.width + Theme.padding / 2
+            y: Theme.padding
+            width: 1
+            height: parent.height - Theme.padding * 2
+            color: Theme.border
+            opacity: 0.6
+        }
+
+        Text {
+            id: heading
+
+            x: sidebar.x + sidebar.width + Theme.padding * 2
+            y: Theme.padding
+            height: 40
+            verticalAlignment: Text.AlignVCenter
+            text: root.category
+            color: Theme.textPrimary
+            font.pixelSize: Theme.fontLarge
+            font.weight: Font.DemiBold
+        }
+
+        // All pages are here; the picked one fades and slides in, the old
+        // one out.
+        Item {
+            id: pages
+
+            x: heading.x
+            y: heading.y + heading.height + 18
+            width: root.pageWidth - Theme.padding
+            height: card.pageHeight
+
+            Page {
+                name: "Appearance"
 
                 SettingSlider {
                     width: parent.width
@@ -133,10 +257,8 @@ Popup {
                 }
             }
 
-            Column {
-                width: parent.width
-                visible: root.category === "Wallpaper"
-                spacing: 16
+            Page {
+                name: "Wallpaper"
 
                 Row {
                     spacing: 6
@@ -202,10 +324,8 @@ Popup {
                 }
             }
 
-            Column {
-                width: parent.width
-                visible: root.category === "Night light"
-                spacing: 16
+            Page {
+                name: "Night light"
 
                 SettingToggle {
                     width: parent.width
@@ -259,10 +379,20 @@ Popup {
                 }
             }
 
-            Column {
-                width: parent.width
-                visible: root.category === "Lock"
-                spacing: 16
+            Page {
+                name: "Screenshots"
+
+                SettingToggle {
+                    width: parent.width
+                    label: "Freeze"
+                    description: "Hold the screen still while picking a region (also for Super P)"
+                    checked: Settings.screenshotFreeze
+                    onToggled: checked => Settings.set("screenshotFreeze", checked)
+                }
+            }
+
+            Page {
+                name: "Lock"
 
                 SettingSlider {
                     width: parent.width
@@ -275,6 +405,28 @@ Popup {
                     onMoved: value => Settings.set("lockAfter", value)
                 }
             }
+        }
+    }
+
+    // One category's settings. Fades and slides in when picked.
+    component Page: Column {
+        required property string name
+        readonly property bool current: root.category === name
+
+        width: parent.width
+        spacing: 16
+        opacity: current ? 1 : 0
+        visible: opacity > 0
+        transform: Translate {
+            y: current ? 0 : 12
+
+            Behavior on y {
+                NumberAnimation { duration: Theme.animationDuration; easing.type: Easing.OutCubic }
+            }
+        }
+
+        Behavior on opacity {
+            NumberAnimation { duration: Theme.animationDuration; easing.type: Easing.OutCubic }
         }
     }
 }

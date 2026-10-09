@@ -85,6 +85,16 @@ Singleton {
             run: () => NightLight.toggle(),
         },
         {
+            name: "bluetooth",
+            description: "Bluetooth devices",
+            run: () => BarLayout.open("bluetooth"),
+        },
+        {
+            name: "windows",
+            description: "All open windows",
+            run: () => Popups.open("windows"),
+        },
+        {
             name: "wifi",
             description: "Wifi networks",
             run: () => BarLayout.open("wifi"),

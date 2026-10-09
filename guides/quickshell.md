@@ -27,7 +27,7 @@ User state lives in `~/.local/state/quickshell/`: `settings.json`, `colors.json`
 
 All windows are `components/ShellWindow.qml`: transparent, above other windows, namespaced `qs-<name>` (or `qs-blur-<name>` with Glass on, blurred by the `quickshell-glass` layer rule in `hypr/hyprland.lua`).
 
-- `bar/` — `Bar.qml` slides down when the pointer reaches the top center. Three cards grow into panels on hover: now playing (`MediaView`), the clock (the dashboard), and the status card (`NotificationsView`, `WifiView`, `AudioView`, `BrightnessView`; power opens the power menu). `qs ipc call bar open <part>` or `> audio`, `> wifi`, `> media`, `> notifications` open a part.
+- `bar/` — `Bar.qml` slides down when the pointer reaches the top center. Three cards grow into panels on hover: now playing (`MediaView`), the clock (the dashboard), and the status card (`NotificationsView`, `WifiView`, `BluetoothView`, `AudioView`, `BrightnessView`; power opens the power menu). The bluetooth icon only shows while Bluetooth is on (dashboard toggle; needs `bluetooth.service`). `qs ipc call bar open <part>` or `> audio`, `> wifi`, `> bluetooth`, `> media`, `> notifications` open a part.
 - `dashboard/` — `DashboardView.qml`, the clock card's panel. Tabs: Overview (`Calendar`, quick toggles, shortcuts), System (`SystemView`: CPU, memory, GPU, disk, processes), Clean (`CleanView`: caches, old packages, logs; click twice to clean, hover shows the command, system entries run in kitty where sudo asks).
 - `launcher/` — `Launcher.qml`: apps, calculator, units, `>` commands (`config/Commands.qml`). `SUPER + R`, `qs ipc call launcher toggle`. Often and recently used apps rank higher.
 - `popups/` — panels opened one at a time through `services/Popups.qml` (`qs ipc call popup toggle <name>`), closed with Esc or a click outside:
@@ -35,7 +35,9 @@ All windows are `components/ShellWindow.qml`: transparent, above other windows, 
   - `CapturePanel` (`screenshot`, `record`): region / screen; Freeze holds the screen still while picking a region (also used by `SUPER + P`); recording with or without sound.
   - `PowerMenu` (`power`): lock, log out, suspend, restart, shut down; each needs a confirming click.
   - `WallpaperPicker` (`wallpapers`): thumbnails, type to filter.
-  - `SettingsPage` (`settings`): Appearance, Wallpaper, Night light, Lock.
+  - `SettingsPage` (`settings`): categories on the left (Appearance, Wallpaper, Night light, Screenshots, Lock; Up/Down switch), the page slides in on the right.
+  - `WindowOverview` (`windows`, `SUPER + Tab`): every workspace as a small live desktop over the blurred wallpaper. `SUPER + Tab` / Tab / arrows step through windows (most recent first), Enter or click goes there, click a workspace or press its number to go there, drag a window onto another workspace (or `+`) to move it, middle click closes. `qs ipc call windows next|previous`.
+  - `PolkitPrompt` (`polkit`): the session's polkit agent; asks for the password when an app needs admin rights (pkexec, mounting drives). Closing it cancels.
 - `overlays/` — `Toasts.qml` (notifications, top right), `Osd.qml` (volume / brightness), `RecordingCard.qml` (time and stop while recording).
 - `lock/` — `LockScreen.qml` locks the session with a `LockSurface` per screen; `LockCover.qml` fades the same `LockView` in over the desktop first, since Hyprland locks instantly. Type the password, Enter checks, Esc clears. `SUPER + Escape`, `> lock`, `qs ipc call lock lock`, or after the idle minutes set in settings.
 - `background/` — `Background.qml`, the wallpaper per screen; `WallpaperView.qml` grows or swipes a new one in.

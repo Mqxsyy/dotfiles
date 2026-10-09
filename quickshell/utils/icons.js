@@ -24,6 +24,10 @@ const wifiOff = "󰤮";
 const wifi = ["󰤟", "󰤢", "󰤥", "󰤨"];           // weak .. strong
 const ethernet = "󰈀";
 
+const bluetooth = "󰂯";
+const bluetoothConnected = "󰂱";
+const bluetoothOff = "󰂲";
+
 const batteryCharging = "󰂄";
 const battery = ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]; // 10% .. 100%
 const batteryAlert = "󰂃";
@@ -40,6 +44,7 @@ const repeat = "󰑖";
 const repeatOne = "󰑘";
 const search = "󰍉";
 const image = "󰋩";
+const palette = "󰏘";
 
 const power = "󰐥";
 const restart = "󰜉";

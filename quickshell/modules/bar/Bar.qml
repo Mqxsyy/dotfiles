@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Bluetooth
 import Quickshell.Services.Mpris
 import Quickshell.Wayland
 import Quickshell.Widgets
@@ -62,8 +63,8 @@ ShellWindow {
     readonly property MprisPlayer player: Media.player
 
     // The part the pointer is on: "media", "dashboard", "notifications",
-    // "wifi", "audio", "brightness" or "".
-    readonly property var statusParts: ["notifications", "wifi", "audio", "brightness"]
+    // "wifi", "bluetooth", "audio", "brightness" or "".
+    readonly property var statusParts: ["notifications", "wifi", "bluetooth", "audio", "brightness"]
     readonly property string hoverTarget: {
         if (mediaHover.hovered)
             return "media";
@@ -492,6 +493,14 @@ ShellWindow {
                 }
 
                 BarButton {
+                    id: bluetooth
+                    visible: Bluetooth.defaultAdapter?.enabled ?? false
+                    icon: Bluetooth.devices.values.some(device => device.connected) ? Icons.bluetoothConnected : Icons.bluetooth
+                    color: root.expanded === "bluetooth" || hovered ? Theme.highlight : "transparent"
+                    onHoveredChanged: if (hovered) root.statusPick = "bluetooth"
+                }
+
+                BarButton {
                     id: volume
                     icon: Audio.muted || Audio.volume === 0 ? Icons.volumeOff : Icons.volumeLevel(Audio.volume)
                     iconColor: Audio.muted ? Theme.textSecondary : Theme.textPrimary
@@ -540,7 +549,7 @@ ShellWindow {
                 x: Theme.padding
                 y: root.cardHeight + 4
                 width: root.statusWidth - Theme.padding * 2
-                height: ({ notifications: notificationsView, wifi: wifiView, audio: audioView, brightness: brightnessView })[root.statusShown].implicitHeight
+                height: ({ notifications: notificationsView, wifi: wifiView, bluetooth: bluetoothView, audio: audioView, brightness: brightnessView })[root.statusShown].implicitHeight
                 visible: opacity > 0
                 opacity: statusIsland.open ? 1 : 0
 
@@ -560,6 +569,13 @@ ShellWindow {
                     width: parent.width
                     visible: root.statusShown === "wifi"
                     active: root.expanded === "wifi"
+                }
+
+                BluetoothView {
+                    id: bluetoothView
+                    width: parent.width
+                    visible: root.statusShown === "bluetooth"
+                    active: root.expanded === "bluetooth"
                 }
 
                 AudioView {

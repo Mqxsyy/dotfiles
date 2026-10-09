@@ -48,4 +48,6 @@ ShellRoot {
     }
     WallpaperPicker {}
     SettingsPage {}
+    PolkitPrompt {}
+    WindowOverview {}
 }

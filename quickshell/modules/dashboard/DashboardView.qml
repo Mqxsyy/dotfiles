@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Bluetooth
 import QtQuick
 import qs.config
 import qs.services
@@ -35,6 +36,16 @@ Column {
             glyph: Network.wifiEnabled ? Icons.level(Icons.wifi, Network.signal) : Icons.wifiOff,
             on: Network.wifiEnabled,
             toggle: () => Network.toggleWifi(),
+        },
+        {
+            text: "Bluetooth",
+            detail: !Bluetooth.defaultAdapter ? "Not available" : Bluetooth.defaultAdapter.enabled ? "On" : "Off",
+            glyph: Bluetooth.defaultAdapter?.enabled ? Icons.bluetooth : Icons.bluetoothOff,
+            on: Bluetooth.defaultAdapter?.enabled ?? false,
+            toggle: () => {
+                if (Bluetooth.defaultAdapter)
+                    Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled;
+            },
         },
         {
             text: "Do not disturb",

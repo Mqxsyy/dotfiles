@@ -8,7 +8,7 @@ import QtQuick
 //   rightBottom: how far down its status card reaches (toasts sit under it)
 // Values are 0 while a screen has no bar yet.
 // open(part) shows the bar on the focused screen with that part expanded:
-// "media", "dashboard", "notifications", "wifi", "audio" or "brightness".
+// "media", "dashboard", "notifications", "wifi", "bluetooth", "audio" or "brightness".
 //   qs ipc call bar open audio
 Singleton {
     id: root

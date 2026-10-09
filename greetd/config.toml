@@ -2,7 +2,7 @@
 # (see guides/greeter.md).
 #
 # At boot: logs in and starts Hyprland already locked (--locked-cmd), and
-# the shell's lock screen is the login screen (quickshell/Lock.qml). One
+# the shell's lock screen is the login screen (quickshell/services/Lock.qml). One
 # Hyprland from boot to desktop, so nothing flickers in between. Hyprland
 # stays locked even if the shell never starts.
 #

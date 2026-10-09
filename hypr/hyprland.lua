@@ -52,7 +52,7 @@ end
 hl.on("hyprland.start", function()
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 
-	hl.exec_cmd("qs -n -d") -- at boot it also picks a new wallpaper (Lock.qml)
+	hl.exec_cmd("qs -n -d") -- at boot it also picks a new wallpaper (services/Lock.qml)
 
 	-- At login the apps open on their workspaces in the background
 	-- ("silent"), so none of them is what greets you; after `quietStartup`

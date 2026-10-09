@@ -3,7 +3,7 @@
 At boot, the lock screen is the login screen. greetd logs in and starts
 Hyprland with the session already locked (`--locked-cmd`, before anything is
 drawn); `quickshell/scripts/start-locked.sh` tells the shell to put its lock
-screen up as soon as it starts (`Lock.qml`). The shell then picks the day's
+screen up as soon as it starts (`quickshell/services/Lock.qml`). The shell then picks the day's
 wallpaper, and the lock screen fades in from black once the wallpaper and its
 colors are ready (3 seconds at most). The
 password is checked like logging in (PAM `login`, including the lockout after
@@ -15,7 +15,7 @@ locked (and says so after 5 seconds); if Hyprland crashes while locked,
 After logging out, greetd shows a separate login screen that looks the same:
 a small Hyprland (`hypr/greeter.lua`, sharing `hypr/hardware.lua` with the
 session) running the quickshell greeter (`quickshell/greeter.qml`, drawing
-`LockView.qml`). Type the password, Enter logs in and starts `start-hyprland`.
+`modules/lock/LockView.qml`). Type the password, Enter logs in and starts `start-hyprland`.
 
 The greeter runs as the `greeter` user but reads the user's colors, settings
 and wallpaper. The user's home is private, so `greeter` gets an ACL to pass

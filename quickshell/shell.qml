@@ -1,5 +1,11 @@
 import Quickshell
 import QtQuick
+import qs.modules.background
+import qs.modules.bar
+import qs.modules.launcher
+import qs.modules.lock
+import qs.modules.overlays
+import qs.modules.popups
 
 ShellRoot {
     Variants {

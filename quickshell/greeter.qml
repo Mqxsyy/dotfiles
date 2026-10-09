@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Services.Greetd
 import Quickshell.Wayland
 import QtQuick
+import qs.modules.lock
 
 // The login screen: the lock screen's look (LockView.qml) on every screen,
 // logging in through greetd. Not part of the shell (shell.qml); greetd

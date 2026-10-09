@@ -105,84 +105,41 @@ Column {
             }
         }
 
-        // Segmented control: the current tab is a filled pill.
-        Rectangle {
+        Tabs {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            width: tabRow.implicitWidth + 8
-            height: 36
-            radius: height / 2
-            color: Theme.tile
-
-            Row {
-                id: tabRow
-                anchors.centerIn: parent
-
-                Repeater {
-                    model: root.tabs
-
-                    Rectangle {
-                        id: tabButton
-
-                        required property string modelData
-                        readonly property bool current: root.tab === modelData
-
-                        width: tabText.implicitWidth + 28
-                        height: 28
-                        radius: height / 2
-                        color: tabHover.hovered ? Theme.tileHover : "transparent"
-                        gradient: current ? Theme.accentGradient : null
-
-                        Glow {
-                            on: tabButton.current
-                        }
-
-                        HoverHandler {
-                            id: tabHover
-                            cursorShape: Qt.PointingHandCursor
-                        }
-
-                        TapHandler {
-                            onTapped: root.tab = tabButton.modelData
-                        }
-
-                        Text {
-                            id: tabText
-                            anchors.centerIn: parent
-                            text: tabButton.modelData
-                            color: tabButton.current ? Theme.accentText : Theme.textPrimary
-                            font.pixelSize: Theme.fontSmall
-                            font.weight: Font.DemiBold
-                        }
-                    }
-                }
-            }
+            tabs: root.tabs
+            current: root.tab
+            onPicked: tab => root.tab = tab
         }
     }
 
-    // Overview: calendar on the left; toggles and shortcuts on the right.
-    Row {
+    // Overview: calendar and quick toggles side by side, shortcuts below.
+    Column {
         width: parent.width
         spacing: 12
         visible: root.tab === "Overview"
 
-        Group {
-            id: calendarGroup
-            height: rightColumn.height
-
-            Calendar {
-                cellSize: 30
-                fillHeight: calendarGroup.height - 28
-            }
-        }
-
-        Column {
-            id: rightColumn
-            width: parent.width - calendarGroup.width - parent.spacing
+        Row {
+            width: parent.width
             spacing: 12
 
             Group {
-                width: parent.width
+                id: calendarGroup
+
+                Calendar {
+                    cellSize: 30
+                }
+            }
+
+            // As tall as the calendar; the tiles grow to fill it.
+            Group {
+                id: quickGroup
+
+                readonly property int rows: Math.ceil(root.toggles.length / 2)
+
+                width: parent.width - calendarGroup.width - parent.spacing
+                height: calendarGroup.height
                 title: "Quick settings"
 
                 // Two per row; an odd one out at the end takes the whole row.
@@ -199,30 +156,31 @@ Column {
                             readonly property bool alone: index === root.toggles.length - 1 && index % 2 === 0
 
                             width: alone ? parent.width : (parent.width - parent.spacing) / 2
+                            height: Math.max(54, (quickGroup.bodyRoom - parent.spacing * (quickGroup.rows - 1)) / quickGroup.rows)
                             entry: modelData
                         }
                     }
                 }
             }
+        }
 
-            Group {
+        Group {
+            width: parent.width
+            title: "Shortcuts"
+
+            Grid {
                 width: parent.width
-                title: "Shortcuts"
+                columns: root.shortcuts.length
+                spacing: 4
 
-                Grid {
-                    width: parent.width
-                    columns: 4
-                    spacing: 4
+                Repeater {
+                    model: root.shortcuts
 
-                    Repeater {
-                        model: root.shortcuts
-
-                        ShortcutTile {
-                            required property var modelData
-                            width: (parent.width - parent.spacing * 3) / 4
-                            entry: modelData
-                            onRan: root.acted()
-                        }
+                    ShortcutTile {
+                        required property var modelData
+                        width: (parent.width - parent.spacing * (root.shortcuts.length - 1)) / root.shortcuts.length
+                        entry: modelData
+                        onRan: root.acted()
                     }
                 }
             }
@@ -241,6 +199,8 @@ Column {
 
         property string title: ""
         default property alias content: body.data
+        // Height left for the content when the group is made taller than it.
+        readonly property real bodyRoom: height - column.y * 2 - body.y
 
         implicitWidth: body.implicitWidth + 28
         implicitHeight: column.implicitHeight + 28
@@ -274,7 +234,6 @@ Column {
 
         property var entry: ({})
 
-        height: 54
         radius: Theme.innerRadius + 4
         color: hover.hovered ? Theme.tileHover : Theme.tile
         gradient: entry.on ? Theme.accentGradient : null

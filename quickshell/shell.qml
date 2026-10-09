@@ -2,7 +2,12 @@ import Quickshell
 import QtQuick
 
 ShellRoot {
-    Variants { model: Quickshell.screens; Background {} }
+    Variants {
+        model: Quickshell.screens
+
+        Background {}
+    }
+
     Variants {
         model: Quickshell.screens
 
@@ -15,17 +20,20 @@ ShellRoot {
         RecordingCard {}
     }
 
+    Variants {
+        model: Quickshell.screens
+
+        LockCover {}
+    }
+
+    LockScreen {}
     Launcher {}
     Toasts {}
     Osd {}
 
     // Panels; Popups.qml opens one at a time.
-    WifiPanel {}
-    AudioPanel {}
-    MediaPanel {}
     PowerMenu {}
     ClipboardPanel {}
-    NotificationsPanel {}
     CapturePanel {
         name: "screenshot"
     }

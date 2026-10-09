@@ -8,7 +8,7 @@ import "icons.js" as Icons
 // shuffle / previous / play / next / repeat; click the art to bring up the
 // player. With several players, chips on
 // top pick which one the bar controls. Shown when the bar's media card
-// expands, and in the media panel ("> media").
+// expands (or "> media").
 Column {
     id: root
 

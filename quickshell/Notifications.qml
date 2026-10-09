@@ -6,7 +6,7 @@ import Quickshell.Services.Notifications
 import QtQuick
 
 // Every notification the shell gets, shown as toasts (Toasts.qml) and kept
-// in `history` (NotificationsView.qml: the bar's bell, "> notifications").
+// in `history` (NotificationsView.qml, under the bar's bell).
 // They come from:
 //   - apps, through the notification server (notify-send, browsers, ...)
 //   - Claude Code:  qs ipc call claude notify "<title>" "<body>"

@@ -1,0 +1,2 @@
+# The lock screen's password check (Lock.qml): just the user's password.
+auth required pam_unix.so

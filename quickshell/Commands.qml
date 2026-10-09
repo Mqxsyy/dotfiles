@@ -26,12 +26,12 @@ Singleton {
         {
             name: "audio",
             description: "Volume per device and app",
-            run: () => Popups.open("audio"),
+            run: () => BarLayout.open("audio"),
         },
         {
             name: "media",
-            description: "Now playing and favorites",
-            run: () => Popups.open("media"),
+            description: "Now playing",
+            run: () => BarLayout.open("media"),
         },
         {
             name: "clipboard",
@@ -54,6 +54,11 @@ Singleton {
             run: () => Recorder.pickColor(),
         },
         {
+            name: "lock",
+            description: "Lock the screen",
+            run: () => Lock.lock(),
+        },
+        {
             name: "reload",
             description: "Reload the quickshell config",
             run: () => Quickshell.reload(false),
@@ -66,7 +71,7 @@ Singleton {
         {
             name: "notifications",
             description: "Notification history",
-            run: () => Popups.open("notifications"),
+            run: () => BarLayout.open("notifications"),
         },
         {
             name: "clear",
@@ -81,7 +86,7 @@ Singleton {
         {
             name: "wifi",
             description: "Wifi networks",
-            run: () => Popups.open("wifi"),
+            run: () => BarLayout.open("wifi"),
         },
     ]
 }

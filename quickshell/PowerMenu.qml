@@ -9,12 +9,13 @@ import "icons.js" as Icons
 Popup {
     id: root
 
-    // To add one: what it's called, its glyph, the command it runs.
+    // To add one: what it's called, its glyph, what it does.
     readonly property var actions: [
-        { text: "Log out", glyph: Icons.logout, command: ["hyprctl", "dispatch", "exit"] },
-        { text: "Suspend", glyph: Icons.suspend, command: ["systemctl", "suspend"] },
-        { text: "Restart", glyph: Icons.restart, command: ["systemctl", "reboot"] },
-        { text: "Shut down", glyph: Icons.power, command: ["systemctl", "poweroff"] },
+        { text: "Lock", glyph: Icons.lock, run: () => Lock.lock() },
+        { text: "Log out", glyph: Icons.logout, run: () => Quickshell.execDetached(["hyprctl", "dispatch", "exit"]) },
+        { text: "Suspend", glyph: Icons.suspend, run: () => Lock.suspend() }, // locked on wake
+        { text: "Restart", glyph: Icons.restart, run: () => Quickshell.execDetached(["systemctl", "reboot"]) },
+        { text: "Shut down", glyph: Icons.power, run: () => Quickshell.execDetached(["systemctl", "poweroff"]) },
     ]
 
     property int cardWidth: 172
@@ -32,7 +33,7 @@ Popup {
         }
         armed = -1;
         Popups.close();
-        Quickshell.execDetached(actions[index].command);
+        actions[index].run();
     }
 
     name: "power"

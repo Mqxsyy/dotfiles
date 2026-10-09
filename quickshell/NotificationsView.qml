@@ -7,7 +7,7 @@ import "format.js" as Format
 // Notification history (Notifications.qml), newest first, with do not
 // disturb and clear all. Click one to open it (the app's default action),
 // or its × to dismiss it. Shown when the bar's status card expands on the
-// bell, and in the notifications panel ("> notifications", SUPER + N).
+// bell (or "> notifications").
 Column {
     id: root
 

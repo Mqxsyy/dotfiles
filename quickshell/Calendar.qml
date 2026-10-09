@@ -9,10 +9,7 @@ Item {
     id: root
 
     property int cellSize: 32
-    // Height to fill, stretching the rows; 0 = rows as tall as cellSize.
-    property real fillHeight: 0
     readonly property int headerHeight: 28
-    readonly property real rowHeight: fillHeight > 0 ? (fillHeight - headerHeight - content.spacing) / 6.8 : cellSize
 
     readonly property date today: clock.date
     property int year: today.getFullYear()
@@ -88,7 +85,7 @@ Item {
                 Text {
                     required property int index
                     width: root.cellSize
-                    height: root.rowHeight * 0.8
+                    height: root.cellSize * 0.8
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     text: Qt.locale().dayName((root.firstDay + index) % 7, Locale.ShortFormat).slice(0, 2)
@@ -110,12 +107,12 @@ Item {
                     readonly property bool isToday: date.toDateString() === root.today.toDateString()
 
                     width: root.cellSize
-                    height: root.rowHeight
+                    height: root.cellSize
 
                     // Today: a lit circle.
                     Rectangle {
                         anchors.centerIn: parent
-                        width: Math.min(root.cellSize, root.rowHeight)
+                        width: root.cellSize
                         height: width
                         radius: width / 2
                         visible: day.isToday

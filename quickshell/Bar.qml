@@ -22,8 +22,11 @@ import "icons.js" as Icons
 // The bar stays while the pointer is on it, a part is expanded, a button is
 // held (dragging a slider) or a password is being typed. Panels it opens
 // (power menu, settings, ...) don't keep it out.
-// A media key opens the now playing card alone, on the focused screen, for
-// `peekDuration`.
+// A part can also open without the pointer, on the focused screen:
+//   a launcher command (BarLayout.open: "> audio", "> wifi", ...): the bar
+//     shows with that part expanded, until the pointer has been in and out
+//     of it, or `openDuration` passes without it coming
+//   a media key: the now playing card alone, for `peekDuration`
 ShellWindow {
     id: root
 
@@ -47,6 +50,7 @@ ShellWindow {
     property int panelRoom: 620     // tallest a part grows; the window is this tall
 
     property int hideDelay: 400
+    property int openDuration: 5000
     property int peekDuration: 1500
     property int openDelay: 80      // hover this long before a part expands
     property int closeDelay: 250
@@ -69,9 +73,12 @@ ShellWindow {
     property string statusPick: ""
     // A dashboard shortcut ran: stay closed until the pointer moves to another part.
     property bool suppressed: false
-    // A media key was pressed: the now playing card opens by itself.
-    readonly property bool peeking: peekTimer.running && hoverTarget === ""
-    readonly property string wanted: peeking ? "media" : suppressed ? "" : hoverTarget
+    // The part opened without the pointer (see the top), and whether it shows
+    // without the rest of the bar.
+    property string opened: ""
+    property bool openedAlone: false
+    // The pointer picks over `opened`.
+    readonly property string wanted: opened !== "" && hoverTarget === "" ? opened : suppressed ? "" : hoverTarget
 
     // The expanded part, following `wanted` after a short delay.
     property string expanded: ""
@@ -80,9 +87,7 @@ ShellWindow {
 
     // Holding a button or typing keeps everything as it is.
     readonly property bool busy: press.active || wifiView.typing
-    // The now playing card shows by itself while open, so a peek doesn't
-    // bring the rest of the bar.
-    readonly property bool revealed: hover.hovered || hideTimer.running || (expanded !== "" && expanded !== "media") || busy
+    readonly property bool revealed: hover.hovered || hideTimer.running || (expanded !== "" && !openedAlone) || busy
 
     // The hovered status item, if it has a hint to show.
     readonly property BarButton hinted: [battery, power].find(item => item.visible && item.hovered && item.hint) ?? null
@@ -151,6 +156,13 @@ ShellWindow {
         expanded = "";
     }
 
+    function open(part, duration, alone) {
+        opened = part;
+        openedAlone = alone;
+        openedTimer.interval = duration;
+        openedTimer.restart();
+    }
+
     // Pointing here, at the top center, reveals the bar.
     Item {
         id: revealArea
@@ -173,9 +185,10 @@ ShellWindow {
         interval: root.hideDelay
     }
 
+    // Closes `opened` if the pointer never comes.
     Timer {
-        id: peekTimer
-        interval: root.peekDuration
+        id: openedTimer
+        onTriggered: root.opened = ""
     }
 
     Connections {
@@ -183,7 +196,16 @@ ShellWindow {
 
         function onKeyPressed() {
             if (FocusedScreen.screen === root.modelData)
-                peekTimer.restart();
+                root.open("media", root.peekDuration, true);
+        }
+    }
+
+    Connections {
+        target: BarLayout
+
+        function onOpenRequested(part) {
+            if (FocusedScreen.screen === root.modelData)
+                root.open(part, root.openDuration, false);
         }
     }
 
@@ -217,7 +239,14 @@ ShellWindow {
 
         HoverHandler {
             id: hover
-            onHoveredChanged: if (!hovered) hideTimer.restart()
+            onHoveredChanged: {
+                if (hovered) {
+                    openedTimer.stop(); // stays while the pointer is in
+                } else {
+                    hideTimer.restart();
+                    root.opened = "";
+                }
+            }
         }
 
         // Active while a button is held anywhere in the bar, even when the
@@ -315,9 +344,11 @@ ShellWindow {
                     }
                 }
 
+                // Only animates while it can be seen: an animation redraws
+                // the whole bar every frame, hidden or not.
                 PlayingBars {
                     anchors.verticalCenter: parent.verticalCenter
-                    playing: root.player?.isPlaying ?? false
+                    playing: (root.player?.isPlaying ?? false) && root.revealed && !mediaIsland.open
                 }
             }
 

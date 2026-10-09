@@ -23,6 +23,7 @@ Singleton {
     readonly property bool nightLightAuto: values.nightLightAuto
     readonly property int nightLightFrom: values.nightLightFrom
     readonly property int nightLightTo: values.nightLightTo
+    readonly property int lockAfter: values.lockAfter
     readonly property bool glass: values.glass
     readonly property string scheme: values.scheme
     readonly property string mode: values.mode
@@ -60,6 +61,7 @@ Singleton {
             property bool nightLightAuto: false         // on from nightLightFrom to nightLightTo
             property int nightLightFrom: 20             // hour
             property int nightLightTo: 7                // hour
+            property int lockAfter: 10                  // idle minutes before locking (Lock.qml), 0 = never
             property string scheme: "scheme-tonal-spot" // matugen --type
             property string mode: "dark"                // matugen --mode
             property real contrast: 0                   // matugen --contrast, -1..1

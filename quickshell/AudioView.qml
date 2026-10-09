@@ -5,7 +5,7 @@ import "icons.js" as Icons
 
 // Sound: output and input volume, mute and default device, and volume per
 // app playing sound. Shown when the bar's status card expands on the volume
-// icon, and in the audio panel ("> audio").
+// icon (or "> audio").
 Column {
     id: root
 

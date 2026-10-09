@@ -196,10 +196,10 @@ hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("qs ipc call launcher toggle"))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("wayscriber --active"))
 
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
+hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("qs ipc call lock lock"))
 
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("qs ipc call popup toggle clipboard"))
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call popup toggle notifications"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 
 hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "left" }))

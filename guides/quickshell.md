@@ -12,24 +12,23 @@ Config lives in `quickshell/` (symlinked to `~/.config/quickshell`); the shell s
 
 All windows are `ShellWindow`s (`ShellWindow.qml`): transparent, over other windows, and named `qs-<name>` — or `qs-blur-<name>` with Glass on, which the `quickshell-glass` layer rule in `hypr/hyprland.lua` blurs.
 
-- `Bar.qml` — slides down on each screen when the pointer reaches the top center, and stays until the pointer leaves the bar. Three parts grow into panels while hovered: the now-playing card top-left (`MediaView`), the clock card top-center (`DashboardView`: Overview tab with calendar, quick toggles, shortcuts; System tab with `SystemView`), and the status card top-right (hover wifi → `WifiView`, volume → `AudioView`, brightness → `BrightnessView`; click power → power menu). Stays while hovered, expanded, dragging or typing a password. A media key opens just the now-playing card for a moment.
+- `Bar.qml` — slides down on each screen when the pointer reaches the top center, and stays until the pointer leaves the bar. Three parts grow into panels while hovered: the now-playing card top-left (`MediaView`), the clock card top-center (`DashboardView`: Overview tab with calendar, quick toggles, shortcuts; System tab with `SystemView`), and the status card top-right (hover the bell → `NotificationsView`: history, do not disturb, clear; click it for do not disturb; hover wifi → `WifiView`, volume → `AudioView`, brightness → `BrightnessView`; click power → power menu). Stays while hovered, expanded, dragging or typing a password. A media key opens just the now-playing card for a moment. `> audio`, `> wifi`, `> media`, `> notifications` (or `qs ipc call bar open <part>`, `BarLayout.open`) show the bar with that part expanded.
 - `Launcher.qml` — app launcher + calculator, `qs ipc call launcher toggle` (`SUPER + R`). Search in `fuzzy.js`, math in `calc.js`, units in `units.js`. `>` lists commands from `Commands.qml`. Apps launched often and recently rank higher (`~/.local/state/quickshell/launcher.json`).
 - `RecordingCard.qml` — while recording: time, stop hotkey and stop button, fixed at the top center just below the bar (reaching it never reveals the bar), on the overlay layer so it's above fullscreen windows. One per screen.
 - `Toasts.qml` — notification toasts, top-right, pushed under the bar while it shows (`BarLayout.qml`). Draws what `Notifications.qml` holds.
 - `Osd.qml` — volume / brightness card sliding in at the right on change.
+- `LockScreen.qml` — the lock screen (`WlSessionLock`), a `LockSurface.qml` per screen showing `LockView.qml`: blurred wallpaper, clock, date, password dots. Just type; Enter checks, Esc clears. `LockCover.qml` (overlay layer) fades the same view in over the desktop before the session locks and out after it unlocks, since Hyprland switches instantly. `SUPER + Escape`, `> lock`, power menu, `qs ipc call lock lock`, or after the idle minutes set on the settings page (Lock).
 - `Background.qml` — the wallpaper, on the background layer of each screen (`WallpaperView.qml`: a new one grows in from the center or swipes in from the top-right corner, picked in settings).
 
 ### Panels
 
 `Popup.qml` windows: open one at a time through `Popups.qml` (`qs ipc call popup toggle <name>`), close with Esc or a click outside.
 
-- `WifiPanel.qml` (`wifi`), `AudioPanel.qml` (`audio`), `MediaPanel.qml` (`media`) — the bar's `WifiView` / `AudioView` / `MediaView` as panels, for `> wifi`, `> audio`, `> media`.
 - `ClipboardPanel.qml` (`clipboard`) — `SUPER + SHIFT + V` or `> clipboard`: history, filter, Enter to copy back.
-- `NotificationsPanel.qml` (`notifications`) — `SUPER + N` or `> notifications`: `NotificationsView` (history, do not disturb, clear). The bar shows the same view when hovering its bell; click the bell for do not disturb.
 - `CapturePanel.qml` (`screenshot`, `record`) — made twice: `> screenshot` (region / screen) and `> record` (region / screen, sound, Stop). While recording, `RecordingCard.qml` shows the time; click it to stop.
-- `PowerMenu.qml` (`power`) — log out / suspend / restart / shut down, card at the right. Every action needs a second, confirming click.
+- `PowerMenu.qml` (`power`) — lock / log out / suspend (locks first) / restart / shut down, card at the right. Every action needs a second, confirming click.
 - `WallpaperPicker.qml` (`wallpapers`) — `> wallpaper`; thumbnails of a folder, type to filter, click or Enter to set.
-- `SettingsPage.qml` (`settings`) — `> settings` or `qs ipc call settings toggle`.
+- `SettingsPage.qml` (`settings`) — `> settings` or `qs ipc call settings toggle`; categories Appearance / Wallpaper / Night light / Lock picked with `Tabs.qml` (also the dashboard's tabs).
 
 ### Services (singletons)
 
@@ -37,6 +36,7 @@ All windows are `ShellWindow`s (`ShellWindow.qml`): transparent, over other wind
 - `Settings.qml` — user settings, saved to `~/.local/state/quickshell/settings.json`. Color settings are also read by `quickshell/scripts/generate-colors.sh`; changing one regenerates the colors.
 - `Notifications.qml` — notification server (notify-send etc.), Claude toasts (`qs ipc call claude notify "<title>" "<body>"`), do not disturb, and the history (`~/.local/state/quickshell/notifications.json`, also what came in during do not disturb).
 - `NightLight.qml` — warmer colors through a Hyprland screen shader written to `~/.local/state/quickshell/night-light-<kelvin>.frag`; Quick settings tile, `> night`, `qs ipc call nightlight toggle`, warmth and on/off hours on the settings page. Screenshots get the tint too.
+- `Lock.qml` — lock state, kept across config reloads (`PersistentProperties`) so saving a file doesn't unlock; checks the password with PAM using `quickshell/pam/lock` (`pam_unix`, the user's password only); idle lock (`IdleMonitor`, `Settings.lockAfter` minutes, 0 = never).
 - `Audio.qml` (Pipewire), `Brightness.qml` (brightnessctl, `qs ipc call brightness up|down`), `Battery.qml` (UPower, low battery toasts at 15% / 5%), `Network.qml` (NetworkManager), `Media.qml` (MPRIS player to show; media keys via `qs ipc call media playPause|next|previous`).
 - `Wallpaper.qml` — current wallpaper (the path in `~/.local/state/quickshell/wallpaper`) and the picker's image list; runs `quickshell/scripts/set-wallpaper.sh` (writes that path + new colors), `quickshell/scripts/randomize-wallpaper.sh` (random one, `> shuffle`) and `quickshell/scripts/generate-colors.sh` (new colors from the current wallpaper).
 - `System.qml` — stats from `top`, `sensors`, `nvidia-smi`, `df`, `/proc/net/dev`.
@@ -58,4 +58,5 @@ All windows are `ShellWindow`s (`ShellWindow.qml`): transparent, over other wind
 - No `options` or `status` variables in zsh scripts: zsh reserves them.
 - Hyprland gives the pointer to a newly shown overlay (slurp) only after the pointer moves; `pick-region.sh` moves the cursor onto itself to hand it over.
 - Commands run by quickshell get an open stdin pipe: give tools that read stdin when it isn't a terminal (slurp) `</dev/null`.
+- If quickshell dies while locked, Hyprland keeps the session locked (with a warning screen). Get back in from a TTY (`Ctrl + Alt + F2`, log in): `hyprctl --instance 0 eval 'hl.config({ misc = { allow_session_lock_restore = true } })'`, then `WAYLAND_DISPLAY=wayland-1 qs -n -d` and `WAYLAND_DISPLAY=wayland-1 qs ipc call lock lock`; back on the Hyprland TTY, unlock with the password.
 - No optional calls (`fn?.()`): Qt 6.11's QML compiler segfaults on them and quickshell dies on load. Use `if (fn) fn()`.

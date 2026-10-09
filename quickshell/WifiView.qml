@@ -5,8 +5,7 @@ import "icons.js" as Icons
 
 // Wifi on/off and the networks in range. Click a network for its actions:
 // connect (asking for the password when needed), disconnect, forget.
-// Shown when the bar's status card expands on the wifi icon, and in the
-// wifi panel ("> wifi").
+// Shown when the bar's status card expands on the wifi icon (or "> wifi").
 Column {
     id: root
 

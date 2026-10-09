@@ -34,11 +34,6 @@ Singleton {
             run: () => Popups.open("media"),
         },
         {
-            name: "system",
-            description: "CPU, memory, GPU, disk and processes",
-            run: () => Popups.open("system"),
-        },
-        {
             name: "clipboard",
             description: "Clipboard history",
             run: () => Popups.open("clipboard"),

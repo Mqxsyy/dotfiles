@@ -23,7 +23,6 @@ ShellRoot {
     AudioPanel {}
     MediaPanel {}
     PowerMenu {}
-    SystemPanel {}
     ClipboardPanel {}
     CapturePanel {
         name: "screenshot"

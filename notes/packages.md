@@ -4,35 +4,44 @@ manually from gh:
 
 pacman/yay:
 - `hyprland`
-- `networkmanager` (`$ nmtui`)
+- `quickshell` (bar, launcher, notifications, panels)
+- `awww-git` (wallpaper)
+- `matugen-bin` (colors from the wallpaper)
+- `networkmanager` (wifi panel)
+- `pipewire`
+- `wireplumber`
+- `pipewire-pulse`
+- `upower` (battery)
+- `brightnessctl`
+- `playerctl` (media keys)
+- `wl-clipboard` (clipboard history)
+- `grim` (screenshots)
+- `slurp` (region picking)
+- `wf-recorder` (screen recording)
+- `hyprpicker` (color picker)
+- `lm_sensors` (temperatures in the system tab)
+- `jq`
+- `libnotify`
+- `xdg-utils`
 - `git`
 - `sddm`
 - `nautilus`
 - `npm`
 - `flatpak`
-- `wlclipboard`
 - `obs-studio-git` -> requires: `xdg-desktop-portal-hyprland`
-- `matugen-bin`
-- `mpvpaper`
-- `waybar`
 - `kitty`
 - `zsh`
 - `starship`
 - `zoxide`
 - `fzf`
-- `nvim`
+- `neovim`
 - `nvtop`
 - `btop`
 - `zen-browser-bin`
-- `pipewire`
-- `wireplumber`
-- `pipewire-pulse`
-- `rofi`
-- `grim`
-- `grimblast`
-- `slurp`
+- `obsidian`
+- `wayscriber`
 - `keepassxc`
-- `nvidia`
+- `nvidia-open`
 - `nvidia-utils`
 - `lib32-nvidia-utils`
 - `libva-nvidia-driver`
@@ -53,14 +62,15 @@ pacman/yay:
 - `unzip`
 - `xdg-desktop-portal-gtk` -> required by vinegar
 - `tmux`
-- `l5p-keyboard-rgb`
+- `l5p-keyboard-rgb-bin`
 - `wine`
 - `winetricks`
-- `bottles`
 
 Flatpak:
 - vinegar
 - sober
+- easyeffects
+- hytale launcher
 
 *create proper install script*
 *create symlink script*

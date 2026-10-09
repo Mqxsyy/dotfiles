@@ -23,7 +23,6 @@ All windows are `ShellWindow`s (`ShellWindow.qml`): transparent, over other wind
 `Popup.qml` windows: open one at a time through `Popups.qml` (`qs ipc call popup toggle <name>`), close with Esc or a click outside.
 
 - `WifiPanel.qml` (`wifi`), `AudioPanel.qml` (`audio`), `MediaPanel.qml` (`media`) — the bar's `WifiView` / `AudioView` / `MediaView` as panels, for `> wifi`, `> audio`, `> media`.
-- `SystemPanel.qml` (`system`) — `> system`: CPU / memory / GPU / disk, network speed, battery draw, busiest processes (click twice to end one). Measured only while open.
 - `ClipboardPanel.qml` (`clipboard`) — `SUPER + SHIFT + V` or `> clipboard`: history, filter, Enter to copy back.
 - `CapturePanel.qml` (`screenshot`, `record`) — made twice: `> screenshot` (region / screen) and `> record` (region / screen, sound, Stop). While recording, `RecordingCard.qml` shows the time; click it to stop.
 - `PowerMenu.qml` (`power`) — log out / suspend / restart / shut down, card at the right. Every action needs a second, confirming click.

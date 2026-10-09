@@ -4,8 +4,7 @@ import "icons.js" as Icons
 
 // CPU, memory, GPU and disk tiles, network speed, battery, and the busiest
 // processes (System.qml). Click a process twice to end it (the first click
-// only arms it). In the dashboard's System tab, and the system panel
-// ("> system").
+// only arms it). The dashboard's System tab.
 Column {
     id: root
 

@@ -12,9 +12,16 @@ import QtQuick
 //   lock():    fade in, then lock the session
 //   submit():  check `password`; right, and it unlocks and fades out
 //   suspend(): lock, then suspend (the power menu's Suspend)
-// The password is checked by PAM with pam/lock (just the user's password).
+// The password is checked like logging in (PAM's "login": the password,
+// and too many wrong tries lock the account for a while).
 // Also locks after Settings.lockAfter idle minutes (0 = never).
 //   qs ipc call lock lock
+//
+// At boot it is the login screen: greetd logs in and starts Hyprland
+// already locked (greetd/config.toml); Hyprland's --locked-cmd,
+// scripts/start-locked.sh, leaves `startLockedFlag` for the shell to put
+// its lock screen up as soon as it starts. If it never does, Hyprland
+// stays locked.
 Singleton {
     id: root
 
@@ -27,6 +34,11 @@ Singleton {
     property string error: "" // why the last try failed
     readonly property bool checking: pam.active
     property int fadeDuration: 500
+    // Locked from the start (boot): nothing has faded the lock screen in
+    // over the desktop, so it fades in from black (LockSurface.qml).
+    property bool fromBlack: false
+
+    readonly property string startLockedFlag: Quickshell.env("XDG_RUNTIME_DIR") + "/quickshell-start-locked"
 
     // A wrong password (the field shakes).
     signal failed()
@@ -38,6 +50,16 @@ Singleton {
         error = "";
         kept.shown = true;
         lockDelay.restart();
+    }
+
+    // Lock at once, without the fade over the desktop: Hyprland has kept
+    // the session locked since it started.
+    function startLocked() {
+        password = "";
+        error = "";
+        fromBlack = true;
+        kept.shown = true;
+        kept.locked = true;
     }
 
     function submit() {
@@ -66,11 +88,34 @@ Singleton {
         }
     }
 
+    // Taken (removed) on the shell's first start after boot; a reload or a
+    // later start finds nothing.
+    Process {
+        running: true
+        command: ["rm", root.startLockedFlag]
+        onExited: exitCode => {
+            if (exitCode === 0)
+                root.startLocked();
+        }
+    }
+
     PamContext {
         id: pam
 
-        configDirectory: Quickshell.shellDir + "/pam"
-        config: "lock"
+        config: "login"
+
+        // Why it refuses, when it says (e.g. locked after too many tries).
+        property string refusal: ""
+
+        onActiveChanged: {
+            if (active)
+                refusal = "";
+        }
+
+        onPamMessage: {
+            if (messageIsError)
+                refusal = message.trim();
+        }
 
         onResponseRequiredChanged: {
             if (responseRequired)
@@ -80,11 +125,12 @@ Singleton {
         onCompleted: result => {
             root.password = "";
             if (result === PamResult.Success) {
+                root.fromBlack = false;
                 kept.locked = false;
                 kept.shown = false;
                 return;
             }
-            root.error = result === PamResult.MaxTries ? "Too many tries" : "Wrong password";
+            root.error = refusal || "Wrong password";
             root.failed();
         }
 

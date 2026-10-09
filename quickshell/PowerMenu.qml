@@ -12,7 +12,7 @@ Popup {
     // To add one: what it's called, its glyph, what it does.
     readonly property var actions: [
         { text: "Lock", glyph: Icons.lock, run: () => Lock.lock() },
-        { text: "Log out", glyph: Icons.logout, run: () => Quickshell.execDetached(["hyprctl", "dispatch", "exit"]) },
+        { text: "Log out", glyph: Icons.logout, run: () => Quickshell.execDetached(["hyprctl", "dispatch", "hl.dsp.exit()"]) },
         { text: "Suspend", glyph: Icons.suspend, run: () => Lock.suspend() }, // locked on wake
         { text: "Restart", glyph: Icons.restart, run: () => Quickshell.execDetached(["systemctl", "reboot"]) },
         { text: "Shut down", glyph: Icons.power, run: () => Quickshell.execDetached(["systemctl", "poweroff"]) },

@@ -22,7 +22,7 @@ pacman/yay:
 - `libnotify`
 - `xdg-utils`
 - `git`
-- `sddm`
+- `greetd` (login screen, see guides/greeter.md)
 - `nautilus`
 - `npm`
 - `flatpak`

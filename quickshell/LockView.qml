@@ -6,11 +6,36 @@ import "icons.js" as Icons
 // What the lock screen shows: the wallpaper, blurred and dimmed, with the
 // time, the date and the password as dots. Drawn by LockCover.qml (fading
 // over the desktop) and LockSurface.qml (the locked session), so the two
-// line up exactly.
+// line up exactly, and by greeter.qml (the login screen).
+//
+// Typing goes straight into the password (no text box to click) while it
+// has focus; Enter checks it, Escape clears it. `auth` is what checks it:
+// Lock.qml, or the greeter's login. It has:
+//   password, error (rw), checking (ro), submit(), signal failed()
 Item {
     id: root
 
     property real reveal: 1 // 0 = not there, 1 = fully shown
+    required property var auth
+    // The wallpaper has loaded (LockSurface.qml waits for it at boot).
+    readonly property bool ready: small.status === Image.Ready
+
+    Keys.onPressed: event => type(event)
+
+    function type(event) {
+        event.accepted = true;
+        if (auth.checking)
+            return;
+        auth.error = "";
+        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
+            auth.submit();
+        else if (event.key === Qt.Key_Escape)
+            auth.password = "";
+        else if (event.key === Qt.Key_Backspace)
+            auth.password = event.modifiers & Qt.ControlModifier ? "" : auth.password.slice(0, -1);
+        else if (event.text.length === 1 && event.text >= " " && event.text !== "\x7f") // printable
+            auth.password += event.text;
+    }
 
     // Blurred: a small copy is cheap to blur and smooth when stretched.
     // Zooms in a little as it fades in, which also keeps the blur's soft
@@ -19,20 +44,37 @@ Item {
     // so with the image cache it's decoded once, in the background, and
     // every screen's cover and lock surface reuse it. Decoding a wallpaper
     // takes ~100 ms, which would freeze the fade.
+    // A new wallpaper loads in `next` first and only then replaces the one
+    // shown (straight from the cache), so it never goes blank in between.
     Item {
         anchors.fill: parent
         opacity: root.reveal
         scale: 1 + 0.08 * root.reveal
 
-        Image {
-            id: small
-
+        component SmallWallpaper: Image {
             anchors.fill: parent
             visible: false
-            source: Wallpaper.current ? "file://" + Wallpaper.current : ""
             fillMode: Image.PreserveAspectCrop
             sourceSize: Qt.size(160, 160) // the smaller side; the other keeps the image's shape
             asynchronous: true
+        }
+
+        SmallWallpaper {
+            id: next
+
+            source: Wallpaper.current ? "file://" + Wallpaper.current : ""
+            onStatusChanged: {
+                if (status === Image.Ready)
+                    small.source = source;
+            }
+            Component.onCompleted: {
+                if (status === Image.Ready)
+                    small.source = source;
+            }
+        }
+
+        SmallWallpaper {
+            id: small
         }
 
         MultiEffect {
@@ -87,14 +129,15 @@ Item {
 
         PasswordField {
             anchors.horizontalCenter: parent.horizontalCenter
+            auth: root.auth
         }
 
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             topPadding: 10
-            text: Lock.error
+            text: root.auth.error
             color: Theme.error
-            opacity: Lock.error ? 1 : 0
+            opacity: root.auth.error ? 1 : 0
             font.pixelSize: Theme.fontSmall
 
             Behavior on opacity {
@@ -107,6 +150,7 @@ Item {
     component PasswordField: Rectangle {
         id: field
 
+        required property var auth
         readonly property int dotSize: 8
         readonly property int dotGap: 6
         readonly property int step: dotSize + dotGap
@@ -116,9 +160,9 @@ Item {
         // One entry per character. Typing adds or removes only the last
         // one, so the other dots don't redraw.
         function sync() {
-            while (dots.count < Lock.password.length)
+            while (dots.count < field.auth.password.length)
                 dots.append({});
-            while (dots.count > Lock.password.length)
+            while (dots.count > field.auth.password.length)
                 dots.remove(dots.count - 1);
         }
 
@@ -126,7 +170,7 @@ Item {
         height: 46
         radius: Math.min(Theme.radius, height / 2)
         color: Theme.surface
-        border.color: Lock.checking ? Theme.accent : Theme.border
+        border.color: field.auth.checking ? Theme.accent : Theme.border
         border.width: 1
 
         Behavior on border.color {
@@ -147,7 +191,7 @@ Item {
         }
 
         Connections {
-            target: Lock
+            target: field.auth
 
             function onFailed() {
                 shake.restart();
@@ -175,14 +219,14 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             x: 16
             text: Icons.lock
-            color: Lock.checking ? Theme.accent : Theme.textSecondary
+            color: field.auth.checking ? Theme.accent : Theme.textSecondary
             font.family: Theme.iconFont
             font.pixelSize: 16
         }
 
         Text {
             anchors.centerIn: parent
-            opacity: Lock.password === "" ? 1 : 0
+            opacity: field.auth.password === "" ? 1 : 0
             text: "Password"
             color: Theme.textSecondary
             font.pixelSize: Theme.fontSmall
@@ -224,7 +268,7 @@ Item {
                         width: field.dotSize
                         height: field.dotSize
                         radius: field.dotSize / 2
-                        color: Lock.checking ? Theme.accent : Theme.textPrimary
+                        color: field.auth.checking ? Theme.accent : Theme.textPrimary
                         opacity: row.overflowing ? Math.min(1, Math.max(0, (row.x + x) / field.fadeWidth)) : 1
 
                         NumberAnimation on scale {

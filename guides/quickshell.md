@@ -18,6 +18,7 @@ All windows are `ShellWindow`s (`ShellWindow.qml`): transparent, over other wind
 - `Toasts.qml` — notification toasts, top-right, pushed under the bar while it shows (`BarLayout.qml`). Draws what `Notifications.qml` holds.
 - `Osd.qml` — volume / brightness card sliding in at the right on change.
 - `LockScreen.qml` — the lock screen (`WlSessionLock`), a `LockSurface.qml` per screen showing `LockView.qml`: blurred wallpaper, clock, date, password dots. Just type; Enter checks, Esc clears. `LockCover.qml` (overlay layer) fades the same view in over the desktop before the session locks and out after it unlocks, since Hyprland switches instantly. `SUPER + Escape`, `> lock`, power menu, `qs ipc call lock lock`, or after the idle minutes set on the settings page (Lock).
+- `greeter.qml` — the login screen, a separate entry run by greetd (not part of `shell.qml`); see `guides/greeter.md`.
 - `Background.qml` — the wallpaper, on the background layer of each screen (`WallpaperView.qml`: a new one grows in from the center or swipes in from the top-right corner, picked in settings).
 
 ### Panels
@@ -36,7 +37,7 @@ All windows are `ShellWindow`s (`ShellWindow.qml`): transparent, over other wind
 - `Settings.qml` — user settings, saved to `~/.local/state/quickshell/settings.json`. Color settings are also read by `quickshell/scripts/generate-colors.sh`; changing one regenerates the colors.
 - `Notifications.qml` — notification server (notify-send etc.), Claude toasts (`qs ipc call claude notify "<title>" "<body>"`), do not disturb, and the history (`~/.local/state/quickshell/notifications.json`, also what came in during do not disturb).
 - `NightLight.qml` — warmer colors through a Hyprland screen shader written to `~/.local/state/quickshell/night-light-<kelvin>.frag`; Quick settings tile, `> night`, `qs ipc call nightlight toggle`, warmth and on/off hours on the settings page. Screenshots get the tint too.
-- `Lock.qml` — lock state, kept across config reloads (`PersistentProperties`) so saving a file doesn't unlock; checks the password with PAM using `quickshell/pam/lock` (`pam_unix`, the user's password only); idle lock (`IdleMonitor`, `Settings.lockAfter` minutes, 0 = never).
+- `Lock.qml` — lock state, kept across config reloads (`PersistentProperties`) so saving a file doesn't unlock; checks the password with PAM `login`, like logging in (lockout after wrong tries); at boot it's the login screen (`guides/greeter.md`); idle lock (`IdleMonitor`, `Settings.lockAfter` minutes, 0 = never).
 - `Audio.qml` (Pipewire), `Brightness.qml` (brightnessctl, `qs ipc call brightness up|down`), `Battery.qml` (UPower, low battery toasts at 15% / 5%), `Network.qml` (NetworkManager), `Media.qml` (MPRIS player to show; media keys via `qs ipc call media playPause|next|previous`).
 - `Wallpaper.qml` — current wallpaper (the path in `~/.local/state/quickshell/wallpaper`) and the picker's image list; runs `quickshell/scripts/set-wallpaper.sh` (writes that path + new colors), `quickshell/scripts/randomize-wallpaper.sh` (random one, `> shuffle`) and `quickshell/scripts/generate-colors.sh` (new colors from the current wallpaper).
 - `System.qml` — stats from `top`, `sensors`, `nvidia-smi`, `df`, `/proc/net/dev`.

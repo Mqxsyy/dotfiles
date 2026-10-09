@@ -35,5 +35,6 @@ PanelWindow {
     LockView {
         anchors.fill: parent
         reveal: root.reveal
+        auth: Lock
     }
 }

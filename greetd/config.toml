@@ -1,0 +1,21 @@
+# greetd: the login screen. Installed as /etc/greetd/config.toml
+# (see guides/greeter.md).
+#
+# At boot: logs in and starts Hyprland already locked (--locked-cmd), and
+# the shell's lock screen is the login screen (quickshell/Lock.qml). One
+# Hyprland from boot to desktop, so nothing flickers in between. Hyprland
+# stays locked even if the shell never starts.
+#
+# After logging out: a small Hyprland (hypr/greeter.lua) with the
+# quickshell greeter (quickshell/greeter.qml).
+
+[terminal]
+vt = 1
+
+[initial_session]
+command = "start-hyprland -- --locked-cmd /home/mqx/dotfiles/quickshell/scripts/start-locked.sh"
+user = "mqx"
+
+[default_session]
+command = "start-hyprland -- -c /home/mqx/dotfiles/hypr/greeter.lua"
+user = "greeter"

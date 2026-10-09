@@ -43,6 +43,11 @@ Popup {
         { value: "value", text: "Brightest" },
     ]
 
+    // "07:00"
+    function hour(value) {
+        return String(value).padStart(2, "0") + ":00";
+    }
+
     name: "settings"
     surface: card
 
@@ -110,6 +115,61 @@ Popup {
                 options: root.wallpaperTransitions
                 value: Settings.wallpaperTransition
                 onPicked: value => Settings.set("wallpaperTransition", value)
+            }
+
+            SectionTitle {
+                text: "Night light"
+            }
+
+            SettingToggle {
+                width: parent.width
+                label: "Night light"
+                description: "Warmer colors, easier on the eyes at night"
+                checked: Settings.nightLight
+                onToggled: checked => Settings.set("nightLight", checked)
+            }
+
+            SettingSlider {
+                width: parent.width
+                label: "Warmth"
+                valueText: Settings.nightLightTemperature + "K"
+                from: 6000
+                to: 2500
+                stepSize: 100
+                value: Settings.nightLightTemperature
+                onMoved: value => Settings.set("nightLightTemperature", value)
+            }
+
+            SettingToggle {
+                width: parent.width
+                label: "Automatic"
+                description: `On from ${root.hour(Settings.nightLightFrom)} to ${root.hour(Settings.nightLightTo)}`
+                checked: Settings.nightLightAuto
+                onToggled: checked => Settings.set("nightLightAuto", checked)
+            }
+
+            SettingSlider {
+                width: parent.width
+                visible: Settings.nightLightAuto
+                label: "Turns on"
+                valueText: root.hour(Settings.nightLightFrom)
+                from: 0
+                to: 23
+                stepSize: 1
+                value: Settings.nightLightFrom
+                onMoved: value => Settings.set("nightLightFrom", value)
+            }
+
+            SettingSlider {
+                width: parent.width
+                visible: Settings.nightLightAuto
+                label: "Turns off"
+                valueText: root.hour(Settings.nightLightTo)
+                from: 0
+                to: 23
+                stepSize: 1
+                value: Settings.nightLightTo
+                onMoved: value => Settings.set("nightLightTo", value)
             }
 
             SectionTitle {

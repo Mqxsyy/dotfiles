@@ -47,6 +47,13 @@ Column {
             toggle: () => Audio.toggleNodeMute(Audio.source),
         },
         {
+            text: "Night light",
+            detail: NightLight.on ? NightLight.temperature + "K" : "Off",
+            glyph: Icons.nightLight,
+            on: NightLight.on,
+            toggle: () => NightLight.toggle(),
+        },
+        {
             text: "Dark mode",
             detail: Settings.mode === "dark" ? "On" : "Off",
             glyph: Settings.mode === "dark" ? Icons.moon : Icons.sun,
@@ -178,9 +185,9 @@ Column {
                 width: parent.width
                 title: "Quick settings"
 
-                Grid {
+                // Two per row; an odd one out at the end takes the whole row.
+                Flow {
                     width: parent.width
-                    columns: 2
                     spacing: 8
 
                     Repeater {
@@ -188,7 +195,10 @@ Column {
 
                         ToggleTile {
                             required property var modelData
-                            width: (parent.width - parent.spacing) / 2
+                            required property int index
+                            readonly property bool alone: index === root.toggles.length - 1 && index % 2 === 0
+
+                            width: alone ? parent.width : (parent.width - parent.spacing) / 2
                             entry: modelData
                         }
                     }

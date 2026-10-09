@@ -83,6 +83,7 @@ Singleton {
             body: "No recording in progress",
             glyph: Icons.record,
             timeout: 2500,
+            history: false,
         });
     }
 

@@ -25,6 +25,7 @@ ShellRoot {
     MediaPanel {}
     PowerMenu {}
     ClipboardPanel {}
+    NotificationsPanel {}
     CapturePanel {
         name: "screenshot"
     }

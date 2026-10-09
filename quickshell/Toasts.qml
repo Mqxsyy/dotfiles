@@ -71,7 +71,7 @@ ShellWindow {
         delegate: Card {
             id: card
 
-            required property int key
+            required property string key
             required property string title
             required property string body
             required property string glyph
@@ -103,7 +103,7 @@ ShellWindow {
                 to: 0
                 duration: card.timeout
                 paused: running && hover.hovered
-                onFinished: Notifications.close(card.key, false)
+                onFinished: Notifications.close(card.key)
             }
 
             SequentialAnimation {

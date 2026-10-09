@@ -16,6 +16,8 @@ import "units.js" as Units
 // shows the result as the first row; Enter copies it. Starting with ">" lists
 // the commands from Commands.qml instead ("> wallpaper"). Launching an app,
 // running a command or Ctrl+Backspace clears the query.
+// Apps you launch often and recently rank higher (`launches`, saved to
+// ~/.local/state/quickshell/launcher.json); with nothing typed they're on top.
 ShellWindow {
     id: root
 
@@ -32,6 +34,10 @@ ShellWindow {
         keywords: 0.5,
         id: 0.5,
     })
+
+    // How quickly old launches stop counting: a launch this many days ago
+    // counts half.
+    property real halfLife: 14
 
     readonly property var apps: Array.from(DesktopEntries.applications.values)
         .filter(app => !app.noDisplay)
@@ -53,7 +59,7 @@ ShellWindow {
         if (calculation !== null)
             rows.push(calculation);
 
-        for (const app of Fuzzy.rank(query, apps, searchFields))
+        for (const app of Fuzzy.rank(query, apps, searchFields, usage))
             rows.push({
                 kind: "app",
                 title: app.name,
@@ -64,6 +70,24 @@ ShellWindow {
             });
 
         return rows;
+    }
+
+    // How much to lift an app for having been launched: grows with launches,
+    // older ones counting less, and slowly (log) so a typed match still wins.
+    function usage(app) {
+        const entry = history.launches[app.id];
+        if (!entry)
+            return 0;
+        const days = (Date.now() - entry.last) / 86400000;
+        const weight = entry.count * Math.pow(0.5, days / halfLife);
+        return 6 * Math.log2(1 + weight);
+    }
+
+    function recordLaunch(app) {
+        const launches = Object.assign({}, history.launches);
+        const entry = launches[app.id] ?? { count: 0, last: 0 };
+        launches[app.id] = { count: entry.count + 1, last: Date.now() };
+        history.launches = launches;
     }
 
     // The calculator row for a query, or null when the query isn't math.
@@ -128,6 +152,7 @@ ShellWindow {
             input.clear();
         } else {
             row.app.execute();
+            recordLaunch(row.app);
             input.clear();
         }
         close();
@@ -160,6 +185,22 @@ ShellWindow {
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+
+    FileView {
+        path: Quickshell.env("HOME") + "/.local/state/quickshell/launcher.json"
+        blockLoading: true
+        onAdapterUpdated: writeAdapter()
+        onLoadFailed: error => {
+            if (error === FileViewError.FileNotFound)
+                writeAdapter();
+        }
+
+        JsonAdapter {
+            id: history
+            // App id -> { count, last (ms) }.
+            property var launches: ({})
+        }
+    }
 
     IpcHandler {
         target: "launcher"

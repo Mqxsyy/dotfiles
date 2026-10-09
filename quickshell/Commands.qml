@@ -64,9 +64,19 @@ Singleton {
             run: () => Notifications.dnd = !Notifications.dnd,
         },
         {
+            name: "notifications",
+            description: "Notification history",
+            run: () => Popups.open("notifications"),
+        },
+        {
             name: "clear",
-            description: "Dismiss all notifications",
-            run: () => Notifications.clear(),
+            description: "Clear all notifications",
+            run: () => Notifications.clearHistory(),
+        },
+        {
+            name: "night",
+            description: "Toggle night light",
+            run: () => NightLight.toggle(),
         },
         {
             name: "wifi",

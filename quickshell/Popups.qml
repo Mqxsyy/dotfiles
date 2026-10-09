@@ -5,7 +5,7 @@ import Quickshell.Io
 import QtQuick
 
 // Which panel is open: "wifi", "audio", "media", "power", "wallpapers",
-// "settings", or "" for none. Only one is open at a time.
+// "settings", "notifications", ... or "" for none. Only one is open at a time.
 //   qs ipc call popup toggle wifi
 Singleton {
     id: root

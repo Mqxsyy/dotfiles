@@ -12,11 +12,12 @@ import "icons.js" as Icons
 // hovered:
 //   top-left:  now playing card (only while there is a player)  -> MediaView
 //   center:    clock card                                         -> DashboardView
-//   top-right: status card: do not disturb, wifi, volume, brightness,
-//              battery, power. Hover wifi -> WifiView, volume -> AudioView,
-//              brightness -> BrightnessView; scroll volume or brightness to
-//              change it, click volume to mute; click power for the power
-//              menu
+//   top-right: status card: notifications, wifi, volume, brightness,
+//              battery, power. Hover the bell -> NotificationsView, wifi ->
+//              WifiView, volume -> AudioView, brightness -> BrightnessView;
+//              click the bell for do not disturb, scroll volume or
+//              brightness to change it, click volume to mute; click power
+//              for the power menu
 // While recording, RecordingCard.qml shows the time under the clock.
 // The bar stays while the pointer is on it, a part is expanded, a button is
 // held (dragging a slider) or a password is being typed. Panels it opens
@@ -52,9 +53,9 @@ ShellWindow {
 
     readonly property MprisPlayer player: Media.player
 
-    // The part the pointer is on: "media", "dashboard", "wifi", "audio",
-    // "brightness" or "".
-    readonly property var statusParts: ["wifi", "audio", "brightness"]
+    // The part the pointer is on: "media", "dashboard", "notifications",
+    // "wifi", "audio", "brightness" or "".
+    readonly property var statusParts: ["notifications", "wifi", "audio", "brightness"]
     readonly property string hoverTarget: {
         if (mediaHover.hovered)
             return "media";
@@ -84,7 +85,7 @@ ShellWindow {
     readonly property bool revealed: hover.hovered || hideTimer.running || (expanded !== "" && expanded !== "media") || busy
 
     // The hovered status item, if it has a hint to show.
-    readonly property BarButton hinted: [dnd, battery, power].find(item => item.visible && item.hovered && item.hint) ?? null
+    readonly property BarButton hinted: [battery, power].find(item => item.visible && item.hovered && item.hint) ?? null
 
     // Bottom of the status card on screen, for toasts to sit under.
     readonly property real rightBottom: Math.max(0, statusIsland.y + statusIsland.height)
@@ -421,12 +422,23 @@ ShellWindow {
                 spacing: 6
 
                 BarButton {
-                    id: dnd
-                    visible: Notifications.dnd
-                    icon: Icons.bellOff
-                    iconColor: Theme.accent
-                    hint: "Do not disturb · click to turn off"
-                    onClicked: Notifications.dnd = false
+                    id: bell
+                    icon: Notifications.dnd ? Icons.bellOff : Icons.bell
+                    iconColor: Notifications.dnd ? Theme.accent : Theme.textPrimary
+                    color: root.expanded === "notifications" || hovered ? Theme.highlight : "transparent"
+                    onHoveredChanged: if (hovered) root.statusPick = "notifications"
+                    onClicked: Notifications.dnd = !Notifications.dnd
+
+                    // New since the history was last looked at.
+                    Rectangle {
+                        x: parent.width - width - 5
+                        y: 5
+                        width: 7
+                        height: 7
+                        radius: 4
+                        visible: Notifications.unread > 0
+                        color: Theme.accent
+                    }
                 }
 
                 BarButton {
@@ -492,12 +504,19 @@ ShellWindow {
                 x: Theme.padding
                 y: root.cardHeight + 4
                 width: root.statusWidth - Theme.padding * 2
-                height: ({ wifi: wifiView, audio: audioView, brightness: brightnessView })[root.statusShown].implicitHeight
+                height: ({ notifications: notificationsView, wifi: wifiView, audio: audioView, brightness: brightnessView })[root.statusShown].implicitHeight
                 visible: opacity > 0
                 opacity: statusIsland.open ? 1 : 0
 
                 Behavior on opacity {
                     NumberAnimation { duration: Theme.expandDuration }
+                }
+
+                NotificationsView {
+                    id: notificationsView
+                    width: parent.width
+                    visible: root.statusShown === "notifications"
+                    active: root.expanded === "notifications"
                 }
 
                 WifiView {

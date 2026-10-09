@@ -18,6 +18,11 @@ Singleton {
     readonly property int radius: values.radius
     readonly property real surfaceOpacity: values.surfaceOpacity
     readonly property string wallpaperTransition: values.wallpaperTransition
+    readonly property bool nightLight: values.nightLight
+    readonly property int nightLightTemperature: values.nightLightTemperature
+    readonly property bool nightLightAuto: values.nightLightAuto
+    readonly property int nightLightFrom: values.nightLightFrom
+    readonly property int nightLightTo: values.nightLightTo
     readonly property bool glass: values.glass
     readonly property string scheme: values.scheme
     readonly property string mode: values.mode
@@ -50,6 +55,11 @@ Singleton {
             property real surfaceOpacity: 1
             property bool glass: false                  // blur what's behind see-through surfaces
             property string wallpaperTransition: "grow" // "grow" or "swipe" (WallpaperView.qml)
+            property bool nightLight: false             // NightLight.qml
+            property int nightLightTemperature: 4000    // kelvin, lower is warmer
+            property bool nightLightAuto: false         // on from nightLightFrom to nightLightTo
+            property int nightLightFrom: 20             // hour
+            property int nightLightTo: 7                // hour
             property string scheme: "scheme-tonal-spot" // matugen --type
             property string mode: "dark"                // matugen --mode
             property real contrast: 0                   // matugen --contrast, -1..1

@@ -3,6 +3,7 @@ import Quickshell.Widgets
 import QtQuick
 import "icons.js" as Icons
 import "fuzzy.js" as Fuzzy
+import "format.js" as Format
 
 // Clipboard history (Clipboard.qml), newest first. Type to filter, Enter or
 // click to copy an entry again and close; then paste as usual.
@@ -22,18 +23,6 @@ Popup {
             return true;
         return entry.kind === "text" && Fuzzy.score(search.text, entry.text) !== null;
     })
-
-    // Time since a copy: "now", "5m", "3h", "2d".
-    function age(time) {
-        const minutes = Math.floor((Date.now() - time) / 60000);
-        if (minutes < 1)
-            return "now";
-        if (minutes < 60)
-            return `${minutes}m`;
-        if (minutes < 1440)
-            return `${Math.floor(minutes / 60)}h`;
-        return `${Math.floor(minutes / 1440)}d`;
-    }
 
     function copy(index) {
         if (index < 0 || index >= matches.length)
@@ -185,7 +174,7 @@ Popup {
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
-                    text: root.age(entry.modelData.time)
+                    text: Format.age(entry.modelData.time)
                     color: Theme.textSecondary
                     font.pixelSize: Theme.fontSmall - 2
                 }

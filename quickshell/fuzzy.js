@@ -79,9 +79,18 @@ function asText(value) {
 // Sort `items` by best match. `fields` maps an item property to how much a hit
 // in that property counts, e.g. { name: 1, keywords: 0.5 }. Items that match
 // in no field are dropped; equal scores keep their original order.
-function rank(query, items, fields) {
-    if (query.trim().length === 0)
-        return items;
+// `boost(item)`, if given, is added to every score (often used apps first);
+// with an empty query, items are sorted by it alone.
+function rank(query, items, fields, boost) {
+    const extra = boost ?? (() => 0);
+    if (query.trim().length === 0) {
+        if (!boost)
+            return items;
+        return items
+            .map((item, index) => ({ item: item, score: extra(item), index: index }))
+            .sort((a, b) => b.score - a.score || a.index - b.index)
+            .map(entry => entry.item);
+    }
 
     const scored = [];
     for (let index = 0; index < items.length; index++) {
@@ -93,7 +102,7 @@ function rank(query, items, fields) {
                 best = s * fields[key];
         }
         if (best !== null)
-            scored.push({ item: item, score: best, index: index });
+            scored.push({ item: item, score: best + extra(item), index: index });
     }
     scored.sort((a, b) => b.score - a.score || a.index - b.index);
     return scored.map(entry => entry.item);

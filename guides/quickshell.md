@@ -13,7 +13,7 @@ Config lives in `quickshell/` (symlinked to `~/.config/quickshell`); the shell s
 All windows are `ShellWindow`s (`ShellWindow.qml`): transparent, over other windows, and named `qs-<name>` — or `qs-blur-<name>` with Glass on, which the `quickshell-glass` layer rule in `hypr/hyprland.lua` blurs.
 
 - `Bar.qml` — slides down on each screen when the pointer reaches the top center, and stays until the pointer leaves the bar. Three parts grow into panels while hovered: the now-playing card top-left (`MediaView`), the clock card top-center (`DashboardView`: Overview tab with calendar, quick toggles, shortcuts; System tab with `SystemView`), and the status card top-right (hover wifi → `WifiView`, volume → `AudioView`, brightness → `BrightnessView`; click power → power menu). Stays while hovered, expanded, dragging or typing a password. A media key opens just the now-playing card for a moment.
-- `Launcher.qml` — app launcher + calculator, `qs ipc call launcher toggle` (`SUPER + R`). Search in `fuzzy.js`, math in `calc.js`, units in `units.js`. `>` lists commands from `Commands.qml`.
+- `Launcher.qml` — app launcher + calculator, `qs ipc call launcher toggle` (`SUPER + R`). Search in `fuzzy.js`, math in `calc.js`, units in `units.js`. `>` lists commands from `Commands.qml`. Apps launched often and recently rank higher (`~/.local/state/quickshell/launcher.json`).
 - `RecordingCard.qml` — while recording: time, stop hotkey and stop button, fixed at the top center just below the bar (reaching it never reveals the bar), on the overlay layer so it's above fullscreen windows. One per screen.
 - `Toasts.qml` — notification toasts, top-right, pushed under the bar while it shows (`BarLayout.qml`). Draws what `Notifications.qml` holds.
 - `Osd.qml` — volume / brightness card sliding in at the right on change.
@@ -25,6 +25,7 @@ All windows are `ShellWindow`s (`ShellWindow.qml`): transparent, over other wind
 
 - `WifiPanel.qml` (`wifi`), `AudioPanel.qml` (`audio`), `MediaPanel.qml` (`media`) — the bar's `WifiView` / `AudioView` / `MediaView` as panels, for `> wifi`, `> audio`, `> media`.
 - `ClipboardPanel.qml` (`clipboard`) — `SUPER + SHIFT + V` or `> clipboard`: history, filter, Enter to copy back.
+- `NotificationsPanel.qml` (`notifications`) — `SUPER + N` or `> notifications`: `NotificationsView` (history, do not disturb, clear). The bar shows the same view when hovering its bell; click the bell for do not disturb.
 - `CapturePanel.qml` (`screenshot`, `record`) — made twice: `> screenshot` (region / screen) and `> record` (region / screen, sound, Stop). While recording, `RecordingCard.qml` shows the time; click it to stop.
 - `PowerMenu.qml` (`power`) — log out / suspend / restart / shut down, card at the right. Every action needs a second, confirming click.
 - `WallpaperPicker.qml` (`wallpapers`) — `> wallpaper`; thumbnails of a folder, type to filter, click or Enter to set.
@@ -34,7 +35,8 @@ All windows are `ShellWindow`s (`ShellWindow.qml`): transparent, over other wind
 
 - `Theme.qml` — colors, sizes, fonts. Colors from `~/.local/state/quickshell/colors.json` (written by matugen from `matugen/templates/quickshell-colors.json`); roundness and opacity from `Settings`.
 - `Settings.qml` — user settings, saved to `~/.local/state/quickshell/settings.json`. Color settings are also read by `quickshell/scripts/generate-colors.sh`; changing one regenerates the colors.
-- `Notifications.qml` — notification server (notify-send etc.), Claude toasts (`qs ipc call claude notify "<title>" "<body>"`), do not disturb.
+- `Notifications.qml` — notification server (notify-send etc.), Claude toasts (`qs ipc call claude notify "<title>" "<body>"`), do not disturb, and the history (`~/.local/state/quickshell/notifications.json`, also what came in during do not disturb).
+- `NightLight.qml` — warmer colors through a Hyprland screen shader written to `~/.local/state/quickshell/night-light-<kelvin>.frag`; Quick settings tile, `> night`, `qs ipc call nightlight toggle`, warmth and on/off hours on the settings page. Screenshots get the tint too.
 - `Audio.qml` (Pipewire), `Brightness.qml` (brightnessctl, `qs ipc call brightness up|down`), `Battery.qml` (UPower, low battery toasts at 15% / 5%), `Network.qml` (NetworkManager), `Media.qml` (MPRIS player to show; media keys via `qs ipc call media playPause|next|previous`).
 - `Wallpaper.qml` — current wallpaper (the path in `~/.local/state/quickshell/wallpaper`) and the picker's image list; runs `quickshell/scripts/set-wallpaper.sh` (writes that path + new colors), `quickshell/scripts/randomize-wallpaper.sh` (random one, `> shuffle`) and `quickshell/scripts/generate-colors.sh` (new colors from the current wallpaper).
 - `System.qml` — stats from `top`, `sensors`, `nvidia-smi`, `df`, `/proc/net/dev`.

@@ -68,6 +68,7 @@ const bell = "󰂚";
 const bellOff = "󰂛";
 const moon = "󰖔";
 const sun = "󰖨";
+const nightLight = "󰖛";
 const settings = "󰒓";
 const refresh = "󰑐";
 const chevronLeft = "󰅁";

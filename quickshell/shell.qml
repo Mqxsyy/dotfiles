@@ -2,8 +2,14 @@ import Quickshell
 import QtQuick
 
 ShellRoot {
-    // Top bar disabled. Uncomment to re-enable.
-    // Bar {}
+    Variants {
+        model: Quickshell.screens
 
-    ClaudePopup {}
+        Bar {}
+    }
+
+    Launcher {}
+    Toasts {}
+    Osd {}
+    SettingsPage {}
 }

@@ -1,47 +1,14 @@
 import Quickshell
-import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell.Widgets
 import QtQuick
-import QtQuick.Effects
 
-// Stacking toast popups driven over IPC:
-//   qs ipc call claude notify "<title>" "<body>"
-//   qs ipc call claude dismiss
-// A toast with the same title and body as a visible one refreshes it instead of stacking.
-PanelWindow {
+// Stack of toasts in the top-right corner. What's shown lives in
+// Notifications.qml; this only draws it. Click a toast to open/dismiss it.
+ShellWindow {
     id: root
 
-    property int timeout: 6000
-    property int maxToasts: 4
     property int cardWidth: 380
-    property int shadowPad: 24
-
-    readonly property color surface: "#e61c1b22"
-    readonly property color border: "#2effffff"
-    readonly property color textPrimary: "#f2efe9"
-    readonly property color textSecondary: "#a8a39b"
-    readonly property color accent: "#d97757"
-
-    function notify(title, body) {
-        const time = Qt.formatTime(new Date(), "hh:mm");
-
-        for (let i = 0; i < toasts.count; i++) {
-            const t = toasts.get(i);
-            if (t.title === title && t.body === body) {
-                toasts.setProperty(i, "time", time);
-                toasts.setProperty(i, "stamp", t.stamp + 1);
-                return;
-            }
-        }
-
-        toasts.insert(0, { title: title, body: body, time: time, stamp: 0 });
-        while (toasts.count > root.maxToasts)
-            toasts.remove(toasts.count - 1);
-    }
-
-    function dismissAll() {
-        toasts.clear();
-    }
 
     anchors {
         top: true
@@ -53,48 +20,37 @@ PanelWindow {
     }
 
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.namespace: "claude-popup"
-    exclusionMode: ExclusionMode.Ignore
 
     // Linger briefly after the last toast closes so its exit animation can finish.
-    visible: toasts.count > 0 || linger.running
-    color: "transparent"
-    implicitWidth: cardWidth + shadowPad * 2
-    implicitHeight: maxToasts * 110 + shadowPad * 2
+    name: "toasts"
+    shown: Notifications.toasts.count > 0 || linger.running
+    implicitWidth: cardWidth + Theme.shadowPad * 2
+    implicitHeight: Notifications.maxToasts * 110 + Theme.shadowPad * 2
     mask: Region { item: list }
-
-    IpcHandler {
-        target: "claude"
-
-        function notify(title: string, body: string): void {
-            root.notify(title, body);
-        }
-
-        function dismiss(): void {
-            root.dismissAll();
-        }
-    }
 
     Timer {
         id: linger
         interval: 400
     }
 
-    ListModel {
-        id: toasts
-        onCountChanged: if (count === 0) linger.restart()
+    Connections {
+        target: Notifications.toasts
+        function onCountChanged() {
+            if (Notifications.toasts.count === 0)
+                linger.restart();
+        }
     }
 
     ListView {
         id: list
 
-        x: root.shadowPad
-        y: root.shadowPad
+        x: Theme.shadowPad
+        y: Theme.shadowPad
         width: root.cardWidth
         height: contentHeight
         spacing: 10
         interactive: false
-        model: toasts
+        model: Notifications.toasts
 
         add: Transition {
             NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 260; easing.type: Easing.OutCubic }
@@ -110,45 +66,31 @@ PanelWindow {
             NumberAnimation { property: "x"; to: 0; duration: 200 }
         }
 
-        delegate: Rectangle {
+        delegate: Card {
             id: card
 
-            required property int index
+            required property int key
             required property string title
             required property string body
+            required property string glyph
+            required property string icon
+            required property bool critical
+            required property int timeout
             required property string time
             required property int stamp
 
             property real progress: 1
 
-            function close() {
-                countdown.stop();
-                if (index >= 0)
-                    toasts.remove(index);
-            }
-
             width: root.cardWidth
-            height: content.implicitHeight + 36
-            radius: 18
-            color: root.surface
-            border.color: root.border
-            border.width: 1
-
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                shadowEnabled: true
-                shadowColor: "#000000"
-                shadowOpacity: 0.55
-                shadowBlur: 1.0
-                shadowVerticalOffset: 6
-                blurMax: 32
-            }
+            height: content.implicitHeight + Theme.padding * 2 + 4
+            border.color: critical ? Theme.accent : Theme.border
 
             onStampChanged: {
-                countdown.restart();
+                if (timeout > 0)
+                    countdown.restart();
                 bump.restart();
             }
-            Component.onCompleted: countdown.start()
+            Component.onCompleted: if (timeout > 0) countdown.start()
 
             NumberAnimation {
                 id: countdown
@@ -156,9 +98,9 @@ PanelWindow {
                 property: "progress"
                 from: 1
                 to: 0
-                duration: root.timeout
+                duration: card.timeout
                 paused: running && hover.hovered
-                onFinished: card.close()
+                onFinished: Notifications.close(card.key, false)
             }
 
             SequentialAnimation {
@@ -173,38 +115,43 @@ PanelWindow {
             }
 
             TapHandler {
-                onTapped: card.close()
+                onTapped: Notifications.activate(card.key)
             }
 
             Row {
                 id: content
-                x: 16
-                y: 16
-                width: parent.width - 32
+                x: Theme.padding + 4
+                y: Theme.padding
+                width: parent.width - x * 2
                 spacing: 14
 
-                Rectangle {
+                // App icon when there is one, otherwise the glyph.
+                Item {
                     id: badge
-                    width: 40
-                    height: 40
-                    radius: 12
-                    gradient: Gradient {
-                        GradientStop { position: 0; color: Qt.lighter(root.accent, 1.2) }
-                        GradientStop { position: 1; color: Qt.darker(root.accent, 1.25) }
+                    width: Theme.iconSize
+                    height: Theme.iconSize
+
+                    IconImage {
+                        anchors.fill: parent
+                        visible: card.icon !== ""
+                        source: card.icon
+                        asynchronous: true
                     }
 
                     Text {
                         anchors.centerIn: parent
-                        text: "✻"
-                        color: "white"
-                        font.pixelSize: 22
-                        font.bold: true
+                        visible: card.icon === ""
+                        text: card.glyph
+                        color: Theme.accent
+                        font.family: Theme.iconFont
+                        font.pixelSize: Theme.fontLarge + 5
+                        font.weight: Font.DemiBold
                     }
                 }
 
                 Column {
                     width: content.width - badge.width - content.spacing
-                    anchors.verticalCenter: badge.verticalCenter
+                    topPadding: (badge.height - titleText.implicitHeight) / 2 // title lines up with the badge
                     spacing: 3
 
                     Item {
@@ -215,8 +162,8 @@ PanelWindow {
                             id: titleText
                             width: parent.width - timeText.implicitWidth - 8
                             text: card.title
-                            color: root.textPrimary
-                            font.pixelSize: 15
+                            color: Theme.textPrimary
+                            font.pixelSize: Theme.fontNormal
                             font.weight: Font.DemiBold
                             elide: Text.ElideRight
                         }
@@ -226,8 +173,8 @@ PanelWindow {
                             anchors.right: parent.right
                             anchors.verticalCenter: titleText.verticalCenter
                             text: card.time
-                            color: root.textSecondary
-                            font.pixelSize: 12
+                            color: Theme.textSecondary
+                            font.pixelSize: Theme.fontSmall - 1
                         }
                     }
 
@@ -235,8 +182,9 @@ PanelWindow {
                         width: parent.width
                         visible: text.length > 0
                         text: card.body
-                        color: root.textSecondary
-                        font.pixelSize: 13
+                        textFormat: Text.PlainText
+                        color: Theme.textSecondary
+                        font.pixelSize: Theme.fontSmall
                         wrapMode: Text.Wrap
                         maximumLineCount: 4
                         elide: Text.ElideRight
@@ -245,15 +193,17 @@ PanelWindow {
                 }
             }
 
+            // Time left before the toast closes itself; critical toasts stay.
             Rectangle {
+                visible: card.timeout > 0
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
-                anchors.leftMargin: 18
+                anchors.leftMargin: Theme.padding + 4
                 anchors.bottomMargin: 7
                 height: 3
                 radius: 2
-                width: (parent.width - 36) * card.progress
-                color: root.accent
+                width: (parent.width - anchors.leftMargin * 2) * card.progress
+                color: Theme.accent
                 opacity: hover.hovered ? 0.4 : 0.85
                 Behavior on opacity { NumberAnimation { duration: 150 } }
             }

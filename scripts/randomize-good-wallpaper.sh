@@ -1,5 +1,4 @@
 #!/bin/zsh
+# Same as randomize-wallpaper.sh, but only from the hand-picked folder.
 
-wallpaper_path="$(find "$HOME/dotfiles/wallpapers/wallpapers-hand-picked" -type f | sort -R | head -n 1)"
-
-awww img "$wallpaper_path" -t wipe
+exec "$HOME/dotfiles/scripts/randomize-wallpaper.sh" "$HOME/dotfiles/wallpapers/wallpapers-hand-picked"

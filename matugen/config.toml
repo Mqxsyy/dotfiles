@@ -25,3 +25,7 @@ output_path = '~/.config/tmux/colors.tmuxtheme'
 [templates.lualine]
 input_path = './templates/nvim-lualine-colors.lua'
 output_path = '~/.config/nvim/lua/nvim-lualine-colors.lua'
+
+[templates.quickshell]
+input_path = './templates/quickshell-colors.json'
+output_path = '~/.local/state/quickshell/colors.json'

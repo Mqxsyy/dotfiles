@@ -1,5 +1,15 @@
 #!/bin/zsh
+# Pick a random wallpaper, show it, and recolor everything from it
+# (generate-colors.sh; quickshell, kitty, tmux, ...: see matugen/config.toml).
+# Usage: randomize-wallpaper.sh [folder]   (default: all wallpapers)
 
-wallpaper_path="$(find "$HOME/dotfiles/wallpapers/" -type f | sort -R | head -n 1)"
+folder="${1:-$HOME/dotfiles/wallpapers}"
 
-awww img "$wallpaper_path" -t wipe
+wallpaper="$(find "$folder" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) | shuf -n 1)"
+if [[ -z "$wallpaper" ]]; then
+    echo "No wallpapers found in $folder" >&2
+    exit 1
+fi
+
+awww img "$wallpaper" -t wipe
+"$HOME/dotfiles/scripts/generate-colors.sh" "$wallpaper"

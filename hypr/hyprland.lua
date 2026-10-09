@@ -116,7 +116,7 @@ hl.config({
 
 		blur = {
 			enabled = true,
-			size = 3,
+			size = 4,
 			passes = 2,
 			vibrancy = 0.2,
 		},
@@ -193,7 +193,7 @@ local mainMod = "SUPER"
 
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd("kitty"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("nautilus"))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("hyprlauncher"))
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("qs ipc call launcher toggle"))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("wayscriber --active"))
 
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
@@ -232,8 +232,8 @@ do
 	hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), opts)
 	hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), opts)
 	hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), opts)
-	hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl s 10%+"), opts)
-	hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl s 10%-"), opts)
+	hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("qs ipc call brightness up"), opts)
+	hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("qs ipc call brightness down"), opts)
 end
 
 do
@@ -295,4 +295,18 @@ hl.window_rule({
 		class = "md.obsidian.Obsidian",
 	},
 	workspace = "special:magic",
+})
+
+------------------
+--- Layerrules ---
+------------------
+
+-- Frosted glass behind quickshell. Quickshell names its layers "qs-blur-*"
+-- while "Glass" is on in its settings page. ignore_alpha keeps the blur to the
+-- surfaces themselves, not their faint shadows.
+hl.layer_rule({
+	name = "quickshell-glass",
+	match = { namespace = "qs-blur-.*" },
+	blur = true,
+	ignore_alpha = 0.15,
 })

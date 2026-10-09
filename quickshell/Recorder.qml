@@ -7,7 +7,9 @@ import "icons.js" as Icons
 
 // Screenshots, screen recordings and the color picker. Both only go to
 // /tmp (gone after a reboot) and the clipboard; paste one somewhere to keep it.
-//   screenshot("region" | "screen"): saved to `screenshots`, copied to the clipboard
+//   screenshot("region" | "screen"): saved to `screenshots`, copied to the clipboard;
+//                                    a region freezes the screen while picking
+//                                    when Settings.screenshotFreeze is on
 //   record("region" | "screen"):     saved to `recordings`; stop() ends it and
 //                                    copies the file to the clipboard (paste it
 //                                    into a chat or file manager)
@@ -56,7 +58,7 @@ Singleton {
         later(() => {
             const file = `${screenshots}/${stamp()}.png`;
             shooter.file = file;
-            shooter.exec([scripts + "screenshot.sh", mode, file]);
+            shooter.exec([scripts + "screenshot.sh", mode, file, Settings.screenshotFreeze ? "freeze" : ""]);
         });
     }
 

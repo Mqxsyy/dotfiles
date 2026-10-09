@@ -6,6 +6,7 @@ import "icons.js" as Icons
 // with two tabs:
 //   Overview: calendar, quick toggles, shortcuts to panels and capture tools
 //   System:   SystemView (CPU, memory, GPU, disk, processes)
+//   Clean:    CleanView (caches, old packages, logs)
 // Toggles and shortcuts are lists below; add an entry to add one.
 Column {
     id: root
@@ -15,7 +16,7 @@ Column {
     // On screen; the System tab only measures while it is.
     property bool active: true
 
-    readonly property var tabs: ["Overview", "System"]
+    readonly property var tabs: ["Overview", "System", "Clean"]
     property string tab: tabs[0]
 
     // A shortcut ran; the bar closes the dashboard so it's out of the way.
@@ -190,6 +191,12 @@ Column {
     SystemView {
         width: parent.width
         visible: root.tab === "System"
+        active: root.active && visible
+    }
+
+    CleanView {
+        width: parent.width
+        visible: root.tab === "Clean"
         active: root.active && visible
     }
 

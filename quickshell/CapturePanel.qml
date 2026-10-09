@@ -3,7 +3,8 @@ import "icons.js" as Icons
 
 // Screenshot or screen recording tools (Recorder.qml), one panel each:
 // shell.qml makes this twice, named "screenshot" and "record".
-//   screenshot: region / screen
+//   screenshot: region / screen, freeze while picking a region (remembered,
+//               the hotkey uses it too)
 //   record:     region / screen, sound; Stop while recording
 // Opened with "> screenshot" / "> record" in the launcher, the dashboard, or
 // `qs ipc call popup toggle screenshot|record`. While recording,
@@ -51,6 +52,15 @@ Popup {
                 text: "Screen"
                 onClicked: Recorder.screenshot("screen")
             }
+        }
+
+        SettingToggle {
+            width: parent.width
+            visible: !root.recording
+            label: "Freeze"
+            description: "Hold the screen still while picking a region"
+            checked: Settings.screenshotFreeze
+            onToggled: checked => Settings.set("screenshotFreeze", checked)
         }
 
         SectionTitle {

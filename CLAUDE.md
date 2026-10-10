@@ -15,7 +15,7 @@ These are dotfiles for a hyprland + quickshell linux config.
 
 ## Other
 
-- **Do not install anything**
+- **Do not install anything**, but ask when a tool would make things far simpler
 - Do not switch and make branches unless told
 - Always ask before spawning sub agents
 

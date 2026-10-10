@@ -29,42 +29,31 @@ Singleton {
         return players.find(p => p.isPlaying) ?? players.find(p => p.trackTitle) ?? null;
     }
 
-    // Firefox learns a track's length after it starts, but doesn't announce
-    // it, so the player's `length` stays unknown until its next play/pause.
-    // Until then it's asked for directly, every second while playing.
+    // Firefox only shares a track's length and position after a play/pause,
+    // so a track that starts playing without them gets a quick pause and play.
     readonly property bool lengthKnown: (player?.lengthSupported ?? false) && player.length > 0
-    readonly property real length: lengthKnown ? player.length : askedLength
-    property real askedLength: 0
+    readonly property real length: lengthKnown ? player.length : 0
+    readonly property string track: player ? `${player.dbusName} ${player.trackTitle} ${player.trackArtist}` : ""
+    property string nudgedTrack: ""
+    property MprisPlayer nudged: null
 
-    onPlayerChanged: askedLength = 0
-
-    Connections {
-        target: root.player
-
-        function onTrackChanged() {
-            root.askedLength = 0;
+    Timer {
+        running: (root.player?.isPlaying ?? false) && !root.lengthKnown && root.nudgedTrack !== root.track
+        interval: 1500
+        onTriggered: {
+            root.nudgedTrack = root.track;
+            root.nudged = root.player;
+            root.nudged.pause();
+            resume.start();
         }
     }
 
     Timer {
-        running: (root.player?.isPlaying ?? false) && !root.lengthKnown && root.askedLength === 0
-        interval: 1000
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: lengthQuery.running = true
-    }
-
-    Process {
-        id: lengthQuery
-        command: ["busctl", "--user", "get-property", root.player?.dbusName ?? "", "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player", "Metadata"]
-
-        // ... "mpris:length" x 246000000 ... (microseconds)
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const match = text.match(/"mpris:length" [xt] (\d+)/);
-                if (match)
-                    root.askedLength = Number(match[1]) / 1000000;
-            }
+        id: resume
+        interval: 150
+        onTriggered: {
+            if (root.nudged)
+                root.nudged.play();
         }
     }
 

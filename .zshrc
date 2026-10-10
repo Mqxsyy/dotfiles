@@ -51,6 +51,9 @@ eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
 eval "$(zoxide init zsh)"
 
+# Every script in ~/dotfiles/bin is a command, by its file name
+export PATH="$HOME/dotfiles/bin:$PATH"
+
 # Qml import paths
 export QML_IMPORT_PATH=/usr/lib/qt6/qml
 export QML2_IMPORT_PATH=/usr/lib/qt6/qml
@@ -70,14 +73,6 @@ alias gl="git log --decorate --oneline --graph"
 gc() {
   git add . && git commit -m "$1"
 }
-
-## Tmux
-alias bonk="~/dotfiles/tmux/sessions/bonk.sh"
-alias seed="~/dotfiles/tmux/sessions/seed-game.sh"
-alias inc="~/dotfiles/tmux/sessions/incremental-game.sh"
-alias rpg="~/dotfiles/tmux/sessions/rpg-game.sh"
-alias void="~/dotfiles/tmux/sessions/void-scape.sh"
-alias potato="~/dotfiles/tmux/sessions/potato.sh"
 
 ## Other
 alias pixfix="wine ~/dotfiles/scripts/Pixfix.exe"

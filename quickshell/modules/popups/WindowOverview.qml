@@ -9,108 +9,88 @@ import qs.config
 import qs.services
 import qs.components
 
-// Every workspace as a small live desktop over the blurred wallpaper.
-// Super+Tab opens it and steps through windows, most recent first; arrows
-// and Tab too. Enter or a click goes to a window, a click on a workspace
-// goes there, number keys pick a workspace. Drag a window onto another
-// workspace (or "+", a new one) to move it; middle click closes it.
-//   qs ipc call windows next | previous
+// Quick glance at every workspace in use: small live desktops in centered,
+// evenly filled rows over the blurred wallpaper, with the apps open on each underneath. Only
+// for looking: hold Super+Tab to peek and let go to dismiss. Opened another
+// way it stays until Esc, a click, or Super+Tab again.
+//   qs ipc call windows toggle
 Popup {
     id: root
 
-    // Windows, most recently used first.
     readonly property var windows: Hyprland.toplevels.values
         .filter(toplevel => toplevel.wayland && toplevel.lastIpcObject.mapped && !toplevel.lastIpcObject.hidden)
-        .sort((a, b) => a.lastIpcObject.focusHistoryID - b.lastIpcObject.focusHistoryID)
     // Numbered ones in order, the focused one even if empty, then special ones.
     readonly property var workspaces: {
-        const used = Hyprland.workspaces.values.filter(workspace => workspace.toplevels.values.length > 0 || workspace.focused);
+        const used = Hyprland.workspaces.values.filter(workspace => windowsOn(workspace).length > 0 || workspace.focused);
         const numbered = used.filter(workspace => workspace.id > 0).sort((a, b) => a.id - b.id);
         return numbered.concat(used.filter(workspace => workspace.id < 0));
     }
-    readonly property int newWorkspace: Math.max(0, ...workspaces.map(workspace => workspace.id)) + 1
 
-    property int selected: 0
-    // Picked by hand since opening; until then it follows the list order.
-    property bool moved: false
-    readonly property var current: windows[selected] ?? null
-    property var dragging: null
+    // Opened by Super+Tab: letting go of Super closes it.
+    property bool holding: false
 
-    // Mini desktops: the monitor's shape, at most `cardWidth` wide.
+    // Mini desktops: the monitor's shape, never narrower than minCardWidth.
+    // As many fit in a row as can; past that they wrap into rows filled
+    // evenly (7 -> 4 + 3), each centered.
     readonly property HyprlandMonitor monitor: Hyprland.focusedMonitor
     readonly property real monitorWidth: monitor ? monitor.width / monitor.scale : 1600
     readonly property real monitorHeight: monitor ? monitor.height / monitor.scale : 1000
-    readonly property int count: workspaces.length + 1
-    readonly property int columns: Math.min(count, 3)
-    readonly property real cardWidth: Math.min(460, (width * 0.86 - (columns - 1) * gap) / columns)
-    readonly property real cardHeight: cardWidth * monitorHeight / monitorWidth
+    readonly property real aspect: monitorWidth / monitorHeight
+    readonly property int count: Math.max(1, workspaces.length)
+    readonly property int fitPerRow: Math.max(1, Math.floor((width * 0.9 + gap) / (minCardWidth + gap)))
+    readonly property int rowCount: Math.ceil(count / fitPerRow)
+    readonly property int perRow: Math.ceil(count / rowCount)
+    // Widest that fits across, and (with the icons under each) down.
+    readonly property real cardWidth: Math.min(maxCardWidth,
+        (width * 0.9 - (perRow - 1) * gap) / perRow,
+        ((height * 0.8 - 60 - (rowCount - 1) * gap) / rowCount - 34) * aspect)
+    readonly property real cardHeight: cardWidth / aspect
     readonly property real cardScale: cardWidth / monitorWidth
-    property int gap: 24
+    // The workspaces split into rows.
+    readonly property var rows: {
+        const rows = [];
+        for (let i = 0; i < workspaces.length; i += perRow)
+            rows.push(workspaces.slice(i, i + perRow));
+        return rows;
+    }
+    property int minCardWidth: 280
+    property int maxCardWidth: 380
+    property int gap: 28
+    property int stagger: 45 // ms between cards rising in
 
-    function step(by) {
-        if (windows.length === 0)
-            return;
-        moved = true;
-        selected = (selected + by + windows.length) % windows.length;
+    function windowsOn(workspace) {
+        return windows.filter(toplevel => toplevel.workspace === workspace);
     }
 
-    function goToWindow(toplevel) {
-        Popups.close();
-        toplevel.wayland.activate();
+    function label(workspace) {
+        return workspace.name.replace(/^special:/, "");
     }
 
-    function goToWorkspace(id) {
-        Popups.close();
-        if (id < 0)
-            Hyprland.dispatch(`hl.dsp.workspace.toggle_special("${workspaceLabel(id)}")`);
-        else
-            Hyprland.dispatch(`hl.dsp.focus({ workspace = ${id} })`);
-    }
-
-    function moveWindow(toplevel, id) {
-        const workspace = id < 0 ? `"special:${workspaceLabel(id)}"` : id;
-        Hyprland.dispatch(`hl.dsp.window.move({ workspace = ${workspace}, follow = false, window = "address:${toplevel.lastIpcObject.address}" })`);
-        Hyprland.refreshToplevels();
-    }
-
-    function workspaceLabel(id) {
-        const workspace = workspaces.find(workspace => workspace.id === id);
-        return (workspace?.name ?? String(id)).replace(/^special:/, "");
+    function iconOf(toplevel) {
+        const windowClass = toplevel.lastIpcObject.class ?? "";
+        return Quickshell.iconPath(DesktopEntries.heuristicLookup(windowClass)?.icon ?? windowClass, true);
     }
 
     name: "windows"
-    surface: grid
+    surface: null // a click anywhere closes it
 
     onOpenChanged: {
         if (!open)
             return;
-        moved = false;
-        selected = Math.min(1, windows.length - 1);
-        // Positions and focus order are only read on refresh.
+        holding = Popups.request === "hold";
+        // Positions are only read on refresh.
         Hyprland.refreshWorkspaces();
         Hyprland.refreshToplevels();
-    }
-
-    onWindowsChanged: {
-        if (!moved)
-            selected = Math.max(0, Math.min(1, windows.length - 1));
     }
 
     IpcHandler {
         target: "windows"
 
-        function next(): void {
+        function toggle(): void {
             if (root.open)
-                root.step(1);
+                Popups.close();
             else
-                Popups.open("windows");
-        }
-
-        function previous(): void {
-            if (root.open)
-                root.step(-1);
-            else
-                Popups.open("windows");
+                Popups.open("windows", null, "hold");
         }
     }
 
@@ -140,283 +120,176 @@ Popup {
         Rectangle {
             anchors.fill: parent
             color: Theme.surface
-            opacity: 0.55
+            opacity: 0.6
         }
     }
 
-    Flow {
-        id: grid
-
+    Column {
         anchors.centerIn: parent
-        width: root.columns * root.cardWidth + (root.columns - 1) * root.gap
         spacing: root.gap
         opacity: root.reveal
-        scale: 0.92 + 0.08 * root.reveal
         focus: true
 
-        Keys.onPressed: event => {
-            const keys = {
-                [Qt.Key_Right]: () => root.step(1),
-                [Qt.Key_Left]: () => root.step(-1),
-                [Qt.Key_Tab]: () => root.step(1),
-                [Qt.Key_Backtab]: () => root.step(-1),
-                [Qt.Key_Return]: () => root.current && root.goToWindow(root.current),
-                [Qt.Key_Enter]: () => root.current && root.goToWindow(root.current),
-            };
-            const digit = event.key - Qt.Key_0;
-            if (keys[event.key])
-                keys[event.key]();
-            else if (digit >= 1 && digit <= 9)
-                root.goToWorkspace(digit);
-            else
-                return;
-            event.accepted = true;
+        Keys.onReleased: event => {
+            const super_ = [Qt.Key_Super_L, Qt.Key_Super_R, Qt.Key_Meta].includes(event.key);
+            if (super_ && root.holding && !event.isAutoRepeat) {
+                event.accepted = true;
+                Popups.close();
+            }
+        }
+
+        // "5 windows · 3 workspaces"
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: {
+                const plural = (count, word) => `${count} ${word}${count === 1 ? "" : "s"}`;
+                return `${plural(root.windows.length, "window")}  ·  ${plural(root.workspaces.length, "workspace")}`;
+            }
+            color: Theme.textSecondary
+            font.pixelSize: Theme.fontNormal
+            font.weight: Font.DemiBold
         }
 
         Repeater {
             // Only while open: live previews cost a capture each.
-            model: root.open ? root.workspaces : []
+            model: root.open ? root.rows : []
 
-            WorkspaceCard {
+            Row {
+                id: row
+
                 required property var modelData
-                workspace: modelData
+                required property int index
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: root.gap
+
+                Repeater {
+                    model: row.modelData
+
+                    WorkspaceCard {
+                        required property var modelData
+                        required property int index
+                        workspace: modelData
+                        delay: (row.index * root.perRow + index) * root.stagger
+                    }
+                }
             }
         }
-
-        WorkspaceCard {
-            visible: root.open
-            workspace: null
-        }
     }
 
-    // The selected (or hovered) window's title, under the workspaces.
-    Text {
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: grid.y + grid.height + 28
-        width: Math.min(implicitWidth, parent.width * 0.6)
-        opacity: root.reveal
-        text: root.current ? `${root.current.title}  ·  ${root.workspaceLabel(root.current.workspace?.id ?? 0)}` : ""
-        color: Theme.textPrimary
-        font.pixelSize: Theme.fontNormal
-        font.weight: Font.DemiBold
-        elide: Text.ElideMiddle
-    }
-
-    // Follows the pointer while a window is dragged to another workspace.
-    ClippingRectangle {
-        id: ghost
-
-        width: root.dragging ? root.dragging.lastIpcObject.size[0] * root.cardScale * 0.9 : 0
-        height: root.dragging ? root.dragging.lastIpcObject.size[1] * root.cardScale * 0.9 : 0
-        visible: root.dragging !== null
-        radius: 8
-        opacity: 0.9
-        border.color: Theme.accent
-        border.width: 2
-        Drag.active: visible
-        Drag.hotSpot.x: width / 2
-        Drag.hotSpot.y: height / 2
-
-        ScreencopyView {
-            anchors.fill: parent
-            captureSource: root.dragging?.wayland ?? null
-            live: true
-        }
-    }
-
-    // A workspace in miniature; `workspace` null is "+", a new workspace.
-    component WorkspaceCard: ClippingRectangle {
+    // A workspace in miniature, with its apps' icons under it. Rises in
+    // `delay` ms after opening.
+    component WorkspaceCard: Column {
         id: card
 
         property var workspace: null
-        readonly property int workspaceId: workspace ? workspace.id : root.newWorkspace
-        readonly property bool focused: workspace?.focused ?? false
-        readonly property bool dropping: drop.containsDrag
+        property int delay: 0
+        readonly property var windows: root.windowsOn(workspace)
+        property real rise: 0
 
-        width: root.cardWidth
-        height: root.cardHeight
-        radius: Theme.radius
-        color: Theme.surface
-        border.width: focused || dropping ? 2 : 1
-        border.color: focused || dropping ? Theme.accent : Theme.border
+        spacing: 12
+        opacity: rise
+        transform: Translate { y: (1 - card.rise) * 40 }
 
-        Behavior on border.color {
-            ColorAnimation { duration: 150 }
+        Component.onCompleted: enter.start()
+
+        SequentialAnimation {
+            id: enter
+            PauseAnimation { duration: card.delay }
+            NumberAnimation { target: card; property: "rise"; to: 1; duration: 380; easing.type: Easing.OutCubic }
         }
 
-        Image {
-            anchors.fill: parent
-            visible: card.workspace !== null
-            source: Wallpaper.current ? "file://" + Wallpaper.current : ""
-            sourceSize.width: 460
-            fillMode: Image.PreserveAspectCrop
-            asynchronous: true
-            opacity: 0.7
-        }
+        ClippingRectangle {
+            width: root.cardWidth
+            height: root.cardHeight
+            radius: Theme.radius
+            color: Theme.surface
+            border.width: card.workspace.focused ? 2 : 1
+            border.color: card.workspace.focused ? Theme.accent : Theme.border
 
-        // New workspace: a plus.
-        Text {
-            anchors.centerIn: parent
-            visible: card.workspace === null
-            text: "+"
-            color: card.dropping ? Theme.accent : Theme.textSecondary
-            font.pixelSize: 40
-            font.weight: Font.Light
-        }
-
-        HoverHandler {
-            cursorShape: Qt.PointingHandCursor
-        }
-
-        // Not when the click was on a window (it handles that itself).
-        TapHandler {
-            onTapped: eventPoint => {
-                const target = card.childAt(eventPoint.position.x, eventPoint.position.y);
-                if (!target?.toplevel)
-                    root.goToWorkspace(card.workspaceId);
+            Image {
+                anchors.fill: parent
+                source: Wallpaper.current ? "file://" + Wallpaper.current : ""
+                sourceSize.width: root.maxCardWidth
+                fillMode: Image.PreserveAspectCrop
+                asynchronous: true
+                opacity: 0.6
             }
-        }
 
-        DropArea {
-            id: drop
-            anchors.fill: parent
-            onDropped: {
-                if (root.dragging && root.dragging.workspace !== card.workspace)
-                    root.moveWindow(root.dragging, card.workspaceId);
+            Repeater {
+                model: card.windows.slice().sort((a, b) => a.lastIpcObject.floating - b.lastIpcObject.floating)
+
+                WindowTile {
+                    required property var modelData
+                    toplevel: modelData
+                    monitor: card.workspace.monitor
+                }
             }
-        }
-
-        Repeater {
-            model: card.workspace
-                ? root.windows.filter(toplevel => toplevel.workspace === card.workspace)
-                    .sort((a, b) => a.lastIpcObject.floating - b.lastIpcObject.floating)
-                : []
-
-            WindowTile {
-                required property var modelData
-                toplevel: modelData
-                monitor: card.workspace.monitor
-            }
-        }
-
-        // Workspace name, top left.
-        Rectangle {
-            x: 10
-            y: 10
-            width: label.implicitWidth + 16
-            height: 22
-            radius: 11
-            visible: card.workspace !== null
-            color: card.focused ? Theme.accent : Qt.alpha(Theme.surface, 0.8)
 
             Text {
-                id: label
                 anchors.centerIn: parent
-                text: root.workspaceLabel(card.workspaceId)
-                color: card.focused ? Theme.accentText : Theme.textPrimary
-                font.pixelSize: Theme.fontSmall - 2
-                font.weight: Font.DemiBold
+                visible: card.windows.length === 0
+                text: "Empty"
+                color: Theme.textSecondary
+                font.pixelSize: Theme.fontSmall
+            }
+
+            // Workspace name, top left.
+            Rectangle {
+                x: 10
+                y: 10
+                width: workspaceName.implicitWidth + 16
+                height: 22
+                radius: 11
+                color: card.workspace.focused ? Theme.accent : Qt.alpha(Theme.surface, 0.85)
+
+                Text {
+                    id: workspaceName
+                    anchors.centerIn: parent
+                    text: root.label(card.workspace)
+                    color: card.workspace.focused ? Theme.accentText : Theme.textPrimary
+                    font.pixelSize: Theme.fontSmall - 2
+                    font.weight: Font.DemiBold
+                }
+            }
+        }
+
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 6
+
+            Repeater {
+                model: card.windows
+
+                IconImage {
+                    required property var modelData
+                    implicitSize: 22
+                    source: root.iconOf(modelData)
+                }
             }
         }
     }
 
     // A window where it is on its workspace, live.
-    component WindowTile: Item {
+    component WindowTile: ClippingRectangle {
         id: tile
 
         property var toplevel: null
         property var monitor: null
-        property real radius: 6
         readonly property var info: toplevel.lastIpcObject
-        readonly property bool selected: root.current === toplevel
-        readonly property real originX: monitor?.x ?? 0
-        readonly property real originY: monitor?.y ?? 0
 
-        x: (info.at[0] - originX) * root.cardScale
-        y: (info.at[1] - originY) * root.cardScale
+        x: (info.at[0] - (monitor?.x ?? 0)) * root.cardScale
+        y: (info.at[1] - (monitor?.y ?? 0)) * root.cardScale
         width: info.size[0] * root.cardScale
         height: info.size[1] * root.cardScale
         z: info.floating ? 1 : 0
-        scale: hover.hovered && !root.dragging ? 1.03 : 1
-        opacity: root.dragging === toplevel ? 0.3 : 1
+        radius: 6
+        color: Theme.surface
 
-        Behavior on scale {
-            NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-        }
-
-        HoverHandler {
-            id: hover
-            cursorShape: Qt.PointingHandCursor
-            onHoveredChanged: {
-                if (hovered && !root.dragging) {
-                    root.moved = true;
-                    root.selected = root.windows.indexOf(tile.toplevel);
-                }
-            }
-        }
-
-        TapHandler {
-            acceptedButtons: Qt.LeftButton
-            onTapped: root.goToWindow(tile.toplevel)
-        }
-
-        TapHandler {
-            acceptedButtons: Qt.MiddleButton
-            onTapped: tile.toplevel.wayland.close()
-        }
-
-        DragHandler {
-            target: null
-            onActiveChanged: {
-                if (active) {
-                    root.dragging = tile.toplevel;
-                } else {
-                    ghost.Drag.drop();
-                    root.dragging = null;
-                }
-            }
-            onCentroidChanged: {
-                if (!active)
-                    return;
-                ghost.x = centroid.scenePosition.x - ghost.width / 2;
-                ghost.y = centroid.scenePosition.y - ghost.height / 2;
-            }
-        }
-
-        Glow {
-            on: tile.selected
-        }
-
-        ClippingRectangle {
+        ScreencopyView {
             anchors.fill: parent
-            radius: tile.radius
-            color: Theme.surface
-            border.width: tile.selected ? 2 : 0
-            border.color: Theme.accent
-
-            ScreencopyView {
-                anchors.fill: parent
-                captureSource: tile.toplevel.wayland
-                live: true
-            }
-        }
-
-        // App icon, bottom center.
-        Rectangle {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: -8
-            width: 26
-            height: 26
-            radius: 13
-            color: Theme.surface
-            border.color: tile.selected ? Theme.accent : Theme.border
-
-            IconImage {
-                anchors.centerIn: parent
-                implicitSize: 18
-                source: Quickshell.iconPath(DesktopEntries.heuristicLookup(tile.info.class ?? "")?.icon ?? tile.info.class ?? "", true)
-            }
+            captureSource: tile.toplevel.wayland
+            live: true
         }
     }
 }

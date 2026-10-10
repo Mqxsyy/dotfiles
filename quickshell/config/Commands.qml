@@ -112,7 +112,7 @@ Singleton {
         },
         {
             name: "windows",
-            description: "All open windows",
+            description: "Glance at every workspace",
             run: () => Popups.open("windows"),
         },
         {

@@ -33,16 +33,13 @@ hl.monitor({
 --- Env Variables ---
 ---------------------
 
-hl.env("GDK_SCALE", "1")
-hl.env("CURSOR_SIZE", "24")
+hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 
 hl.env("LIBVA_DRIVER_NAME", "nvidia")
 hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 
 hl.env("MOZ_DISABLE_RDD_SANDBOX", "1")
-
-hl.env("AQ_DRM_DEVICES", "/dev/dri/card1")
 
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 

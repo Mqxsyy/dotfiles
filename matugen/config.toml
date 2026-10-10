@@ -10,7 +10,7 @@ post_hook = 'hyprctl reload'
 [templates.kitty]
 input_path = './templates/kitty-colors.conf'
 output_path = '~/.config/kitty/colors.conf'
-post_hook = "kitty @ set-colors -a -c ~/.config/kitty/colors.conf"
+post_hook = 'for s in "$XDG_RUNTIME_DIR"/kitty-*; do kitty @ --to "unix:$s" set-colors -a -c ~/.config/kitty/colors.conf; done 2>/dev/null || true'
 
 [templates.tmux]
 input_path = './templates/colors.tmuxtheme'

@@ -134,6 +134,10 @@ ShellWindow {
     // the empty part from taking input.
     implicitHeight: cardGap + panelRoom + Theme.shadowPad
 
+    // Above fullscreen windows too. Panels, the launcher and toasts are
+    // overlays as well, and stay above the bar since they appear after it.
+    WlrLayershell.layer: WlrLayer.Overlay
+
     // Keyboard only for typing a wifi password.
     WlrLayershell.keyboardFocus: expanded === "wifi" ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 

@@ -10,9 +10,9 @@ import qs.components
 import qs.modules.dashboard
 import "../../utils/icons.js" as Icons
 
-// Top bar: slides down when the pointer reaches the top center of the
-// screen, and stays until the pointer leaves the bar (its strip along the
-// top, or an expanded card).
+// Top bar: slides down when the pointer touches the top edge of the screen
+// (anywhere along it), and stays until the pointer leaves the bar (its
+// height across the whole top, or an expanded card).
 // One per screen (see shell.qml). Its three parts grow into panels while
 // hovered:
 //   top-left:  now playing card (only while there is a player)  -> MediaView
@@ -44,8 +44,7 @@ ShellWindow {
     property int spacing: 12        // between items inside a card
     property int padding: 10        // card side to its first/last control
     readonly property int barBottom: cardGap + cardHeight
-    property int revealWidth: 320   // area at the top center that reveals the bar
-    property int cornerGap: 50      // the shown bar's strip leaves the corners to apps
+    property int revealHeight: 2    // pixels at the top edge that reveal the bar
     property int popupGap: 8        // space between the bar and a hint under it
 
     // Expanded sizes.
@@ -144,14 +143,13 @@ ShellWindow {
         right: true
     }
 
-    // Input only where the bar is or would be. Hidden: just the reveal area
-    // at the top center, so the rest of the top of the screen stays
-    // clickable for windows. Shown: the whole bar strip and the cards
-    // (expanded ones are bigger). Hidden cards sit above the window.
+    // Input only where the bar is or would be. Hidden: just the top edge, so
+    // the rest of the top of the screen stays clickable for windows. Shown:
+    // the whole bar strip and the cards (expanded ones are bigger). Hidden
+    // cards sit above the window.
     mask: Region {
-        item: revealArea
+        item: strip
 
-        Region { item: strip }
         Region { item: mediaIsland }
         Region { item: clockIsland }
         Region { item: statusIsland }
@@ -169,21 +167,13 @@ ShellWindow {
         openedTimer.restart();
     }
 
-    // Pointing here, at the top center, reveals the bar.
-    Item {
-        id: revealArea
-        x: Math.round((parent.width - width) / 2)
-        width: root.revealWidth
-        height: root.barBottom
-    }
-
-    // While shown: the whole bar height across the screen (minus the
-    // corners), so the bar stays until the pointer leaves it.
+    // Hidden: the top edge, pointing at it reveals the bar. Shown: the whole
+    // bar height across the screen, so the bar stays until the pointer
+    // leaves it.
     Item {
         id: strip
-        x: root.cornerGap
-        width: root.revealed ? parent.width - root.cornerGap * 2 : 0
-        height: root.barBottom
+        width: parent.width
+        height: root.revealed ? root.barBottom : root.revealHeight
     }
 
     Timer {

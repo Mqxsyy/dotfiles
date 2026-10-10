@@ -1,5 +1,5 @@
-set -g @theme-status-current-prefix ""
-set -g @theme-status-current-suffix ""
+set -g @theme-status-current-prefix ""
+set -g @theme-status-current-suffix ""
 
 set -g status-style "fg=#{@theme-status-fg},bg=default,bold"
 
@@ -8,6 +8,7 @@ set -g status-right ""
 
 set -g status-justify centre
 set -g window-status-format "#I #W"
+set -g window-status-current-style default
 
 set -g window-status-current-format \
 	"#[bg=default]\

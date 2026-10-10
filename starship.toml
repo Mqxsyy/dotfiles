@@ -1,3 +1,36 @@
+# Plain text prompt, colors follow the wallpaper (guides/terminal.md)
+
+format = """
+$directory$git_branch$git_status$cmd_duration
+$character"""
+
+[directory]
+format = "[$path]($style)"
+style = "bold blue"
+truncation_length = 3
+
+[git_branch]
+format = " on [$branch]($style)"
+style = "purple"
+
+[git_status]
+format = "[$all_status$ahead_behind]($style)"
+style = "cyan"
+staged = ' \[$count staged\]'
+modified = ' \[$count changed\]'
+untracked = ' \[$count new\]'
+deleted = ' \[$count deleted\]'
+renamed = ' \[$count renamed\]'
+conflicted = ' \[$count conflicts\]'
+stashed = ''
+ahead = ' \[$count to push\]'
+behind = ' \[$count to pull\]'
+diverged = ' \[$ahead_count to push, $behind_count to pull\]'
+
+[cmd_duration]
+format = " [\\[took $duration\\]]($style)"
+style = "dimmed"
+
 [character]
-success_symbol = "[>](bold green)"
-error_symbol = "[x](bold red)"
+success_symbol = "[>](bold blue)"
+error_symbol = "[>](bold red)"

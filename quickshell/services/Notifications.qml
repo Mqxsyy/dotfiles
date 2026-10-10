@@ -38,17 +38,21 @@ Singleton {
     //   image:   path of a picture shown large under the text (screenshot previews)
     //   action:  function run when it's clicked (the shell's own notifications)
     //   history: false keeps it out of the history (short-lived notices)
-    // One with the same title and body as a visible toast refreshes it instead.
+    // An exact repeat (same app, title and body) of a visible toast refreshes
+    // it instead, and moves its history entry to the top. A repeat of an
+    // older one replaces it in the history.
     // Returns its key, or "" when it was merged.
     function notify(entry) {
         const time = Qt.formatTime(new Date(), "hh:mm");
         const body = entry.body ?? "";
+        const repeat = { app: entry.app ?? "", title: entry.title, body: body };
 
         for (let i = 0; i < model.count; i++) {
             const toast = model.get(i);
-            if (toast.title === entry.title && toast.body === body) {
+            if (same(toast, repeat)) {
                 model.setProperty(i, "time", time);
                 model.setProperty(i, "stamp", toast.stamp + 1);
+                bump(toast.key);
                 return "";
             }
         }
@@ -76,6 +80,8 @@ Singleton {
             const kept = Object.assign({}, fields, { time: Date.now() });
             if (kept.icon.startsWith("image://"))
                 kept.icon = "";
+            for (const old of saved.entries.filter(old => same(old, kept)))
+                remove(old.key);
             saved.entries = [kept, ...saved.entries].slice(0, maxHistory);
             unread++;
         }
@@ -128,11 +134,29 @@ Singleton {
         model.clear();
     }
 
+    // Everything gone at once; the apps are told theirs were dismissed.
     function clearHistory() {
-        for (const entry of saved.entries)
-            remove(entry.key);
+        for (const notification of Object.values(sources))
+            notification.dismiss();
+        sources = {};
+        actions = {};
+        saved.entries = [];
         model.clear();
         unread = 0;
+    }
+
+    function same(a, b) {
+        return a.app === b.app && a.title === b.title && a.body === b.body;
+    }
+
+    // A repeat came in: its history entry moves to the top with the new time.
+    function bump(key) {
+        const entry = saved.entries.find(entry => entry.key === key);
+        if (!entry)
+            return;
+        const rest = saved.entries.filter(entry => entry.key !== key);
+        saved.entries = [Object.assign({}, entry, { time: Date.now() }), ...rest];
+        unread++;
     }
 
     function markRead() {

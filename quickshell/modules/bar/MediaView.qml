@@ -124,10 +124,7 @@ Column {
                     color: Theme.textPrimary
                     font.pixelSize: Theme.fontLarge + 3
                     font.weight: Font.Bold
-                    wrapMode: Text.Wrap
-                    maximumLineCount: 2
                     elide: Text.ElideRight
-                    lineHeight: 1.05
                 }
 
                 Text {
@@ -144,7 +141,7 @@ Column {
             Visualizer {
                 anchors.bottom: parent.bottom
                 width: parent.width
-                active: root.active && (root.player?.isPlaying ?? false)
+                active: root.active && Spectrum.listening
             }
         }
     }

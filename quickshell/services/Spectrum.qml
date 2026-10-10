@@ -21,8 +21,25 @@ Singleton {
         levels = levels.map(() => 0);
     }
 
+    readonly property bool playing: Media.player?.isPlaying ?? false
+    property bool listening: playing
+
+    onPlayingChanged: {
+        if (playing)
+            listening = true;
+        stopLater.restart();
+    }
+
+    // Short pauses (a track change, Media's length nudge) keep cava running,
+    // so it doesn't start over and settle on the volume again.
+    Timer {
+        id: stopLater
+        interval: 3000
+        onTriggered: root.listening = root.playing
+    }
+
     Process {
-        running: Media.player?.isPlaying ?? false
+        running: root.listening
         command: ["cava", "-p", Quickshell.shellDir + "/config/cava.conf"]
         onRunningChanged: if (!running) root.rest()
 

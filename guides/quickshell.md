@@ -33,7 +33,7 @@ All windows are `components/ShellWindow.qml`: transparent, above other windows, 
 - `popups/` — panels opened one at a time through `services/Popups.qml` (`qs ipc call popup toggle <name>`), closed with Esc or a click outside:
   - `ClipboardPanel` (`clipboard`, `SUPER + SHIFT + V`): history, filter, Enter copies back.
   - `CapturePanel` (`screenshot`, `record`): region / screen; Freeze holds the screen still while picking a region (also used by `SUPER + P`); recording with or without sound.
-  - `PowerMenu` (`power`): lock, log out, suspend, restart, shut down; each needs a confirming click.
+  - `PowerMenu` (`power`): lock, log out, suspend, restart, shut down; each needs a confirming click (or Enter), and runs once the menu has slid away. `> logout`, `> suspend`, `> restart`, `> shutdown` open it with that action armed.
   - `WallpaperPicker` (`wallpapers`): thumbnails, type to filter.
   - `SettingsPage` (`settings`): categories on the left (Appearance, Wallpaper, Night light, Screenshots, Lock; Up/Down switch), the page slides in on the right.
   - `WindowOverview` (`windows`, `SUPER + Tab`): every workspace as a small live desktop over the blurred wallpaper. `SUPER + Tab` / Tab / arrows step through windows (most recent first), Enter or click goes there, click a workspace or press its number to go there, drag a window onto another workspace (or `+`) to move it, middle click closes. `qs ipc call windows next|previous`.

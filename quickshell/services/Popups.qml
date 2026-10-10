@@ -13,9 +13,12 @@ Singleton {
     property string current: ""
     // Where it opens; the focused screen when not given.
     property ShellScreen screen: null
+    // What the panel starts with, when given, e.g. the power action to confirm.
+    property var request: null
 
-    function open(name, screen) {
+    function open(name, screen, request) {
         root.screen = screen ?? FocusedScreen.screen;
+        root.request = request ?? null;
         current = name;
     }
 

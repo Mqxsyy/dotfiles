@@ -59,6 +59,27 @@ Singleton {
             description: "Lock the screen",
             run: () => Lock.lock(),
         },
+        // Power actions open the power menu, waiting for a confirm.
+        {
+            name: "logout",
+            description: "Log out (asks to confirm)",
+            run: () => Popups.open("power", null, "logout"),
+        },
+        {
+            name: "suspend",
+            description: "Suspend (asks to confirm)",
+            run: () => Popups.open("power", null, "suspend"),
+        },
+        {
+            name: "restart",
+            description: "Restart (asks to confirm)",
+            run: () => Popups.open("power", null, "restart"),
+        },
+        {
+            name: "shutdown",
+            description: "Shut down (asks to confirm)",
+            run: () => Popups.open("power", null, "shutdown"),
+        },
         {
             name: "reload",
             description: "Reload the quickshell config",

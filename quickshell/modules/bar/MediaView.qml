@@ -217,17 +217,17 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width - art.width - parent.spacing
 
-            // The seek bar and times only when the player tells the length.
-            readonly property bool known: root.player !== null && root.player.lengthSupported && root.player.length > 0
+            // Until the length is known (see Media.length) the bar stays
+            // empty and the total shows --:--.
+            readonly property bool known: Media.length > 0
 
             Slider {
-                visible: parent.known
                 width: parent.width
                 from: 0
-                to: root.player?.length ?? 1
+                to: parent.known ? Media.length : 1
                 stepSize: 1
-                value: root.player?.position ?? 0
-                enabled: root.player?.canSeek ?? false
+                value: parent.known ? root.player.position : 0
+                enabled: parent.known && root.player.canSeek
                 onMoved: value => root.player.position = value
             }
 
@@ -237,7 +237,6 @@ Column {
 
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
-                    visible: parent.parent.known
                     text: Media.formatTime(root.player?.position ?? 0)
                     color: Theme.textSecondary
                     font.pixelSize: Theme.fontSmall - 3
@@ -271,8 +270,7 @@ Column {
                 Text {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    visible: parent.parent.known
-                    text: Media.formatTime(root.player?.length ?? 0)
+                    text: parent.parent.known ? Media.formatTime(Media.length) : "--:--"
                     color: Theme.textSecondary
                     font.pixelSize: Theme.fontSmall - 3
                 }

@@ -11,6 +11,7 @@ import qs.config
 // first one with a track loaded. null when there is none.
 //   artSources: album art to try, best first (see ArtImage.qml)
 //   artColor:   the most colorful color in the art, to tint the media card
+//   length:     the track's length in seconds, 0 while unknown
 // Media keys (hypr/hyprland.lua):  qs ipc call media playPause | next | previous
 // They also make the bar show the player for a moment (keyPressed).
 Singleton {
@@ -26,6 +27,45 @@ Singleton {
         if (chosen && players.includes(chosen))
             return chosen;
         return players.find(p => p.isPlaying) ?? players.find(p => p.trackTitle) ?? null;
+    }
+
+    // Firefox learns a track's length after it starts, but doesn't announce
+    // it, so the player's `length` stays unknown until its next play/pause.
+    // Until then it's asked for directly, every second while playing.
+    readonly property bool lengthKnown: (player?.lengthSupported ?? false) && player.length > 0
+    readonly property real length: lengthKnown ? player.length : askedLength
+    property real askedLength: 0
+
+    onPlayerChanged: askedLength = 0
+
+    Connections {
+        target: root.player
+
+        function onTrackChanged() {
+            root.askedLength = 0;
+        }
+    }
+
+    Timer {
+        running: (root.player?.isPlaying ?? false) && !root.lengthKnown && root.askedLength === 0
+        interval: 1000
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: lengthQuery.running = true
+    }
+
+    Process {
+        id: lengthQuery
+        command: ["busctl", "--user", "get-property", root.player?.dbusName ?? "", "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player", "Metadata"]
+
+        // ... "mpris:length" x 246000000 ... (microseconds)
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const match = text.match(/"mpris:length" [xt] (\d+)/);
+                if (match)
+                    root.askedLength = Number(match[1]) / 1000000;
+            }
+        }
     }
 
     // Browsers hand MPRIS a tiny (60px) thumbnail. For YouTube and YouTube

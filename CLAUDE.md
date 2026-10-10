@@ -8,6 +8,7 @@ These are dotfiles for a hyprland + quickshell linux config.
 - Readable, Testable, Understandable, Maintainable, Scalable, Extensible
 - Procedural, Declarative & Data-Driven
 - Simple & Direct (do not over complicate)
+- Keep code comments short; no big comment blocks in every file. Longer notes go in `guides/`
 
 ## Conventions
 

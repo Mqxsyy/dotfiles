@@ -48,7 +48,7 @@ ShellWindow {
     property int popupGap: 8        // space between the bar and a hint under it
 
     // Expanded sizes.
-    property int mediaWidth: 440
+    property int mediaWidth: 420
     property int statusWidth: 380
     property int dashboardWidth: 660
     property int panelRoom: 620     // tallest a part grows; the window is this tall
@@ -330,14 +330,6 @@ ShellWindow {
                         elide: Text.ElideRight
                     }
 
-                    Text {
-                        width: Math.min(implicitWidth, 200)
-                        visible: text !== ""
-                        text: root.player?.trackArtist ?? ""
-                        color: Theme.textSecondary
-                        font.pixelSize: Theme.fontSmall - 2
-                        elide: Text.ElideRight
-                    }
                 }
 
                 // Only animates while it can be seen: an animation redraws

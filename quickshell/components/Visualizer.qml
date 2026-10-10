@@ -1,59 +1,52 @@
-import Quickshell.Services.Pipewire
+import Quickshell
+import Quickshell.Io
 import QtQuick
 import qs.config
-import qs.services
 
-// What's playing right now, as bars: the default output's sound level
-// sampled every `interval` ms, newest on the right, scrolling left. Bars go
-// from the accent to the second accent. Only measures while `active`.
-// Music sits in a narrow loudness range (peaks of 0.3-0.5), so bars are
-// scaled between the quietest and loudest of what's on screen.
+// Spectrum of what's playing, like a terminal visualizer: bass on the left,
+// treble on the right, each bar rising from the bottom with its band's
+// loudness. Bars go from the accent to the second accent. The numbers come
+// from cava (config/cava.conf sets the bar count and smoothing), which only
+// runs while `active`.
 Item {
     id: root
 
     property bool active: true
-    property int bars: 56
-    property int interval: 40
-    property var levels: new Array(bars).fill(0)
-    readonly property real low: Math.min(...levels)
-    readonly property real high: Math.max(...levels)
+    property int spacing: 2
+    // 0..1 per bar, from cava's latest frame.
+    property var levels: []
 
-    // 0.1..1 for a level, relative to what's on screen.
-    function scaled(level) {
-        return 0.1 + 0.9 * (level - low) / Math.max(0.05, high - low);
-    }
+    implicitHeight: 24
 
-    implicitHeight: 40
+    // Paused: the bars rest flat.
+    onActiveChanged: if (!active) levels = levels.map(() => 0)
 
-    PwNodePeakMonitor {
-        id: monitor
-        node: Audio.sink
-        enabled: root.active
-    }
-
-    Timer {
+    Process {
         running: root.active
-        interval: root.interval
-        repeat: true
-        onTriggered: root.levels = [...root.levels.slice(1), monitor.peak]
+        command: ["cava", "-p", Quickshell.shellDir + "/config/cava.conf"]
+
+        // One frame per line: "12;40;33;..." (0-100, with a trailing ";").
+        stdout: SplitParser {
+            onRead: line => root.levels = line.split(";").filter(value => value !== "").map(value => value / 100)
+        }
     }
 
     Row {
-        anchors.centerIn: parent
-        spacing: 2
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: root.spacing
 
         Repeater {
-            model: root.bars
+            model: root.levels.length
 
             Rectangle {
                 required property int index
 
-                anchors.verticalCenter: parent.verticalCenter
-                width: (root.width - (root.bars - 1) * 2) / root.bars
-                height: Math.max(3, root.height * root.scaled(root.levels[index] ?? 0))
-                radius: width / 2
-                color: Qt.tint(Theme.accent, Qt.alpha(Theme.accent2, index / root.bars * 0.8))
-                opacity: 0.35 + 0.65 * index / root.bars
+                anchors.bottom: parent.bottom
+                width: (root.width - (root.levels.length - 1) * root.spacing) / root.levels.length
+                height: Math.max(2, root.height * root.levels[index])
+                radius: Math.min(2, width / 2)
+                color: Qt.tint(Theme.accent, Qt.alpha(Theme.accent2, index / root.levels.length * 0.8))
             }
         }
     }

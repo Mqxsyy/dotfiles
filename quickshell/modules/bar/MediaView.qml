@@ -7,10 +7,10 @@ import qs.services
 import qs.components
 import "../../utils/icons.js" as Icons
 
-// Now playing: big art next to the track, seek bar with times, and
-// shuffle / previous / play / next / repeat; click the art to bring up the
-// player. With several players, chips on
-// top pick which one the bar controls. Shown when the bar's media card
+// Now playing: art next to the track and a visualizer; under the art
+// previous / play / next, under the visualizer the seek bar with times and
+// shuffle / repeat; click the art to bring up the player. With several players, chips on top
+// pick which one the bar controls. Shown when the bar's media card
 // expands (or "> media").
 Column {
     id: root
@@ -22,7 +22,10 @@ Column {
     // Repeat cycles off -> playlist -> track.
     readonly property var repeatOrder: [MprisLoopState.None, MprisLoopState.Playlist, MprisLoopState.Track]
 
-    spacing: 16
+    // Art to the track text; the buttons and seek bar line up with them.
+    property int gap: 18
+
+    spacing: 12
 
     Timer {
         running: root.active && (root.player?.isPlaying ?? false)
@@ -56,16 +59,16 @@ Column {
         font.pixelSize: Theme.fontSmall
     }
 
-    // Art, then title, artist and album.
+    // Art, then title and artist, with the visualizer under them.
     Row {
         visible: root.player !== null
         width: parent.width
-        spacing: 18
+        spacing: root.gap
 
         Item {
             id: art
-            width: 124
-            height: 124
+            width: 100
+            height: 100
 
             RectangularShadow {
                 anchors.fill: parent
@@ -102,7 +105,110 @@ Column {
                     text: Icons.music
                     color: Theme.accent
                     font.family: Theme.iconFont
-                    font.pixelSize: 40
+                    font.pixelSize: 34
+                }
+            }
+        }
+
+        Item {
+            width: parent.width - art.width - parent.spacing
+            height: art.height
+
+            Column {
+                width: parent.width
+                spacing: 4
+
+                Text {
+                    width: parent.width
+                    text: root.player?.trackTitle ?? ""
+                    color: Theme.textPrimary
+                    font.pixelSize: Theme.fontLarge + 3
+                    font.weight: Font.Bold
+                    wrapMode: Text.Wrap
+                    maximumLineCount: 2
+                    elide: Text.ElideRight
+                    lineHeight: 1.05
+                }
+
+                Text {
+                    width: parent.width
+                    visible: text !== ""
+                    text: root.player?.trackArtist ?? ""
+                    color: Theme.textPrimary
+                    opacity: 0.85
+                    font.pixelSize: Theme.fontSmall + 1
+                    elide: Text.ElideRight
+                }
+            }
+
+            Visualizer {
+                anchors.bottom: parent.bottom
+                width: parent.width
+                active: root.active && (root.player?.isPlaying ?? false)
+            }
+        }
+    }
+
+    // Previous / play / next under the art; the seek bar under the
+    // visualizer, with the times and shuffle / repeat under it.
+    Row {
+        visible: root.player !== null
+        width: parent.width
+        spacing: root.gap
+
+        Item {
+            anchors.verticalCenter: parent.verticalCenter
+            width: art.width
+            height: transport.height
+
+            Row {
+                id: transport
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 2
+
+                BarButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    icon: Icons.previous
+                    interactive: root.player?.canGoPrevious ?? false
+                    onClicked: root.player.previous()
+                }
+
+                Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 30
+                    height: 30
+                    radius: width / 2
+                    gradient: Theme.accentGradient
+                    scale: playTap.pressed ? 0.92 : playHover.hovered ? 1.05 : 1
+
+                    Behavior on scale {
+                        NumberAnimation { duration: 120; easing.type: Easing.OutCubic }
+                    }
+
+                    HoverHandler {
+                        id: playHover
+                        cursorShape: Qt.PointingHandCursor
+                    }
+
+                    TapHandler {
+                        id: playTap
+                        onTapped: root.player.togglePlaying()
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: root.player?.isPlaying ? Icons.pause : Icons.play
+                        color: Theme.accentText
+                        font.family: Theme.iconFont
+                        font.pixelSize: 15
+                    }
+                }
+
+                BarButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    icon: Icons.next
+                    interactive: root.player?.canGoNext ?? false
+                    onClicked: root.player.next()
                 }
             }
         }
@@ -110,155 +216,66 @@ Column {
         Column {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width - art.width - parent.spacing
-            spacing: 6
 
-            Text {
+            // The seek bar and times only when the player tells the length.
+            readonly property bool known: root.player !== null && root.player.lengthSupported && root.player.length > 0
+
+            Slider {
+                visible: parent.known
                 width: parent.width
-                text: root.player?.trackTitle ?? ""
-                color: Theme.textPrimary
-                font.pixelSize: Theme.fontLarge + 3
-                font.weight: Font.Bold
-                wrapMode: Text.Wrap
-                maximumLineCount: 2
-                elide: Text.ElideRight
-                lineHeight: 1.05
+                from: 0
+                to: root.player?.length ?? 1
+                stepSize: 1
+                value: root.player?.position ?? 0
+                enabled: root.player?.canSeek ?? false
+                onMoved: value => root.player.position = value
             }
 
-            Text {
+            Item {
                 width: parent.width
-                visible: text !== ""
-                text: root.player?.trackArtist ?? ""
-                color: Theme.textPrimary
-                opacity: 0.85
-                font.pixelSize: Theme.fontSmall + 1
-                maximumLineCount: 2
-                wrapMode: Text.Wrap
-                elide: Text.ElideRight
-            }
+                height: modes.height
 
-            Text {
-                width: parent.width
-                visible: text !== ""
-                text: root.player?.trackAlbum ?? ""
-                color: Theme.textSecondary
-                font.pixelSize: Theme.fontSmall - 1
-                elide: Text.ElideRight
-            }
-        }
-    }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: parent.parent.known
+                    text: Media.formatTime(root.player?.position ?? 0)
+                    color: Theme.textSecondary
+                    font.pixelSize: Theme.fontSmall - 3
+                }
 
-    Visualizer {
-        width: parent.width
-        visible: root.player !== null
-        active: root.active && (root.player?.isPlaying ?? false)
-    }
+                Row {
+                    id: modes
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 2
 
-    // Elapsed, seek bar, total.
-    Row {
-        visible: root.player !== null && root.player.lengthSupported && root.player.length > 0
-        width: parent.width
-        spacing: 10
+                    BarButton {
+                        visible: root.player?.shuffleSupported ?? false
+                        implicitHeight: 22
+                        icon: Icons.shuffle
+                        iconColor: root.player?.shuffle ? Theme.accent : Theme.textSecondary
+                        onClicked: root.player.shuffle = !root.player.shuffle
+                    }
 
-        Text {
-            id: elapsed
-            anchors.verticalCenter: parent.verticalCenter
-            width: 40
-            text: Media.formatTime(root.player?.position ?? 0)
-            color: Theme.textSecondary
-            font.pixelSize: Theme.fontSmall - 2
-        }
+                    BarButton {
+                        visible: root.player?.loopSupported ?? false
+                        implicitHeight: 22
+                        icon: root.player?.loopState === MprisLoopState.Track ? Icons.repeatOne : Icons.repeat
+                        iconColor: root.player?.loopState === MprisLoopState.None ? Theme.textSecondary : Theme.accent
+                        onClicked: {
+                            const next = (root.repeatOrder.indexOf(root.player.loopState) + 1) % root.repeatOrder.length;
+                            root.player.loopState = root.repeatOrder[next];
+                        }
+                    }
+                }
 
-        Slider {
-            anchors.verticalCenter: parent.verticalCenter
-            width: parent.width - elapsed.width - total.width - parent.spacing * 2
-            from: 0
-            to: root.player?.length ?? 1
-            stepSize: 1
-            value: root.player?.position ?? 0
-            enabled: root.player?.canSeek ?? false
-            onMoved: value => root.player.position = value
-        }
-
-        Text {
-            id: total
-            anchors.verticalCenter: parent.verticalCenter
-            width: 40
-            horizontalAlignment: Text.AlignRight
-            text: Media.formatTime(root.player?.length ?? 0)
-            color: Theme.textSecondary
-            font.pixelSize: Theme.fontSmall - 2
-        }
-    }
-
-    // Shuffle, previous, play/pause, next, repeat.
-    Row {
-        visible: root.player !== null
-        anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 18
-
-        BarButton {
-            anchors.verticalCenter: parent.verticalCenter
-            visible: root.player?.shuffleSupported ?? false
-            icon: Icons.shuffle
-            iconColor: root.player?.shuffle ? Theme.accent : Theme.textSecondary
-            onClicked: root.player.shuffle = !root.player.shuffle
-        }
-
-        BarButton {
-            anchors.verticalCenter: parent.verticalCenter
-            icon: Icons.previous
-            interactive: root.player?.canGoPrevious ?? false
-            onClicked: root.player.previous()
-        }
-
-        Rectangle {
-            anchors.verticalCenter: parent.verticalCenter
-            width: 52
-            height: 52
-            radius: width / 2
-            gradient: Theme.accentGradient
-            scale: playTap.pressed ? 0.92 : playHover.hovered ? 1.05 : 1
-
-            Behavior on scale {
-                NumberAnimation { duration: 120; easing.type: Easing.OutCubic }
-            }
-
-            Glow {}
-
-            HoverHandler {
-                id: playHover
-                cursorShape: Qt.PointingHandCursor
-            }
-
-            TapHandler {
-                id: playTap
-                onTapped: root.player.togglePlaying()
-            }
-
-            Text {
-                anchors.centerIn: parent
-                text: root.player?.isPlaying ? Icons.pause : Icons.play
-                color: Theme.accentText
-                font.family: Theme.iconFont
-                font.pixelSize: 24
-            }
-        }
-
-        BarButton {
-            anchors.verticalCenter: parent.verticalCenter
-            icon: Icons.next
-            interactive: root.player?.canGoNext ?? false
-            onClicked: root.player.next()
-        }
-
-        BarButton {
-            anchors.verticalCenter: parent.verticalCenter
-            visible: root.player?.loopSupported ?? false
-            icon: root.player?.loopState === MprisLoopState.Track ? Icons.repeatOne : Icons.repeat
-            iconColor: root.player?.loopState === MprisLoopState.None ? Theme.textSecondary : Theme.accent
-            onClicked: {
-                const next = (root.repeatOrder.indexOf(root.player.loopState) + 1) % root.repeatOrder.length;
-                root.player.loopState = root.repeatOrder[next];
+                Text {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: parent.parent.known
+                    text: Media.formatTime(root.player?.length ?? 0)
+                    color: Theme.textSecondary
+                    font.pixelSize: Theme.fontSmall - 3
+                }
             }
         }
     }

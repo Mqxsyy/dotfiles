@@ -1,4 +1,0 @@
-set -g @theme-status-bg "#191c20"
-set -g @theme-status-fg "#e1e2e9"
-set -g @theme-status-current-bg "#a5c8ff"
-set -g @theme-status-current-fg "#00315e"

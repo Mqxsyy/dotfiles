@@ -1,35 +1,20 @@
-import Quickshell
-import Quickshell.Io
 import QtQuick
 import qs.config
+import qs.services
 
 // Spectrum of what's playing, like a terminal visualizer: bass on the left,
 // treble on the right, each bar rising from the bottom with its band's
-// loudness. Bars go from the accent to the second accent. The numbers come
-// from cava (config/cava.conf sets the bar count and smoothing), which only
-// runs while `active`.
+// loudness (Spectrum.qml). Bars go from the accent to the second accent.
+// Only follows the sound while `active`; otherwise the bars rest flat.
 Item {
     id: root
 
     property bool active: true
     property int spacing: 2
-    // 0..1 per bar, from cava's latest frame.
-    property var levels: []
+    // Off screen it doesn't follow every frame.
+    readonly property var levels: active ? Spectrum.levels : new Array(Spectrum.bands).fill(0)
 
     implicitHeight: 24
-
-    // Paused: the bars rest flat.
-    onActiveChanged: if (!active) levels = levels.map(() => 0)
-
-    Process {
-        running: root.active
-        command: ["cava", "-p", Quickshell.shellDir + "/config/cava.conf"]
-
-        // One frame per line: "12;40;33;..." (0-100, with a trailing ";").
-        stdout: SplitParser {
-            onRead: line => root.levels = line.split(";").filter(value => value !== "").map(value => value / 100)
-        }
-    }
 
     Row {
         anchors.bottom: parent.bottom

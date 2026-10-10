@@ -1,0 +1,51 @@
+#!/bin/zsh
+
+# Lines of code: non-blank lines (repeated lines count) in files of the given
+# types, under the current folder or the one given. Skips files git ignores
+# and hidden ones.
+#   loc *.lua                 (unquoted works: .zshrc makes `loc` noglob)
+#   loc lua qml               (a line per type, then the total)
+#   loc *.lua ~/Projects/bonk
+
+dir=.
+types=()
+for arg in "$@"; do
+    if [[ -d $arg ]]; then
+        dir=$arg
+    else
+        types+=(${${arg#\*}#.}) # "*.lua", ".lua" and "lua" all mean lua
+    fi
+done
+
+if (( ${#types} == 0 )); then
+    echo "usage: loc <type...> [folder]    e.g. loc *.lua" >&2
+    exit 1
+fi
+
+# "lines files" for one type.
+count() {
+    rg --files -0 -g "*.$1" "$dir" \
+        | xargs -0 -r awk 'FNR == 1 { files++ } NF { lines++ } END { print lines + 0, files + 0 }' \
+        | awk '{ lines += $1; files += $2 } END { print lines + 0, files + 0 }'
+}
+
+# 189234 -> 189,234
+commas() {
+    sed ':a; s/\B[0-9]\{3\}\>/,&/; ta' <<< $1
+}
+
+show() {
+    printf "%-8s %12s lines %8s files\n" $1 $(commas $2) $(commas $3)
+}
+
+total_lines=0
+total_files=0
+for type in $types; do
+    read lines files <<< $(count $type)
+    show $type $lines $files
+    (( total_lines += lines, total_files += files ))
+done
+
+if (( ${#types} > 1 )); then
+    show total $total_lines $total_files
+fi

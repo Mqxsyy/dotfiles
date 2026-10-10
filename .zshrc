@@ -64,6 +64,7 @@ alias cd='z'
 alias ls="eza $eza_params"
 alias ll="eza --all --header --long $eza_params"
 alias tree="eza --tree -L 1 $eza_params"
+alias loc="noglob loc" # so `loc *.lua` reaches it unexpanded
 
 ## Git
 alias gs="git status"

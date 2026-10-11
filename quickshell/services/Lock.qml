@@ -15,7 +15,8 @@ import qs.config
 //   suspend(): lock, then suspend (the power menu's Suspend)
 // The password is checked like logging in (PAM's "login": the password,
 // and too many wrong tries lock the account for a while).
-// Also locks after Settings.lockAfter idle minutes (0 = never).
+// Also locks after Settings.lockAfter idle minutes (0 = never), but not
+// while any media player is playing (YouTube, Spotify, ...).
 //   qs ipc call lock lock
 //
 // At boot it is the login screen: greetd logs in and starts Hyprland
@@ -187,7 +188,7 @@ Singleton {
     }
 
     IdleMonitor {
-        enabled: Settings.lockAfter > 0 && !root.locked
+        enabled: Settings.lockAfter > 0 && !root.locked && !Media.players.some(p => p.isPlaying)
         timeout: Settings.lockAfter * 60 // seconds
         onIsIdleChanged: {
             if (isIdle)

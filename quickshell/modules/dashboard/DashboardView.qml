@@ -32,7 +32,7 @@ Column {
     readonly property var toggles: [
         {
             text: "Wi-Fi",
-            detail: Network.wifiEnabled ? (Network.name || "Not connected") : "Off",
+            detail: Network.wifiEnabled ? (Network.name ? "Connected" : "Not connected") : "Off",
             glyph: Network.wifiEnabled ? Icons.level(Icons.wifi, Network.signal) : Icons.wifiOff,
             on: Network.wifiEnabled,
             toggle: () => Network.toggleWifi(),

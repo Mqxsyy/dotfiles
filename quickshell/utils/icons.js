@@ -22,7 +22,7 @@ const brightness = ["󰃞", "󰃟", "󰃠"];          // low .. high
 
 const wifiOff = "󰤮";
 const wifi = ["󰤟", "󰤢", "󰤥", "󰤨"];           // weak .. strong
-const ethernet = "󰈀";
+const ethernet = "󰈁";
 
 const bluetooth = "󰂯";
 const bluetoothConnected = "󰂱";

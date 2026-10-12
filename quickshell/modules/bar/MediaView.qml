@@ -219,7 +219,9 @@ Column {
             readonly property bool known: Media.length > 0
 
             Slider {
+                id: seek
                 width: parent.width
+                live: false
                 from: 0
                 to: parent.known ? Media.length : 1
                 stepSize: 1
@@ -234,7 +236,7 @@ Column {
 
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: Media.formatTime(root.player?.position ?? 0)
+                    text: Media.formatTime(seek.pressed ? seek.dragValue : root.player?.position ?? 0)
                     color: Theme.textSecondary
                     font.pixelSize: Theme.fontSmall - 3
                 }

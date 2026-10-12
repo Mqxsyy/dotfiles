@@ -10,11 +10,16 @@ Item {
     property real stepSize: 0.01
     property real value: 0
     property color fill: Theme.accent
+    // false: report the value only on release (seeking), not on every move.
+    property bool live: true
 
     // The user dragged to a new value (already snapped to stepSize).
     signal moved(real value)
 
-    readonly property real ratio: Math.max(0, Math.min(1, (value - from) / (to - from)))
+    // Where the knob sits: under the pointer while dragging, else value.
+    property real dragValue: 0
+    readonly property real shown: mouse.pressed ? dragValue : value
+    readonly property real ratio: Math.max(0, Math.min(1, (shown - from) / (to - from)))
     readonly property bool pressed: mouse.pressed
 
     implicitWidth: 200
@@ -68,11 +73,17 @@ Item {
             const raw = root.from + ratio * (root.to - root.from);
             const snapped = Math.round(raw / root.stepSize) * root.stepSize;
             // Round away float noise from the step math (0.30000000000000004).
-            root.moved(Number(snapped.toFixed(4)));
+            root.dragValue = Number(snapped.toFixed(4));
+            if (root.live)
+                root.moved(root.dragValue);
         }
 
         onPressed: mouse => pick(mouse.x)
         onPositionChanged: mouse => pick(mouse.x)
+        onReleased: {
+            if (!root.live)
+                root.moved(root.dragValue);
+        }
     }
 
     WheelHandler {

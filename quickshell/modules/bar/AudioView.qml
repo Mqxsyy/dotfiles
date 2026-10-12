@@ -8,63 +8,80 @@ import "../../utils/icons.js" as Icons
 
 // Sound: output and input volume, mute and default device, and volume per
 // app playing sound. Shown when the bar's status card expands on the volume
-// icon (or "> audio").
-Column {
+// icon (or "> audio"). Scrolls when taller than `listHeight`.
+Flickable {
     id: root
 
-    spacing: 10
+    property int listHeight: 440
 
-    SectionTitle {
-        text: "Output"
-    }
+    implicitHeight: Math.min(contentHeight, listHeight)
+    contentHeight: content.implicitHeight
+    clip: true
+    boundsBehavior: Flickable.StopAtBounds
 
-    VolumeControl {
-        width: parent.width
-        node: Audio.sink
-        glyph: Icons.volumeLevel(Audio.volume)
-        mutedGlyph: Icons.volumeOff
-    }
+    Column {
+        id: content
 
-    DeviceList {
-        width: parent.width
-        devices: Audio.sinks
-        current: Audio.sink
-        glyph: Icons.speaker
-    }
+        width: root.width - (scrollbar.visible ? 12 : 0) // room for the scrollbar
+        spacing: 10
 
-    SectionTitle {
-        topPadding: 6
-        text: "Input"
-    }
-
-    VolumeControl {
-        width: parent.width
-        node: Audio.source
-        glyph: Icons.mic
-        mutedGlyph: Icons.micOff
-    }
-
-    DeviceList {
-        width: parent.width
-        devices: Audio.sources
-        current: Audio.source
-        glyph: Icons.mic
-    }
-
-    SectionTitle {
-        topPadding: 6
-        visible: Audio.streams.length > 0
-        text: "Apps"
-    }
-
-    Repeater {
-        model: Audio.streams
-
-        AppVolume {
-            required property var modelData
-            width: parent.width
-            node: modelData
+        SectionTitle {
+            text: "Output"
         }
+
+        VolumeControl {
+            width: parent.width
+            node: Audio.sink
+            glyph: Icons.volumeLevel(Audio.volume)
+            mutedGlyph: Icons.volumeOff
+        }
+
+        DeviceList {
+            width: parent.width
+            devices: Audio.sinks
+            current: Audio.sink
+            glyph: Icons.speaker
+        }
+
+        SectionTitle {
+            topPadding: 6
+            text: "Input"
+        }
+
+        VolumeControl {
+            width: parent.width
+            node: Audio.source
+            glyph: Icons.mic
+            mutedGlyph: Icons.micOff
+        }
+
+        DeviceList {
+            width: parent.width
+            devices: Audio.sources
+            current: Audio.source
+            glyph: Icons.mic
+        }
+
+        SectionTitle {
+            topPadding: 6
+            visible: Audio.streams.length > 0
+            text: "Apps"
+        }
+
+        Repeater {
+            model: Audio.streams
+
+            AppVolume {
+                required property var modelData
+                width: parent.width
+                node: modelData
+            }
+        }
+    }
+
+    Scrollbar {
+        id: scrollbar
+        flickable: root
     }
 
     // Mute button, slider and percent for one node.

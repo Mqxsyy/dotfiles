@@ -31,11 +31,28 @@ Singleton {
 
     // Firefox only shares a track's length and position after a play/pause,
     // so a track that starts playing without them gets a quick pause and play.
+    // It also drops them after a seek, so seek() allows another nudge and the
+    // last length is kept for the same track meanwhile.
     readonly property bool lengthKnown: (player?.lengthSupported ?? false) && player.length > 0
-    readonly property real length: lengthKnown ? player.length : 0
     readonly property string track: player ? `${player.dbusName} ${player.trackTitle} ${player.trackArtist}` : ""
+    readonly property real reportedLength: lengthKnown ? player.length : 0
+    property real lastLength: 0
+    property string lastLengthTrack: ""
+    readonly property real length: lengthKnown ? reportedLength : lastLengthTrack === track ? lastLength : 0
     property string nudgedTrack: ""
     property MprisPlayer nudged: null
+
+    onReportedLengthChanged: {
+        if (reportedLength > 0) {
+            lastLength = reportedLength;
+            lastLengthTrack = track;
+        }
+    }
+
+    function seek(position) {
+        player.position = position;
+        nudgedTrack = "";
+    }
 
     Timer {
         running: (root.player?.isPlaying ?? false) && !root.lengthKnown && root.nudgedTrack !== root.track

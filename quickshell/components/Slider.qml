@@ -17,13 +17,26 @@ Item {
     signal moved(real value)
 
     // Where the knob sits: under the pointer while dragging, else value.
+    // When not live it stays on the picked spot until value catches up.
     property real dragValue: 0
-    readonly property real shown: mouse.pressed ? dragValue : value
+    property bool settling: false
+    readonly property real shown: mouse.pressed || settling ? dragValue : value
     readonly property real ratio: Math.max(0, Math.min(1, (shown - from) / (to - from)))
     readonly property bool pressed: mouse.pressed
 
     implicitWidth: 200
     implicitHeight: 20
+
+    onValueChanged: {
+        if (settling && Math.abs(value - dragValue) <= stepSize * 2)
+            settling = false;
+    }
+
+    Timer {
+        id: settle
+        interval: 3000
+        onTriggered: root.settling = false
+    }
 
     Rectangle {
         anchors.verticalCenter: parent.verticalCenter
@@ -33,7 +46,7 @@ Item {
         color: Theme.tile
 
         Rectangle {
-            width: parent.width * root.ratio
+            width: knob.x + knob.width / 2
             height: parent.height
             radius: parent.radius
             gradient: Gradient {
@@ -45,6 +58,7 @@ Item {
     }
 
     Rectangle {
+        id: knob
         x: (parent.width - width) * root.ratio
         anchors.verticalCenter: parent.verticalCenter
         width: mouse.pressed || hover.hovered ? 16 : 12
@@ -68,8 +82,9 @@ Item {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
 
+        // The knob's center lands under the pointer.
         function pick(x) {
-            const ratio = Math.max(0, Math.min(1, x / width));
+            const ratio = Math.max(0, Math.min(1, (x - knob.width / 2) / (width - knob.width)));
             const raw = root.from + ratio * (root.to - root.from);
             const snapped = Math.round(raw / root.stepSize) * root.stepSize;
             // Round away float noise from the step math (0.30000000000000004).
@@ -81,8 +96,11 @@ Item {
         onPressed: mouse => pick(mouse.x)
         onPositionChanged: mouse => pick(mouse.x)
         onReleased: {
-            if (!root.live)
+            if (!root.live) {
+                root.settling = true;
+                settle.restart();
                 root.moved(root.dragValue);
+            }
         }
     }
 

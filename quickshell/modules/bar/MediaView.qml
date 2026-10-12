@@ -158,13 +158,17 @@ Column {
             width: art.width
             height: transport.height
 
+            // A bit wider than the art; spaced so prev / next aren't misclicked.
             Row {
                 id: transport
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 2
+                spacing: 10
 
                 BarButton {
                     anchors.verticalCenter: parent.verticalCenter
+                    implicitWidth: 30
+                    implicitHeight: 30
+                    iconSize: 20
                     icon: Icons.previous
                     interactive: root.player?.canGoPrevious ?? false
                     onClicked: root.player.previous()
@@ -203,6 +207,9 @@ Column {
 
                 BarButton {
                     anchors.verticalCenter: parent.verticalCenter
+                    implicitWidth: 30
+                    implicitHeight: 30
+                    iconSize: 20
                     icon: Icons.next
                     interactive: root.player?.canGoNext ?? false
                     onClicked: root.player.next()
@@ -227,7 +234,7 @@ Column {
                 stepSize: 1
                 value: parent.known ? root.player.position : 0
                 enabled: parent.known && root.player.canSeek
-                onMoved: value => root.player.position = value
+                onMoved: value => Media.seek(value)
             }
 
             Item {
@@ -236,7 +243,7 @@ Column {
 
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: Media.formatTime(seek.pressed ? seek.dragValue : root.player?.position ?? 0)
+                    text: Media.formatTime(seek.pressed || seek.settling ? seek.dragValue : root.player?.position ?? 0)
                     color: Theme.textSecondary
                     font.pixelSize: Theme.fontSmall - 3
                 }

@@ -9,6 +9,7 @@ Rectangle {
     property string icon: ""
     property string label: ""
     property color iconColor: Theme.textPrimary
+    property int iconSize: 16
     property color labelColor: Theme.textPrimary
     property bool interactive: true
     property int maxLabelWidth: 0 // 0 = no limit; longer labels are elided
@@ -50,7 +51,7 @@ Rectangle {
             text: root.icon
             color: root.iconColor
             font.family: Theme.iconFont
-            font.pixelSize: 16
+            font.pixelSize: root.iconSize
         }
 
         Text {

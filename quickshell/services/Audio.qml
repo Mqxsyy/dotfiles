@@ -19,7 +19,7 @@ Singleton {
     readonly property var nodes: Pipewire.nodes.values.filter(node => node.audio)
     readonly property var sinks: nodes.filter(node => node.isSink && !node.isStream)
     readonly property var sources: nodes.filter(node => !node.isSink && !node.isStream)
-    readonly property var streams: nodes.filter(node => node.isStream && !node.isSink)
+    readonly property var streams: nodes.filter(node => node.isStream && node.isSink) // playback streams count as sinks
 
     function setVolume(value) {
         setNodeVolume(sink, value);

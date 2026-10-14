@@ -39,7 +39,7 @@ All windows are `components/ShellWindow.qml`: transparent, above other windows, 
   - `WindowOverview` (`windows`, `SUPER + Tab`): quick glance at every workspace in use, as small live desktops in centered, evenly filled rows with their apps' icons under them. Only for looking: hold `SUPER + Tab` to peek, let go to dismiss; opened another way, Esc, a click or `SUPER + Tab` closes it. `qs ipc call windows toggle`.
   - `PolkitPrompt` (`polkit`): the session's polkit agent; asks for the password when an app needs admin rights (pkexec, mounting drives). Closing it cancels.
 - `overlays/` — `Toasts.qml` (notifications, top right), `Osd.qml` (volume / brightness), `RecordingCard.qml` (time and stop while recording).
-- `lock/` — `LockScreen.qml` locks the session with a `LockSurface` per screen; `LockCover.qml` fades the same `LockView` in over the desktop first, since Hyprland locks instantly. Type the password, Enter checks, Esc clears. `SUPER + Escape`, `> lock`, `qs ipc call lock lock`, or after the idle minutes set in settings.
+- `lock/` — `LockScreen.qml` locks the session with a `LockSurface` per screen; `LockCover.qml` fades the same `LockView` in over the desktop first, since Hyprland locks instantly. Type the password, Enter checks, Esc clears. `> lock`, `qs ipc call lock lock`, or after the idle minutes set in settings.
 - `background/` — `Background.qml`, the wallpaper per screen; `WallpaperView.qml` grows or swipes a new one in.
 
 ## Services

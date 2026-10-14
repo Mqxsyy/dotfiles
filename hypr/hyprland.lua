@@ -186,7 +186,6 @@ hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("qs ipc call windows toggle"))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("wayscriber --active"))
 
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
-hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("qs ipc call lock lock"))
 
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("qs ipc call popup toggle clipboard"))

@@ -2,6 +2,7 @@ pragma Singleton
 
 import Quickshell
 import Quickshell.Io
+import Quickshell.Services.Pipewire
 import Quickshell.Services.Mpris
 import QtQuick
 import qs.config
@@ -12,6 +13,8 @@ import qs.config
 //   artSources: album art to try, best first (see ArtImage.qml)
 //   artColor:   the most colorful color in the art, to tint the media card
 //   length:     the track's length in seconds, 0 while unknown
+//   stream:     the player's own Pipewire stream (a browser tab), for its
+//               volume; null while it isn't playing sound
 // Media keys (hypr/hyprland.lua):  qs ipc call media playPause | next | previous
 // They also make the bar show the player for a moment (keyPressed).
 Singleton {
@@ -27,6 +30,18 @@ Singleton {
         if (chosen && players.includes(chosen))
             return chosen;
         return players.find(p => p.isPlaying) ?? players.find(p => p.trackTitle) ?? null;
+    }
+
+    // Browsers name a tab's stream after the tab title, which holds the
+    // track title. Other players: the stream of the app with the same name.
+    readonly property PwNode stream: {
+        if (!player)
+            return null;
+        const title = player.trackTitle;
+        const identity = player.identity.toLowerCase();
+        return Audio.streams.find(node => title && Audio.streamTitle(node).includes(title))
+            ?? Audio.streams.find(node => identity.includes(Audio.appName(node).toLowerCase()))
+            ?? null;
     }
 
     // Firefox only shares a track's length and position after a play/pause,

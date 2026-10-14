@@ -11,8 +11,8 @@ import qs.modules.dashboard
 import "../../utils/icons.js" as Icons
 
 // Top bar: slides down when the pointer touches the top edge of the screen
-// (anywhere along it), and stays until the pointer leaves the bar (its
-// height across the whole top, or an expanded card).
+// (anywhere along it), and stays until the pointer leaves its cards. The
+// space between the cards clicks through to the windows under it.
 // One per screen (see shell.qml). Its three parts grow into panels while
 // hovered:
 //   top-left:  now playing card (only while there is a player)  -> MediaView
@@ -147,9 +147,8 @@ ShellWindow {
         right: true
     }
 
-    // Input only where the bar is or would be. Hidden: just the top edge, so
-    // the rest of the top of the screen stays clickable for windows. Shown:
-    // the whole bar strip and the cards (expanded ones are bigger). Hidden
+    // Input only on the top edge and the cards (expanded ones are bigger), so
+    // the rest of the top of the screen stays clickable for windows. Hidden
     // cards sit above the window.
     mask: Region {
         item: strip
@@ -171,13 +170,11 @@ ShellWindow {
         openedTimer.restart();
     }
 
-    // Hidden: the top edge, pointing at it reveals the bar. Shown: the whole
-    // bar height across the screen, so the bar stays until the pointer
-    // leaves it.
+    // The top edge; pointing at it reveals the bar.
     Item {
         id: strip
         width: parent.width
-        height: root.revealed ? root.barBottom : root.revealHeight
+        height: root.revealHeight
     }
 
     Timer {

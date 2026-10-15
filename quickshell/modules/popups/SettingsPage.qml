@@ -20,7 +20,6 @@ Popup {
         { name: "Wallpaper", glyph: Icons.image },
         { name: "Night light", glyph: Icons.nightLight },
         { name: "Screenshots", glyph: Icons.screenshot },
-        { name: "Lock", glyph: Icons.lock },
     ]
     property int selected: 0
     readonly property string category: categories[selected].name
@@ -388,21 +387,6 @@ Popup {
                     description: "Hold the screen still while picking a region (also for Super P)"
                     checked: Settings.screenshotFreeze
                     onToggled: checked => Settings.set("screenshotFreeze", checked)
-                }
-            }
-
-            Page {
-                name: "Lock"
-
-                SettingSlider {
-                    width: parent.width
-                    label: "Lock when idle"
-                    valueText: Settings.lockAfter > 0 ? `After ${Settings.lockAfter} min` : "Never"
-                    from: 0
-                    to: 30
-                    stepSize: 1
-                    value: Settings.lockAfter
-                    onMoved: value => Settings.set("lockAfter", value)
                 }
             }
         }

@@ -5,7 +5,6 @@ import Quickshell.Io
 import Quickshell.Services.Pam
 import Quickshell.Wayland
 import QtQuick
-import qs.config
 
 // The lock screen's state. LockCover.qml fades the lock screen in over the
 // desktop, then LockScreen.qml locks the session behind the same picture;
@@ -15,8 +14,6 @@ import qs.config
 //   suspend(): lock, then suspend (the power menu's Suspend)
 // The password is checked like logging in (PAM's "login": the password,
 // and too many wrong tries lock the account for a while).
-// Also locks after Settings.lockAfter idle minutes (0 = never), but not
-// while any media player is playing (YouTube, Spotify, ...).
 //   qs ipc call lock lock
 //
 // At boot it is the login screen: greetd logs in and starts Hyprland
@@ -185,15 +182,6 @@ Singleton {
         id: suspendDelay
         interval: root.fadeDuration + 1000
         onTriggered: Quickshell.execDetached(["systemctl", "suspend"])
-    }
-
-    IdleMonitor {
-        enabled: Settings.lockAfter > 0 && !root.locked && !Media.players.some(p => p.isPlaying)
-        timeout: Settings.lockAfter * 60 // seconds
-        onIsIdleChanged: {
-            if (isIdle)
-                root.lock();
-        }
     }
 
     IpcHandler {

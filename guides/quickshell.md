@@ -35,11 +35,11 @@ All windows are `components/ShellWindow.qml`: transparent, above other windows, 
   - `CapturePanel` (`screenshot`, `record`): region / screen; Freeze holds the screen still while picking a region (also used by `SUPER + P`); recording with or without sound.
   - `PowerMenu` (`power`): lock, log out, suspend, restart, shut down; each needs a confirming click (or Enter), and runs once the menu has slid away. `> logout`, `> suspend`, `> restart`, `> shutdown` open it with that action armed.
   - `WallpaperPicker` (`wallpapers`): thumbnails, type to filter.
-  - `SettingsPage` (`settings`): categories on the left (Appearance, Wallpaper, Night light, Screenshots, Lock; Up/Down switch), the page slides in on the right.
+  - `SettingsPage` (`settings`): categories on the left (Appearance, Wallpaper, Night light, Screenshots; Up/Down switch), the page slides in on the right.
   - `WindowOverview` (`windows`, `SUPER + Tab`): quick glance at every workspace in use, as small live desktops in centered, evenly filled rows with their apps' icons under them. Only for looking: hold `SUPER + Tab` to peek, let go to dismiss; opened another way, Esc, a click or `SUPER + Tab` closes it. `qs ipc call windows toggle`.
   - `PolkitPrompt` (`polkit`): the session's polkit agent; asks for the password when an app needs admin rights (pkexec, mounting drives). Closing it cancels.
 - `overlays/` — `Toasts.qml` (notifications, top right), `Osd.qml` (volume / brightness), `RecordingCard.qml` (time and stop while recording).
-- `lock/` — `LockScreen.qml` locks the session with a `LockSurface` per screen; `LockCover.qml` fades the same `LockView` in over the desktop first, since Hyprland locks instantly. Type the password, Enter checks, Esc clears. `> lock`, `qs ipc call lock lock`, or after the idle minutes set in settings.
+- `lock/` — `LockScreen.qml` locks the session with a `LockSurface` per screen; `LockCover.qml` fades the same `LockView` in over the desktop first, since Hyprland locks instantly. Type the password, Enter checks, Esc clears. `> lock` or `qs ipc call lock lock`; no idle auto-lock.
 - `background/` — `Background.qml`, the wallpaper per screen; `WallpaperView.qml` grows or swipes a new one in.
 
 ## Services

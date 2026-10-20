@@ -8,7 +8,7 @@
 //   term    = unary (("*" | "/" | "%") unary | unary)*   -- juxtaposition multiplies: 2pi, 3(4+1)
 //   unary   = ("-" | "+") unary | power
 //   power   = postfix ("^" unary)?                        -- right associative: 2^3^2 = 2^9
-//   postfix = atom "!"*
+//   postfix = atom ("!" | "deg" | "°")*                  -- degrees to radians: sin 30deg
 //   atom    = number | constant | function unary | "(" expr ")"
 //
 // A missing closing ")" at the end is allowed, so "(2+3" already shows 5 while typing.
@@ -44,7 +44,7 @@ const aliases = {
     "÷": "/",
 };
 
-const tokenPattern = /^\s*(\d*\.?\d+(?:e[+-]?\d+)?|[a-z]+|\*\*|[-+*/%^()!×÷])/i;
+const tokenPattern = /^\s*(\d*\.?\d+(?:e[+-]?\d+)?|[a-z]+|\*\*|[-+*/%^()!×÷°])/i;
 
 function has(table, key) {
     return Object.prototype.hasOwnProperty.call(table, key);
@@ -138,11 +138,15 @@ function evaluate(text) {
 
     function postfix() {
         let value = atom();
-        while (peek() === "!") {
+        for (;;) {
+            if (peek() === "!")
+                value = factorial(value);
+            else if (peek() === "deg" || peek() === "°")
+                value *= Math.PI / 180;
+            else
+                return value;
             take();
-            value = factorial(value);
         }
-        return value;
     }
 
     function atom() {

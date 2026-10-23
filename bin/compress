@@ -1,0 +1,17 @@
+#!/bin/bash
+# compress <input.mp4> [crf]  ->  <input>-compressed.mp4, file copied to clipboard
+
+INPUT="$1"
+CRF="${2:-24}"
+
+if [[ ! -f "$INPUT" ]]; then
+    echo "usage: compress <input.mp4> [crf, default 24, higher = smaller]"
+    exit 1
+fi
+
+OUTPUT="${INPUT%.*}-compressed.mp4"
+
+ffmpeg -y -i "$INPUT" -c:a copy -c:v libx264 -crf "$CRF" -preset slow "$OUTPUT" || exit 1
+
+echo "$(du -h "$INPUT" | cut -f1) -> $(du -h "$OUTPUT" | cut -f1)  $OUTPUT"
+wl-copy -t text/uri-list <<<"file://$(realpath "$OUTPUT")" &>/dev/null

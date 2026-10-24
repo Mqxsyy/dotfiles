@@ -10,11 +10,13 @@ import qs.services
 //
 // A panel puts its card (or tab) in here and sets `surface` to it. `reveal`
 // goes 0 -> 1 while opening; use it to fade or slide the card in.
+// shell.qml makes most panels only while open (LazyPopup.qml), so `open`
+// starts false and turns true once made: onOpenChanged runs and it animates in.
 ShellWindow {
     id: root
 
     property Item surface: null
-    readonly property bool open: Popups.current === name
+    property bool open: false
     property real reveal: open ? 1 : 0
 
     default property alias content: area.data
@@ -25,6 +27,19 @@ ShellWindow {
 
     // Stay mapped until the closing animation finishes.
     shown: open || reveal > 0
+
+    Component.onCompleted: {
+        if (Popups.screen)
+            screen = Popups.screen;
+        open = Qt.binding(() => Popups.current === name);
+    }
+
+    // Closed and gone from screen: LazyPopup can free it. Later, so handlers
+    // still reacting to this change finish first.
+    onShownChanged: {
+        if (!shown)
+            Qt.callLater(() => Popups.closed(name));
+    }
 
     anchors {
         top: true

@@ -1,5 +1,6 @@
 import Quickshell
 import QtQuick
+import qs.components
 import qs.modules.background
 import qs.modules.bar
 import qs.modules.launcher
@@ -37,17 +38,39 @@ ShellRoot {
     Toasts {}
     Osd {}
 
-    // Panels; Popups.qml opens one at a time.
-    PowerMenu {}
-    ClipboardPanel {}
-    CapturePanel {
+    // Panels; Popups.qml opens one at a time. Each is made only while open.
+    LazyPopup {
+        name: "power"
+        PowerMenu {}
+    }
+    LazyPopup {
+        name: "clipboard"
+        ClipboardPanel {}
+    }
+    LazyPopup {
         name: "screenshot"
+        CapturePanel {
+            name: "screenshot"
+        }
     }
-    CapturePanel {
+    LazyPopup {
         name: "record"
+        CapturePanel {
+            name: "record"
+        }
     }
-    WallpaperPicker {}
-    SettingsPage {}
+    LazyPopup {
+        name: "wallpapers"
+        WallpaperPicker {}
+    }
+    LazyPopup {
+        name: "settings"
+        SettingsPage {}
+    }
+    LazyPopup {
+        name: "windows"
+        WindowOverview {}
+    }
+    // Always there: it is the session's polkit agent, waiting for requests.
     PolkitPrompt {}
-    WindowOverview {}
 }

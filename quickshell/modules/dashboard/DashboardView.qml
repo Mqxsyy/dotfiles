@@ -86,6 +86,8 @@ Column {
         { text: "Wallpaper", glyph: Icons.image, run: () => Popups.open("wallpapers", root.screen) },
         { text: "Shuffle", glyph: Icons.shuffle, run: () => Wallpaper.randomize() },
         { text: "Settings", glyph: Icons.settings, run: () => Popups.open("settings", root.screen) },
+        // A full restart (scripts/restart.sh): still works when the launcher has broken.
+        { text: "Reload", glyph: Icons.refresh, run: () => Quickshell.execDetached([Quickshell.shellDir + "/scripts/restart.sh"]) },
         { text: "Power", glyph: Icons.power, run: () => Popups.open("power", root.screen) },
     ]
 

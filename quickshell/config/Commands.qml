@@ -86,6 +86,11 @@ Singleton {
             run: () => Quickshell.reload(false),
         },
         {
+            name: "restart shell",
+            description: "Restart quickshell when it acts up (SUPER + SHIFT + R)",
+            run: () => Quickshell.execDetached([Quickshell.shellDir + "/scripts/restart.sh"]),
+        },
+        {
             name: "dnd",
             description: "Toggle do not disturb",
             run: () => Notifications.dnd = !Notifications.dnd,

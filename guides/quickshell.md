@@ -30,7 +30,7 @@ All windows are `components/ShellWindow.qml`: transparent, above other windows, 
 - `bar/` — `Bar.qml` slides down when the pointer touches the top edge, and stays while it is within the bar's height. Three cards grow into panels on hover: now playing (`MediaView`; its spectrum visualizer needs `cava`, set up in `config/cava.conf`), the clock (the dashboard), and the status card (`NotificationsView`, `WifiView`, `BluetoothView`, `AudioView`, `BrightnessView`; power opens the power menu). The bluetooth icon only shows while Bluetooth is on (dashboard toggle; needs `bluetooth.service`). `qs ipc call bar open <part>` or `> audio`, `> wifi`, `> bluetooth`, `> media`, `> notifications` open a part.
 - `dashboard/` — `DashboardView.qml`, the clock card's panel. Tabs: Overview (`Calendar`, quick toggles, shortcuts), System (`SystemView`: CPU, memory, GPU, disk, processes), Clean (`CleanView`: caches, old packages, logs; click twice to clean, hover shows the command, system entries run in kitty where sudo asks).
 - `launcher/` — `Launcher.qml`: apps, calculator, units, `>` commands (`config/Commands.qml`). `SUPER + R`, `qs ipc call launcher toggle`. Often and recently used apps rank higher.
-- `popups/` — panels opened one at a time through `services/Popups.qml` (`qs ipc call popup toggle <name>`), closed with Esc or a click outside:
+- `popups/` — panels opened one at a time through `services/Popups.qml` (`qs ipc call popup toggle <name>`), closed with Esc or a click outside. Each is wrapped in `components/LazyPopup.qml` in `shell.qml`: made on open, freed after its closing animation, so IPC handlers and anything that must always run go in a service, not the panel (`PolkitPrompt` stays always loaded as the polkit agent):
   - `ClipboardPanel` (`clipboard`, `SUPER + SHIFT + V`): history, filter, Enter copies back.
   - `CapturePanel` (`screenshot`, `record`): region / screen; Freeze holds the screen still while picking a region (also used by `SUPER + P`); recording with or without sound.
   - `PowerMenu` (`power`): lock, log out, suspend, restart, shut down; each needs a confirming click (or Enter), and runs once the menu has slid away. `> logout`, `> suspend`, `> restart`, `> shutdown` open it with that action armed.
@@ -58,6 +58,10 @@ All windows are `components/ShellWindow.qml`: transparent, above other windows, 
 - `Theme.qml` — colors, sizes, fonts.
 - `Commands.qml` — launcher `>` commands: add an entry with `name`, `description`, `run`.
 
+## Running
+
+Hyprland starts `scripts/keep-running.sh`, which starts `qs` again whenever it dies. `SUPER + SHIFT + R`, `> restart shell` or Reload on the dashboard (`scripts/restart.sh`) kills and restarts it when it breaks; `> reload` only reloads the config inside the running process.
+
 ## Gotchas
 
 - Keep text out of layers (`layer.enabled`): it gets resampled and looks blurry.
@@ -65,4 +69,5 @@ All windows are `components/ShellWindow.qml`: transparent, above other windows, 
 - No `options` or `status` variables in zsh scripts: zsh reserves them.
 - Hyprland gives the pointer to a newly shown overlay (slurp) only after the pointer moves; `pick-region.sh` moves the cursor onto itself to hand it over.
 - Commands run by quickshell get an open stdin pipe: give tools that read stdin when it isn't a terminal (slurp) `</dev/null`.
+- Everything shares the one 8 GB GPU. When a game fills its memory, apps making a new window or GL context (quickshell opening a panel, a new kitty, Steam) segfault; the kernel log shows `NVRM: ... GspRmAlloc failed` and `Failed to allocate NVKMS video memory`. Lower the game's texture quality or close GPU-heavy apps (Roblox Studio) while gaming.
 - If quickshell dies while locked, Hyprland keeps the session locked (with a warning screen). From a TTY (`Ctrl + Alt + F2`, log in): `hyprctl --instance 0 eval 'hl.config({ misc = { allow_session_lock_restore = true } })'`, then `WAYLAND_DISPLAY=wayland-1 qs -n -d` and `WAYLAND_DISPLAY=wayland-1 qs ipc call lock lock`; back on the Hyprland TTY, unlock with the password.

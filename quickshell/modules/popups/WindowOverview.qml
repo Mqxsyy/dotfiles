@@ -1,6 +1,5 @@
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
 import QtQuick
@@ -81,17 +80,6 @@ Popup {
         // Positions are only read on refresh.
         Hyprland.refreshWorkspaces();
         Hyprland.refreshToplevels();
-    }
-
-    IpcHandler {
-        target: "windows"
-
-        function toggle(): void {
-            if (root.open)
-                Popups.close();
-            else
-                Popups.open("windows", null, "hold");
-        }
     }
 
     // The wallpaper, blurred and dimmed.

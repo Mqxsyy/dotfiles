@@ -52,7 +52,8 @@ end
 hl.on("hyprland.start", function()
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 
-	hl.exec_cmd("qs -n -d") -- at boot it also picks a new wallpaper (services/Lock.qml)
+	-- Restarted when it crashes; at boot it also picks a new wallpaper (services/Lock.qml)
+	hl.exec_cmd("~/.config/quickshell/scripts/keep-running.sh")
 
 	-- At login the apps open on their workspaces in the background
 	-- ("silent"), so none of them is what greets you; after `quietStartup`
@@ -182,6 +183,7 @@ local mainMod = "SUPER"
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd("kitty"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("nautilus"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("qs ipc call launcher toggle"))
+hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.config/quickshell/scripts/restart.sh"))
 hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("qs ipc call windows toggle"))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("wayscriber --active"))
 

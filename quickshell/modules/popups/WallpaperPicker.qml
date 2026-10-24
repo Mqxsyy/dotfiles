@@ -144,6 +144,7 @@ Popup {
                         sourceSize: Qt.size(width * 2, height * 2)
                         fillMode: Image.PreserveAspectCrop
                         asynchronous: true
+                        cache: false // freed with the picker, not kept in Qt's image cache
                         opacity: hover.hovered || cell.isCurrent || cell.onScreen ? 1 : 0.8
                     }
 

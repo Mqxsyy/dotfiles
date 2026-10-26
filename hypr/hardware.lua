@@ -51,7 +51,7 @@ hl.config({
 	input = {
 		kb_layout = "ee",
 		kb_variant = "us",
-		kb_options = "caps:escape",
+		kb_options = "caps:escape,lv3:switch",
 
 		follow_mouse = 1,
 

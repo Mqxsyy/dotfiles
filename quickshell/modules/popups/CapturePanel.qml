@@ -8,7 +8,7 @@ import "../../utils/icons.js" as Icons
 // shell.qml makes this twice, named "screenshot" and "record".
 //   screenshot: region / screen, freeze while picking a region (remembered,
 //               the hotkey uses it too)
-//   record:     region / screen, sound; Stop while recording
+//   record:     region / screen, sound, indicator; Stop while recording
 // Opened with "> screenshot" / "> record" in the launcher, the dashboard, or
 // `qs ipc call popup toggle screenshot|record`. While recording,
 // RecordingCard.qml shows the time; click it to stop.
@@ -104,6 +104,15 @@ Popup {
             options: root.sounds
             value: Recorder.audio
             onPicked: value => Recorder.audio = value
+        }
+
+        // Live: can be flipped mid-recording too.
+        SettingToggle {
+            width: parent.width
+            visible: root.recording
+            label: "Indicator"
+            checked: Recorder.indicator
+            onToggled: checked => Recorder.indicator = checked
         }
 
         // Hotkeys for next time, under a thin line.

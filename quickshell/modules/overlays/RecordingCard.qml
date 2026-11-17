@@ -18,11 +18,13 @@ ShellWindow {
     property int cardHeight: 36 // same as the bar's cards
     // Below the bar's cards (Theme.gap + cardHeight), with a gap.
     readonly property int top: Theme.gap * 2 + cardHeight
+    // Hidden from the record panel (Recorder.indicator).
+    readonly property bool showing: Recorder.recording && Recorder.indicator
 
     name: "recording"
     screen: modelData
     // Stay mapped until the fade-out finishes.
-    shown: Recorder.recording || card.opacity > 0
+    shown: root.showing || card.opacity > 0
     implicitHeight: top + cardHeight + Theme.shadowPad
     mask: Region { item: card }
 
@@ -39,8 +41,8 @@ ShellWindow {
 
         x: Math.round((parent.width - width) / 2)
         y: root.top
-        opacity: Recorder.recording ? 1 : 0
-        scale: Recorder.recording ? 1 : 0.9
+        opacity: root.showing ? 1 : 0
+        scale: root.showing ? 1 : 0.9
         width: recordingRow.implicitWidth + 24
         height: root.cardHeight
         radius: Math.min(Theme.radius, height / 2)
@@ -81,7 +83,7 @@ ShellWindow {
                     color: Theme.error
 
                     SequentialAnimation on opacity {
-                        running: Recorder.recording
+                        running: root.showing
                         loops: Animation.Infinite
                         NumberAnimation { to: 0.35; duration: 700 }
                         NumberAnimation { to: 1; duration: 700 }

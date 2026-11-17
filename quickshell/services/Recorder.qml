@@ -39,6 +39,10 @@ Singleton {
     // (the default output's monitor; never the microphone).
     property string audio: "none"
 
+    // Show the recording card (RecordingCard.qml) while recording; it ends
+    // up in the video. Hide it for a clean shot; Super + ] still stops.
+    property bool indicator: true
+
     readonly property bool busy: recorder.running
     // Picking a region or taking a screenshot (the bar holds still meanwhile).
     readonly property bool shooting: shooter.running

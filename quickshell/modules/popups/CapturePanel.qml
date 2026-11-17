@@ -19,11 +19,6 @@ Popup {
 
     property int cardWidth: 380
 
-    readonly property var sounds: [
-        { value: "none", text: "No sound" },
-        { value: "all", text: "All sounds" },
-    ]
-
     surface: card
 
     PanelCard {
@@ -97,13 +92,12 @@ Popup {
             onClicked: Recorder.stop()
         }
 
-        SettingChoice {
+        SettingToggle {
             width: parent.width
             visible: root.recording && !Recorder.busy
             label: "Sound"
-            options: root.sounds
-            value: Recorder.audio
-            onPicked: value => Recorder.audio = value
+            checked: Recorder.sound
+            onToggled: checked => Recorder.sound = checked
         }
 
         // Live: can be flipped mid-recording too.

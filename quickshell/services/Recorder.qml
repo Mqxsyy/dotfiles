@@ -35,9 +35,9 @@ Singleton {
         stop: ["Super", "]"],
     })
 
-    // Sound in recordings: "none", or "all": everything the computer plays
-    // (the default output's monitor; never the microphone).
-    property string audio: "none"
+    // Sound in recordings: everything the computer plays (the default
+    // output's monitor; never the microphone).
+    property bool sound: false
 
     // Show the recording card (RecordingCard.qml) while recording; it ends
     // up in the video. Hide it for a clean shot; Super + ] still stops.
@@ -82,12 +82,9 @@ Singleton {
         if (busy)
             return;
         later(() => {
-            const devices = {
-                none: "",
-                all: Audio.sink ? Audio.sink.name + ".monitor" : "",
-            };
+            const device = sound && Audio.sink ? Audio.sink.name + ".monitor" : "";
             file = `${recordings}/${stamp()}.mp4`;
-            recorder.exec([scripts + "record.sh", mode, file, devices[audio]]);
+            recorder.exec([scripts + "record.sh", mode, file, device]);
         });
     }
 

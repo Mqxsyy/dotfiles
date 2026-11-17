@@ -42,6 +42,11 @@ ShellWindow {
     // counts half.
     property real halfLife: 14
 
+    // Where the pointer last was (window coordinates), or null right after
+    // opening. Hover only selects a row once the pointer really moves, not
+    // when the launcher opens under it or rows slide under a still pointer.
+    property var pointer: null
+
     readonly property var apps: Array.from(DesktopEntries.applications.values)
         .filter(app => !app.noDisplay)
         .sort((a, b) => a.name.localeCompare(b.name))
@@ -129,6 +134,7 @@ ShellWindow {
             root.screen = FocusedScreen.screen;
 
         list.currentIndex = 0;
+        root.pointer = null;
         root.shown = true;
         input.forceActiveFocus();
         input.selectAll(); // typing replaces the old query; arrow keys keep it
@@ -159,6 +165,14 @@ ShellWindow {
             input.clear();
         }
         close();
+    }
+
+    function hover(item, x, y, index) {
+        const p = item.mapToItem(null, x, y);
+        const moved = root.pointer !== null && (p.x !== root.pointer.x || p.y !== root.pointer.y);
+        root.pointer = p;
+        if (moved)
+            list.currentIndex = index;
     }
 
     function move(step) {
@@ -358,10 +372,12 @@ ShellWindow {
                         }
 
                         MouseArea {
+                            id: rowMouse
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onEntered: list.currentIndex = row.index
+                            onEntered: root.hover(rowMouse, mouseX, mouseY, row.index)
+                            onPositionChanged: mouse => root.hover(rowMouse, mouse.x, mouse.y, row.index)
                             onClicked: root.activate(row.modelData)
                         }
 
